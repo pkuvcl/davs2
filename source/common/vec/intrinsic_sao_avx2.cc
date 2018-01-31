@@ -41,6 +41,7 @@
 
 #ifdef _MSC_VER
 #pragma warning(disable:4244)  // TODO: ÐÞÕý±àÒëwarning
+#endif  // _MSC_VER
 
 /* ---------------------------------------------------------------------------
  * lcu neighbor
@@ -653,4 +654,3 @@ void sao_on_block_avx2(pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, i
          }
     }
 }
-#endif  // _MSC_VER
