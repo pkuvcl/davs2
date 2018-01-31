@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="inc">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\source\common\aec.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\alf.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\bitstream.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\block_info.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\common.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\cu.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\deblock.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\header.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\intra.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\mc.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\sao.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\transform.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\decoder.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\frame.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\cpu.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\predict.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\quant.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\pixel.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\threadpool.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\davs2.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\primitives.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\memory.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\common\aec.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\alf.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\bitstream.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\block_info.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\common.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\cu.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\deblock.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\defines.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\header.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\intra.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\mc.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\osdep.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\sao.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\transform.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\vlc.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\decoder.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\scantab.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\frame.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\cpu.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\predict.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\quant.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\threadpool.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\davs2.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\primitives.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\common\aec.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
