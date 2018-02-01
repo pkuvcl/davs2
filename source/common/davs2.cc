@@ -548,12 +548,13 @@ static void *proc_decoder_decode(void *arg, int arg2)
             b_has_picture_data = 1;
             mgr->num_frames_in++;
         }
-        davs2_thread_mutex_unlock(&mgr->mutex_aec);
 
         if (b_has_picture_data && task_get_references(h, es_unit->pts, es_unit->dts) == 0) {
+            davs2_thread_mutex_unlock(&mgr->mutex_aec);
             /* decode picture data */
             decoder_decode_picture_data(h, 0);
         } else {
+            davs2_thread_mutex_unlock(&mgr->mutex_aec);
             /* task is free */
             task_unload_packet(h, es_unit);
         }
