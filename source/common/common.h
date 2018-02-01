@@ -911,8 +911,8 @@ struct davs2_mgr_t {
     assembler_t         assembler;    /* frame assembler */
     davs2_seq_t        seq_info;     /* latest sequence head */
 
-    int                 coi_wrap;     /* COI wrap count */
-    int                 prev_coi;     /* previous COI */
+    int                 i_tr_wrap_cnt;/* COI wrap count */
+    int                 i_prev_coi;   /* previous COI */
 
     int                 new_sps;      /* is SPS(sequence property set) changed? */
 
@@ -1035,10 +1035,6 @@ struct davs2_t {
     int           decoding_error;     /* 非零值表示遇到了解码错误 */
 
     /* -------------------------------------------------------------
-     * counters */
-    int         i_tr_wrap_cnt;
-
-    /* -------------------------------------------------------------
      * field */
     bool_t      b_top_field_first;
     bool_t      b_repeat_first_field;
@@ -1067,7 +1063,6 @@ struct davs2_t {
 
     int         i_poc;                /* POC (picture order count) of current frame, 8 bit */
     int         i_coi;                /* COI (coding order index) */
-    int         i_prev_coi;           /* previous COI */
 
     int         i_cur_layer;
 

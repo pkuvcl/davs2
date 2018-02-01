@@ -72,7 +72,7 @@ void davs2_memory_init(uint32_t cpuid, ao_funcs_t* pf)
 
     if (cpuid & DAVS2_CPU_SSE2) {
         pf->memzero_aligned = davs2_memzero_aligned_c_sse2;
-        // gf_davs2.memcpy_aligned  = staravs_memcpy_aligned_c_sse2;
+        // gf_davs2.memcpy_aligned  = davs2_memcpy_aligned_c_sse2;
     }
 
     if (cpuid & DAVS2_CPU_AVX) {

@@ -677,11 +677,13 @@ static int parse_picture_header_inter(davs2_t *h, davs2_bs_t *bs)
     return 0;
 }
 
+/* ---------------------------------------------------------------------------
+ */
 static
 int parse_picture_header(davs2_t *h, uint32_t start_code)
 {
-    davs2_mgr_t *taskmgr  = h->task_info.taskmgr;
-    davs2_bs_t  *bs       = &h->bs;
+    davs2_mgr_t *mgr = h->task_info.taskmgr;
+    davs2_bs_t  *bs  = &h->bs;
 
     assert(start_code == SC_INTRA_PICTURE || start_code == SC_INTER_PICTURE);
 
@@ -690,7 +692,7 @@ int parse_picture_header(davs2_t *h, uint32_t start_code)
             return -1;
         }
     } else {
-        if (taskmgr->outpics.output == -1) {
+        if (mgr->outpics.output == -1) {
             /* An I frame is expected for the first frame or after the decoder is flushed. */
             davs2_log(h, AVS2_LOG_ERROR, "sequence should start with an I frame.");
             return -1;
@@ -708,19 +710,19 @@ int parse_picture_header(davs2_t *h, uint32_t start_code)
     }
 
     /* COI should be a periodically-repeated value from 0 to 255 */
-    if (taskmgr->outpics.output != -1 &&
-        h->i_coi != (h->i_prev_coi + 1) % AVS2_COI_CYCLE) {
-        davs2_log(h, AVS2_LOG_ERROR, "discontinuous COI (prev: %d --> curr: %d).", h->i_prev_coi, h->i_coi);
+    if (mgr->outpics.output != -1 &&
+        h->i_coi != (mgr->i_prev_coi + 1) % AVS2_COI_CYCLE) {
+        davs2_log(h, AVS2_LOG_ERROR, "discontinuous COI (prev: %d --> curr: %d).", mgr->i_prev_coi, h->i_coi);
     }
 
     /* update COI */
-    if (h->i_coi < h->i_prev_coi) { /// !!! '='
-        h->i_tr_wrap_cnt++;
+    if (h->i_coi < mgr->i_prev_coi) { /// !!! '='
+        mgr->i_tr_wrap_cnt++;
     }
 
-    h->i_prev_coi = h->i_coi;
+    mgr->i_prev_coi = h->i_coi;
 
-    h->i_coi += h->i_tr_wrap_cnt * AVS2_COI_CYCLE;
+    h->i_coi += mgr->i_tr_wrap_cnt * AVS2_COI_CYCLE;
 
     if (h->seq_info.head.low_delay == 0) {
         h->i_poc = h->i_coi + h->i_display_delay - h->seq_info.picture_reorder_delay;
@@ -730,12 +732,12 @@ int parse_picture_header(davs2_t *h, uint32_t start_code)
 
     assert(h->i_coi >= 0 && h->i_poc >= 0); /// 'int' (2147483647) should be large enough for 'i_coi' & 'i_poc'.
 
-    if (taskmgr->outpics.output == -1 && start_code == SC_INTRA_PICTURE) {
+    if (mgr->outpics.output == -1 && start_code == SC_INTRA_PICTURE) {
         if (h->i_coi != 0) {
             davs2_log(h, AVS2_LOG_INFO, "COI of the first frame is %d.", h->i_coi);
         }
 
-        taskmgr->outpics.output = h->i_poc;
+        mgr->outpics.output = h->i_poc;
     }
 
     return 0;
@@ -1054,10 +1056,6 @@ int task_decoder_update(davs2_t *h)
     memcpy(h->wq.seq_wq_matrix, seq->seq_wq_matrix, 2 * 64 * sizeof(int16_t)); /* weighting quantization matrix */
     memcpy(&h->seq_info, seq, sizeof(davs2_seq_t));
 
-    /* update last COI */
-    h->i_tr_wrap_cnt      = mgr->coi_wrap;
-    h->i_prev_coi         = mgr->prev_coi;
-
     return 0;
 }
 
@@ -1088,8 +1086,8 @@ int task_set_sequence_head(davs2_t *h)
             }
 
             /* COI for the new sequence should be reset */
-            mgr->coi_wrap = 0;
-            mgr->prev_coi = -1;
+            mgr->i_tr_wrap_cnt = 0;
+            mgr->i_prev_coi    = -1;
 
             destroy_dpb(mgr);
 
@@ -1114,17 +1112,6 @@ int task_set_sequence_head(davs2_t *h)
 
     davs2_thread_mutex_unlock(&mgr->mutex_mgr);
     return ret;
-}
-
-/* ---------------------------------------------------------------------------
- */
-void task_manager_update(davs2_t *h)
-{
-    davs2_mgr_t *mgr = h->task_info.taskmgr;
-
-    /* update last COI */
-    mgr->coi_wrap = h->i_tr_wrap_cnt;
-    mgr->prev_coi = h->i_prev_coi;
 }
 
 /* ---------------------------------------------------------------------------
@@ -1525,9 +1512,6 @@ int parse_header(davs2_t *h)
             if (parse_picture_header(h, start_code) < 0) {
                 return -1;
             }
-
-            /* update the task manager */
-            task_manager_update(h);
 
             return 0; /// !!! we only decode one frame for a single call.
 

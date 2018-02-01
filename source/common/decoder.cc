@@ -1113,7 +1113,6 @@ davs2_t *decoder_open(davs2_mgr_t *mgr, davs2_t *h)
     h->i_frame_type      = AVS2_I_SLICE;
     h->num_of_references = 0;
     h->b_video_edit_code = 0;
-    h->i_tr_wrap_cnt     = 0;
 
 #if AVS2_TRACE
     if (avs2_trace_init(h, TRACEFILE) == -1) {  // append new statistic at the end
