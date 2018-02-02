@@ -1,6 +1,8 @@
-# davs2
+# xavs2
 
-**davs2** is an open-source decoder of `AVS2/IEEE1857.4` video coding standard.
+**davs2** is an open-source decoder of `AVS2-P2/IEEE1857.4` video coding standard.
+
+An encoder, **xavs2**, can be found at [Github][2] or  [Gitee (mirror in China)][3].
 
 [![GitHub tag](https://img.shields.io/github/tag/pkuvcl/davs2.svg?style=plastic)]()
 [![GitHub issues](https://img.shields.io/github/issues/pkuvcl/davs2.svg)](https://github.com/pkuvcl/davs2/issues)
@@ -44,10 +46,12 @@ $ make
 
 [PKU-VCL][1]
 
-[git repository on Gitee.com][2]
+`AVS2-P2/IEEE1857.4` Encoder: [xavs2 (Github)][2], [xavs2 (mirror in China)][3]
 
-[git repository on Github.com][3]
+`AVS2-P2/IEEE1857.4` Decoder: [davs2 (Github)][4], [davs2 (mirror in China)][5]
 
   [1]: http://vcl.idm.pku.edu.cn/ "PKU-VCL"
-  [2]: https://gitee.com/pkuvcl/davs2 "gitee repository"
-  [3]: https://github.com/pkuvcl/davs2 "github repository"
+  [2]: https://github.com/pkuvcl/xavs2 "xavs2 github repository"
+  [3]: https://gitee.com/pkuvcl/xavs2 "xavs2 gitee repository"
+  [4]: https://github.com/pkuvcl/davs2 "davs2 decoder@github"
+  [5]: https://gitee.com/pkuvcl/davs2 "davs2 decoder@gitee"
