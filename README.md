@@ -1,4 +1,4 @@
-# xavs2
+# davs2
 
 **davs2** is an open-source decoder of `AVS2-P2/IEEE1857.4` video coding standard.
 
@@ -29,11 +29,11 @@ $ make
 ## Try it
 
 ```
-./davs2 -i test.avs -o test_dec.yuv [-r test_rec.yuv -t N]
+./davs2 -i test.avs -o test_dec.yuv [-r test_rec.yuv] [-t N]
 ```
 
 ### Parameter Instructions
-| Parametesr       |   Alias     |   Result  |
+|  Parameter       |   Alias     |   Result  |
 | :--------:       | :---------: | :--------------: |
 | --input=test.avs | -i test.avs |  Setting the input bitstream file |
 | --output=dec.yuv | -o dec.yuv  |  Setting the output YUV file |
