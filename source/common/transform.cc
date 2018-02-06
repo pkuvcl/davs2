@@ -975,9 +975,9 @@ void davs2_dct_init(uint32_t cpuid, ao_funcs_t *fh)
             fh->idct[PART_32x8][i] = idct_32x8_sse128;
 
 #if !HIGH_BIT_DEPTH
-            fh->idct[PART_4x4 ][i] = davs2_idct_4x4_sse2;
+            fh->idct[PART_4x4 ][i] = FPFX(idct_4x4_sse2);
 #if ARCH_X86_64
-            fh->idct[PART_8x8 ][i] = davs2_idct_8x8_sse2;
+            fh->idct[PART_8x8 ][i] = FPFX(idct_8x8_sse2);
 #endif
 #endif
         }

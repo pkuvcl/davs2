@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_MC_H__
-#define __AVS2_MC_H__
+#ifndef DAVS2_MC_H
+#define DAVS2_MC_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -42,4 +42,4 @@ void mc_chroma(davs2_t *h, pel_t *dst, int i_dst, int posx, int posy, int width,
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_MC_H__
+#endif  // DAVS2_MC_H

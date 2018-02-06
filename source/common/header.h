@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_HEADER_H__
-#define __AVS2_HEADER_H__
+#ifndef DAVS2_HEADER_H
+#define DAVS2_HEADER_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -49,4 +49,4 @@ void destroy_dpb(davs2_mgr_t *mgr);
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_HEADER_H__
+#endif  // DAVS2_HEADER_H

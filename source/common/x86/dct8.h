@@ -24,23 +24,23 @@
  *****************************************************************************/
 
 
-#ifndef __AVS2_I386_DCT8_H__
-#define __AVS2_I386_DCT8_H__
+#ifndef DAVS2_I386_DCT8_H
+#define DAVS2_I386_DCT8_H
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void avsd_idct_4x4_sse2  (const coeff_t *src, coeff_t *dst, int i_dst);
-void avsd_idct_8x8_ssse3 (const coeff_t *src, coeff_t *dst, int i_dst);
+void FPFX(idct_4x4_sse2 )(const coeff_t *src, coeff_t *dst, int i_dst);
+void FPFX(idct_8x8_ssse3)(const coeff_t *src, coeff_t *dst, int i_dst);
 #if ARCH_X86_64
-void avsd_idct_4x4_avx2  (const coeff_t *src, coeff_t *dst, int i_dst);
-void avsd_idct_8x8_sse2  (const coeff_t *src, coeff_t *dst, int i_dst);
-void avsd_idct_8x8_avx2  (const coeff_t *src, coeff_t *dst, int i_dst);
-void avsd_idct_16x16_avx2(const coeff_t *src, coeff_t *dst, int i_dst);
-void avsd_idct_32x32_avx2(const coeff_t *src, coeff_t *dst, int i_dst);
+void FPFX(idct_4x4_avx2  )(const coeff_t *src, coeff_t *dst, int i_dst);
+void FPFX(idct_8x8_sse2  )(const coeff_t *src, coeff_t *dst, int i_dst);
+void FPFX(idct_8x8_avx2  )(const coeff_t *src, coeff_t *dst, int i_dst);
+void FPFX(idct_16x16_avx2)(const coeff_t *src, coeff_t *dst, int i_dst);
+void FPFX(idct_32x32_avx2)(const coeff_t *src, coeff_t *dst, int i_dst);
 #endif
 
 #ifdef __cplusplus
 }
 #endif
-#endif // ifndef __AVS2_I386_DCT8_H__
+#endif // ifndef DAVS2_I386_DCT8_H

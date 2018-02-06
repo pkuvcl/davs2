@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_FRAME_H__
-#define __AVS2_FRAME_H__
+#ifndef DAVS2_FRAME_H
+#define DAVS2_FRAME_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -58,4 +58,4 @@ void pad_line_lcu(davs2_t *h, int lcu_y);
 #ifdef __cplusplus
 }
 #endif
-#endif  /* __AVS2_FRAME_H__ */
+#endif  /* DAVS2_FRAME_H */

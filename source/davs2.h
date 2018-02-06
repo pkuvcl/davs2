@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __DAVS2_H__
-#define __DAVS2_H__
+#ifndef DAVS2_DAVS2_H
+#define DAVS2_DAVS2_H
 
 #ifdef __cplusplus
 extern "C" {    // only need to export C interface if used by C++ source code
@@ -292,4 +292,4 @@ davs2_decoder_close(void *decoder);
 }
 #endif
 
-#endif // __DAVS2_H__
+#endif // DAVS2_DAVS2_H

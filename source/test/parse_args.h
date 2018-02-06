@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef ___DAVS2_GETOPT_H___
-#define ___DAVS2_GETOPT_H___
+#ifndef DAVS2_GETOPT_H
+#define DAVS2_GETOPT_H
 
 #include <stdio.h>
 #include <string.h>
@@ -194,4 +194,4 @@ static int parse_args(davs2_input_param_t *p_param, int argc, char **argv)
     return 0;
 }
 
-#endif /// ___DAVS2_GETOPT_H___
+#endif /// DAVS2_GETOPT_H

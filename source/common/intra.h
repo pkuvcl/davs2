@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_INTRA_H__
-#define __AVS2_INTRA_H__
+#ifndef DAVS2_INTRA_H
+#define DAVS2_INTRA_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -59,4 +59,4 @@ void davs2_get_intra_pred_chroma(davs2_row_rec_t *h, cu_t *p_cu, int ctu_c_x, in
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_INTRA_H__
+#endif  // DAVS2_INTRA_H

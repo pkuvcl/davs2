@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_DECODER_H__
-#define __AVS2_DECODER_H__
+#ifndef DAVS2_DECODER_H
+#define DAVS2_DECODER_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -60,4 +60,4 @@ int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_pict
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_DECODER_H__
+#endif  // DAVS2_DECODER_H

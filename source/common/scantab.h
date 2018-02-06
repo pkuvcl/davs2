@@ -31,8 +31,8 @@
  */
 
 
-#ifndef __AVS2_SCAN_TAB_H__
-#define __AVS2_SCAN_TAB_H__
+#ifndef DAVS2_SCAN_TAB_H
+#define DAVS2_SCAN_TAB_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -446,4 +446,4 @@ static const int16_t(*tab_scan_cg[4][4])[2] = {
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_SCAN_TAB_H__
+#endif  // DAVS2_SCAN_TAB_H

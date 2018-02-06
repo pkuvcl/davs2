@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef ___DAVS2_PSNR_H___
-#define ___DAVS2_PSNR_H___
+#ifndef DAVS2_PSNR_H
+#define DAVS2_PSNR_H
 
 #ifdef _MSC_VER
 #undef fseek
@@ -313,4 +313,4 @@ cal_psnr(int number, uint8_t *dst[3], FILE *f_rec, int width, int height, int nu
     return 0;
 }
 
-#endif /// ___DAVS2_PSNR_H___
+#endif /// DAVS2_PSNR_H

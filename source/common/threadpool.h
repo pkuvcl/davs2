@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __DAVS2_THREADPOOL_H__
-#define __DAVS2_THREADPOOL_H__
+#ifndef DAVS2_THREADPOOL_H
+#define DAVS2_THREADPOOL_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -49,4 +49,4 @@ void  davs2_threadpool_delete(davs2_threadpool_t *pool);
 #ifdef __cplusplus
 }
 #endif
-#endif  // __STARAVS_THREADPOOL_H__
+#endif  // __STARAVS_THREADPOOL_H

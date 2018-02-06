@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_VLC_H__
-#define __AVS2_VLC_H__
+#ifndef DAVS2_VLC_H
+#define DAVS2_VLC_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -237,4 +237,4 @@ int vlc_se_v(davs2_bs_t *bs
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_VLC_H__
+#endif  // DAVS2_VLC_H

@@ -87,8 +87,11 @@
     <ClInclude Include="..\..\source\common\vec\intrinsic.h">
       <Filter>vec</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\x86\dct8.h">
+      <Filter>asm-x86</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\common\x86\ipfilter8.h">
-      <Filter>vec</Filter>
+      <Filter>asm-x86</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

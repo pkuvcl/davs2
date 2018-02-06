@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_AEC_H__
-#define __AVS2_AEC_H__
+#ifndef DAVS2_AEC_H
+#define DAVS2_AEC_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -102,4 +102,4 @@ int  aec_read_alf_lcu_ctrl  (aec_t *p_aec);
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_AEC_H__
+#endif  // DAVS2_AEC_H

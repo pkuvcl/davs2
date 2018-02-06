@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_SAO_H__
-#define __AVS2_SAO_H__
+#ifndef DAVS2_SAO_H
+#define DAVS2_SAO_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -46,4 +46,4 @@ void davs2_sao_init(uint32_t cpuid, ao_funcs_t *fh);
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_SAO_H__
+#endif  // DAVS2_SAO_H

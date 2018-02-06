@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_OSDEP_H__
-#define __AVS2_OSDEP_H__
+#ifndef DAVS2_OSDEP_H
+#define DAVS2_OSDEP_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -432,4 +432,4 @@ static int ALWAYS_INLINE davs2_is_regular_file_path(const char *filename)
 #ifdef __cplusplus
 }
 #endif
-#endif /* __AVS2_OSDEP_H__ */
+#endif /* DAVS2_OSDEP_H */

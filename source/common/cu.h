@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_CU_H__
-#define __AVS2_CU_H__
+#ifndef DAVS2_CU_H
+#define DAVS2_CU_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -73,4 +73,4 @@ void decoder_wait_row(davs2_t *h, davs2_frame_t *frame, int max_y_in_pic);
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_CU_H__
+#endif  // DAVS2_CU_H

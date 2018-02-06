@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_DEFINES_H__
-#define __AVS2_DEFINES_H__
+#ifndef DAVS2_DEFINES_H
+#define DAVS2_DEFINES_H
 
 
 /**
@@ -324,4 +324,4 @@ enum intra_chroma_pred_mode_e {
 */
 #define HDR_CHROMA_DELTA_QP     0
 
-#endif  // __AVS2_DEFINES_H__
+#endif  // DAVS2_DEFINES_H

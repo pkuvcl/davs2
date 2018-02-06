@@ -31,8 +31,8 @@
  */
 
 
-#ifndef __CDAVS2_CPU_H__
-#define __CDAVS2_CPU_H__
+#ifndef DAVS2_CPU_H
+#define DAVS2_CPU_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -76,4 +76,4 @@ void avs_cpu_restore(uint32_t cpuid);
 #ifdef __cplusplus
 }
 #endif
-#endif  // __CDAVS2_CPU_H__
+#endif  // DAVS2_CPU_H

@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_BITSTREAM_H__
-#define __AVS2_BITSTREAM_H__
+#ifndef DAVS2_BITSTREAM_H
+#define DAVS2_BITSTREAM_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,4 +50,4 @@ int32_t find_pic_start_code(uint8_t prevbyte3, uint8_t prevbyte2, uint8_t prevby
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_BITSTREAM_H__
+#endif  // DAVS2_BITSTREAM_H

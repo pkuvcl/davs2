@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_DEBLOCK_H__
-#define __AVS2_DEBLOCK_H__
+#ifndef DAVS2_DEBLOCK_H
+#define DAVS2_DEBLOCK_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -42,4 +42,4 @@ void davs2_lcu_deblock(davs2_t *h, davs2_frame_t *frm, int i_lcu_x, int i_lcu_y)
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_DEBLOCK_H__
+#endif  // DAVS2_DEBLOCK_H

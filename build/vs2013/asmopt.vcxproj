@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\vec\intrinsic.h" />
+    <ClInclude Include="..\..\source\common\x86\dct8.h" />
     <ClInclude Include="..\..\source\common\x86\ipfilter8.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

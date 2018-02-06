@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __DAVS2_PRIMITIVES_H__
-#define __DAVS2_PRIMITIVES_H__
+#ifndef DAVS2_PRIMITIVES_H
+#define DAVS2_PRIMITIVES_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -179,4 +179,4 @@ void davs2_memory_init(uint32_t cpuid, ao_funcs_t* pixf);
 #ifdef __cplusplus
 }
 #endif
-#endif  // __DAVS2_PRIMITIVES_H__
+#endif  // DAVS2_PRIMITIVES_H

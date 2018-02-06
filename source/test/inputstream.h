@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef ___DAVS2_CHECKFRAME_H___
-#define ___DAVS2_CHECKFRAME_H___
+#ifndef DAVS2_CHECKFRAME_H
+#define DAVS2_CHECKFRAME_H
 
 #include "utils.h"
 
@@ -152,4 +152,4 @@ read_input_file(davs2_input_param_t *p_param, uint8_t **data, int *size, int *fr
     return 0;
 }
 
-#endif /// ___DAVS2_CHECKFRAME_H___
+#endif /// DAVS2_CHECKFRAME_H

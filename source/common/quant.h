@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_QUANT_H__
-#define __AVS2_QUANT_H__
+#ifndef DAVS2_QUANT_H
+#define DAVS2_QUANT_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -111,4 +111,4 @@ void cu_get_quant_params(davs2_t * h, int qp, int bit_size,
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_QUANT_H__
+#endif  // DAVS2_QUANT_H

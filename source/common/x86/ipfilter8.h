@@ -22,8 +22,8 @@
  * For more information, contact us at license @ x265.com.
  *****************************************************************************/
 
-#ifndef X265_IPFILTER8_H
-#define X265_IPFILTER8_H
+#ifndef DAVS2_IPFILTER8_H
+#define DAVS2_IPFILTER8_H
 
 #include "../vec/intrinsic.h"
 
@@ -49,4 +49,4 @@ SETUP_FUNC_DEF(avx2);
 #if defined(__cplusplus)
 }
 #endif  /* __cplusplus */
-#endif // ifndef X265_IPFILTER8_H
+#endif // ifndef DAVS2_IPFILTER8_H

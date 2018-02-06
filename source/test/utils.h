@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef ___DAVS2_UTILS_H___
-#define ___DAVS2_UTILS_H___
+#ifndef DAVS2_UTILS_H
+#define DAVS2_UTILS_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -161,4 +161,4 @@ static void write_frame(davs2_picture_t *pic, FILE *g_outfile)
     }
 }
 
-#endif /// ___DAVS2_UTILS_H___
+#endif /// DAVS2_UTILS_H

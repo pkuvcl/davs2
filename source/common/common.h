@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_COMMON_H__
-#define __AVS2_COMMON_H__
+#ifndef DAVS2_COMMON_H
+#define DAVS2_COMMON_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -1423,4 +1423,4 @@ void *xl_remove_head_ex(xlist_t *const xlist);
 #ifdef __cplusplus
 }
 #endif
-#endif // __AVS2_COMMON_H__
+#endif // DAVS2_COMMON_H

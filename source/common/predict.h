@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
  
-#ifndef __AVS2_PRED_H__
-#define __AVS2_PRED_H__
+#ifndef DAVS2_PRED_H
+#define DAVS2_PRED_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -309,4 +309,4 @@ void fill_mv_and_ref_for_skip(davs2_t *h, cu_t *p_cu, int pix_x, int pix_y, int 
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_PRED_H__
+#endif  // DAVS2_PRED_H

@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_BLOCK_INFO_H__
-#define __AVS2_BLOCK_INFO_H__
+#ifndef DAVS2_BLOCK_INFO_H
+#define DAVS2_BLOCK_INFO_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -41,4 +41,4 @@ int  get_neighbor_cbp_y(davs2_t *h, int xN, int yN, int scu_x, int scu_y, cu_t *
 #ifdef __cplusplus
 }
 #endif
-#endif // __AVS2_BLOCK_INFO_H__
+#endif // DAVS2_BLOCK_INFO_H

@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __AVS2_TRANSFORM_H__
-#define __AVS2_TRANSFORM_H__
+#ifndef DAVS2_TRANSFORM_H
+#define DAVS2_TRANSFORM_H
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -43,4 +43,4 @@ void davs2_get_recons(davs2_row_rec_t *row_rec, cu_t *p_cu, int blockidx, cb_t *
 #ifdef __cplusplus
 }
 #endif
-#endif  // __AVS2_TRANSFORM_H__
+#endif  // DAVS2_TRANSFORM_H

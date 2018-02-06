@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __DAVS2_INTRINSIC_H__
-#define __DAVS2_INTRINSIC_H__
+#ifndef DAVS2_INTRINSIC_H
+#define DAVS2_INTRINSIC_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -172,11 +172,6 @@ void deblock_edge_ver_c_avx2(pel_t *SrcPtrU, pel_t *SrcPtrV, int stride, int Alp
 
 
 void davs2_dequant_sse4(coeff_t *coef, const int i_coef, const int scale, const int shift);
-
-
-void davs2_idct_4x4_sse2(const coeff_t *src, coeff_t *dst, int i_dst);
-void davs2_idct_8x8_sse2(const coeff_t *src, coeff_t *dst, int i_dst);
-void davs2_idct_8x8_ssse3(const coeff_t *src, coeff_t *dst, int i_dst);
 
 void idct_4x4_sse128  (const coeff_t *src, coeff_t *dst, int i_dst);
 void idct_8x8_sse128  (const coeff_t *src, coeff_t *dst, int i_dst);
@@ -406,4 +401,4 @@ void intra_pred_ang_y_32_avx(pel_t *src, pel_t *dst, int i_dst, int dir_mode, in
 #ifdef __cplusplus
 }
 #endif
-#endif // #ifndef __DAVS2_INTRINSIC_H__
+#endif // #ifndef DAVS2_INTRINSIC_H
