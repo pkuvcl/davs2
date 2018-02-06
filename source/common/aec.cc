@@ -415,7 +415,7 @@ int biari_decode_symbol(aec_t *p_aec, context_t *ctx)
     }
 
     if (p_aec->i_value_s > AEC_VALUE_BOUND) {
-        /// davs2_log(NULL, AVS2_LOG_ERROR, "p_aec->i_value_s (>254).");
+        /// davs2_log(NULL, DAVS2_LOG_ERROR, "p_aec->i_value_s (>254).");
         p_aec->b_bit_error = 1;
         p_aec->i_value_s   = i_value_s;
         return 0;
@@ -624,7 +624,7 @@ int biari_decode_symbol_continue0(aec_t *p_aec, context_t *ctx, int max_num)
         t2 = p_aec->i_t1 - lg_pmps + (s_flag << 8);            // 8bits
 
         if (i_value_s > AEC_VALUE_BOUND) {
-            /// davs2_log(NULL, AVS2_LOG_ERROR, "i_value_s (>254).");
+            /// davs2_log(NULL, DAVS2_LOG_ERROR, "i_value_s (>254).");
             p_aec->b_bit_error = 1;
             return 0;
         }
@@ -710,7 +710,7 @@ int biari_decode_symbol_continu0_ext(aec_t *p_aec, context_t *ctx, int max_ctx_i
         t2 = p_aec->i_t1 - lg_pmps + (s_flag << 8);            // 8bits
 
         if (p_aec->i_value_s > AEC_VALUE_BOUND) {
-            /// davs2_log(NULL, AVS2_LOG_ERROR, "p_aec->i_value_s (>254).");
+            /// davs2_log(NULL, DAVS2_LOG_ERROR, "p_aec->i_value_s (>254).");
             /// exit(1);
             p_aec->b_bit_error = 1;
             return 0;
@@ -1665,7 +1665,7 @@ int cu_read_cbp(davs2_t *h, aec_t *p_aec, cu_t *p_cu, int scu_x, int scu_y)
             h->i_last_dquant = i_delta_qp = (int8_t)aec_read_cu_delta_qp(p_aec, h->i_last_dquant);
             if (i_delta_qp < -range_max_qp ||
                 i_delta_qp > range_max_qp) {
-                davs2_log(h, AVS2_LOG_ERROR, "Invalid cu_qp_delta: %d.", i_delta_qp);
+                davs2_log(h, DAVS2_LOG_ERROR, "Invalid cu_qp_delta: %d.", i_delta_qp);
             }
         }
 
@@ -1695,7 +1695,7 @@ int aec_read_intra_pmode_c(aec_t *p_aec, davs2_t *h, int luma_mode)
         act_sym = unary_bin_max_decode(p_aec, p_ctx + 2, 0, 3) + 1;
         if (is_redundant && act_sym >= lmode) {
             if (act_sym == 4) {
-                davs2_log(h, AVS2_LOG_ERROR, "Error in intra_chroma_pred_mode. (%d, %d) (%d, %d)", h->lcu.i_pix_x, h->lcu.i_pix_y, h->lcu.i_scu_x, h->lcu.i_scu_y);
+                davs2_log(h, DAVS2_LOG_ERROR, "Error in intra_chroma_pred_mode. (%d, %d) (%d, %d)", h->lcu.i_pix_x, h->lcu.i_pix_y, h->lcu.i_scu_x, h->lcu.i_scu_y);
                 return 4;
             }
 
@@ -2126,7 +2126,7 @@ int aec_read_run_level(aec_t *p_aec, cu_t *p_cu, int num_cg, int b_luma, int is_
                     int run   = p_runlevel[num_pairs - 1].run;
                     num_pairs--;
                     if (run < 0 || run >= 16) {
-                        // davs2_log(h, AVS2_LOG_ERROR, "wrong run level.");
+                        // davs2_log(h, DAVS2_LOG_ERROR, "wrong run level.");
                         return -1;
                     }
                     coef_ctr += run + 1;

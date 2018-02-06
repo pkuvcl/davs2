@@ -711,7 +711,7 @@ static int decode_lcu_row_recon(davs2_t *h, int i_lcu_y)
             }
         }
 
-        // davs2_log(h, AVS2_LOG_INFO, "POC %3d reconstruction finished.", h->i_poc);
+        // davs2_log(h, DAVS2_LOG_INFO, "POC %3d reconstruction finished.", h->i_poc);
         if (h->i_frame_type == AVS2_G_SLICE) {
             davs2_frame_copy_planes(h->f_background_ref, h->fdec);
         }
@@ -916,7 +916,7 @@ int decoder_alloc_extra_buffer(davs2_t *h)
     }
 
     if (mem_size < (mem_base - h->p_integral)) {
-        davs2_log(h, AVS2_LOG_ERROR, "No enough memory allocated. mem_size %llu <= %llu\n",
+        davs2_log(h, DAVS2_LOG_ERROR, "No enough memory allocated. mem_size %llu <= %llu\n",
                    mem_size, mem_base - h->p_integral);
         goto fail;
     }
@@ -1116,7 +1116,7 @@ davs2_t *decoder_open(davs2_mgr_t *mgr, davs2_t *h)
 
 #if AVS2_TRACE
     if (avs2_trace_init(h, TRACEFILE) == -1) {  // append new statistic at the end
-        davs2_log(h, AVS2_LOG_ERROR, "Error open trace file!");
+        davs2_log(h, DAVS2_LOG_ERROR, "Error open trace file!");
     }
 #endif
 
@@ -1258,7 +1258,7 @@ void decoder_flush(davs2_mgr_t *mgr)
         /* all frames have been decoded and put into the output list, */
         /* so the first frame in the output list should be the next output frame. */
         if (mgr->outpics.output < poc) {
-            davs2_log(&mgr->decoders[0], AVS2_LOG_ERROR, "the expected frame %d unavailable, proceed to frame %d.", mgr->outpics.output, poc);
+            davs2_log(&mgr->decoders[0], DAVS2_LOG_ERROR, "the expected frame %d unavailable, proceed to frame %d.", mgr->outpics.output, poc);
 
             mgr->outpics.output = poc;
 

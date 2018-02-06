@@ -84,10 +84,10 @@ int avs2_trace_init(davs2_t *h, char *psz_trace_file)
         /* create or truncate the trace file */
         h_trace = fopen(psz_trace_file, "wt");
         if (!h_trace) {
-            davs2_log(h, AVS2_LOG_ERROR, "trace: can't write to trace file");
+            davs2_log(h, DAVS2_LOG_ERROR, "trace: can't write to trace file");
             return -1;
         } else if (!davs2_is_regular_file(fileno(h_trace))) {
-            davs2_log(h, AVS2_LOG_ERROR, "trace: incompatible with non-regular file");
+            davs2_log(h, DAVS2_LOG_ERROR, "trace: incompatible with non-regular file");
             return -1;
         }
     }
@@ -438,16 +438,16 @@ davs2_log_default(int i_log_level, const char *psz_fmt)
     const char *psz_prefix = null_prefix;
 
     switch (i_log_level) {
-    case AVS2_LOG_ERROR:
+    case DAVS2_LOG_ERROR:
         psz_prefix = "[davs2 error]: ";
         break;
-    case AVS2_LOG_WARNING:
+    case DAVS2_LOG_WARNING:
         psz_prefix = "[davs2 warn]: ";
         break;
-    case AVS2_LOG_INFO:
+    case DAVS2_LOG_INFO:
         psz_prefix = "[davs2 info]: ";
         break;
-    case AVS2_LOG_DEBUG:
+    case DAVS2_LOG_DEBUG:
         psz_prefix = "[davs2 debug]: ";
         break;
     default:
@@ -462,7 +462,7 @@ davs2_log_default(int i_log_level, const char *psz_fmt)
     fprintf(stdout, "%s%s\n", psz_prefix, psz_fmt);
     davs2_set_font_color(0);     /* restore to white color */
 #else
-    if (i_log_level != AVS2_LOG_INFO) {
+    if (i_log_level != DAVS2_LOG_INFO) {
         fprintf(stdout, "%s%s%s%s\n", cur_color, psz_prefix, psz_fmt, str_color_clear);
     } else {
         fprintf(stdout, "%s%s\n", psz_prefix, psz_fmt);
@@ -482,7 +482,7 @@ void davs2_log(void *handle, int level, const char *format, ...)
         i_enable_level = h->task_info.taskmgr->param.i_info_level;
     }
 
-    assert(level >= 0 && level < AVS2_LOG_MAX);
+    assert(level >= 0 && level < DAVS2_LOG_MAX);
 
     if (level >= i_enable_level) {
         char message[2048] = { 0 };

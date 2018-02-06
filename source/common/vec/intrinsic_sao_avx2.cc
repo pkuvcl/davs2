@@ -648,7 +648,7 @@ void sao_on_block_avx2(pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, i
         }
         break;
         default: {
-            davs2_log(NULL, AVS2_LOG_ERROR, "Not a supported SAO types in sao_avx2.");
+            davs2_log(NULL, DAVS2_LOG_ERROR, "Not a supported SAO types in sao_avx2.");
             assert(0);
             exit(-1);
          }

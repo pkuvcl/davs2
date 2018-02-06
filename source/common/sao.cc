@@ -298,7 +298,7 @@ void sao_block_c(pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src,
         }
         break;
     default:
-        davs2_log(NULL, AVS2_LOG_ERROR, "Not a supported SAO types.");
+        davs2_log(NULL, DAVS2_LOG_ERROR, "Not a supported SAO types.");
         assert(0);
         exit(-1);
     }

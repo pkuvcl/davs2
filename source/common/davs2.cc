@@ -72,7 +72,7 @@ es_unit_alloc(int buf_size)
     es_unit = (es_unit_t *)davs2_malloc(bufsize);
 
     if (es_unit == NULL) {
-        davs2_log(NULL, AVS2_LOG_ERROR, "failed to malloc memory in es_unit_alloc.\n");
+        davs2_log(NULL, DAVS2_LOG_ERROR, "failed to malloc memory in es_unit_alloc.\n");
         return NULL;
     }
 
@@ -312,7 +312,7 @@ davs2_outpic_t *output_list_get_one_output_picture(davs2_mgr_t *mgr)
             }
 
             /* 目前输出队列的最小POC与已输出的POC之间间隔较大，将输出POC提前到当前最小POC */
-            davs2_log(&mgr->decoders[0], AVS2_LOG_WARNING, "Advance to discontinuous POC: %d\n", frame->i_poc);
+            davs2_log(&mgr->decoders[0], DAVS2_LOG_WARNING, "Advance to discontinuous POC: %d\n", frame->i_poc);
             mgr->outpics.output = frame->i_poc;
         }
     }
@@ -585,7 +585,7 @@ davs2_decoder_open(davs2_param_t *param)
     int i;
 
     /* output version information */
-    davs2_log(NULL, AVS2_LOG_INFO, "davs2: %s.%d, %s",
+    davs2_log(NULL, DAVS2_LOG_INFO, "davs2: %s.%d, %s",
                XVERSION_STR, BIT_DEPTH, XBUILD_TIME);
 
 #if DAVS2_TRACE_API
@@ -595,12 +595,12 @@ davs2_decoder_open(davs2_param_t *param)
 
     /* check parameters */
     if (param == NULL) {
-        davs2_log(NULL, AVS2_LOG_ERROR, "Invalid input parameters: Null parameters\n");
+        davs2_log(NULL, DAVS2_LOG_ERROR, "Invalid input parameters: Null parameters\n");
         return 0;
     }
 #if DAVS2_API_VERSION < 2
     if (param->output_f == NULL) {
-        davs2_log(NULL, AVS2_LOG_ERROR, "Invalid input parameters: Null output functions\n");
+        davs2_log(NULL, DAVS2_LOG_ERROR, "Invalid input parameters: Null output functions\n");
         return 0;
     }
 #endif
@@ -613,7 +613,7 @@ davs2_decoder_open(davs2_param_t *param)
 
     /* CPU capacities */
     davs2_get_simd_capabilities(buf_cpu, cpuid);
-    davs2_log(NULL, AVS2_LOG_INFO, "CPU Capabilities: %s\n", buf_cpu);
+    davs2_log(NULL, DAVS2_LOG_INFO, "CPU Capabilities: %s\n", buf_cpu);
 
     mem_size = sizeof(davs2_mgr_t) + CACHE_LINE_SIZE
         + AVS2_THREAD_MAX * (sizeof(davs2_t) + CACHE_LINE_SIZE);
@@ -629,7 +629,7 @@ davs2_decoder_open(davs2_param_t *param)
     }
     if (mgr->param.threads > max_num_thread) {
         mgr->param.threads = max_num_thread;
-        davs2_log(NULL, AVS2_LOG_WARNING, "Max number of thread reached, forcing to be %d\n", max_num_thread);
+        davs2_log(NULL, DAVS2_LOG_WARNING, "Max number of thread reached, forcing to be %d\n", max_num_thread);
     }
 
     /* init members that could not be zero */
@@ -674,7 +674,7 @@ davs2_decoder_open(davs2_param_t *param)
     if (mgr->num_total_thread < 1 || mgr->num_decoders < mgr->num_aec_thread ||
         mgr->num_rec_thread < 0 ||
         mgr->num_aec_thread < 1 || mgr->num_aec_thread > mgr->num_total_thread) {
-        davs2_log(NULL, AVS2_LOG_ERROR, 
+        davs2_log(NULL, DAVS2_LOG_ERROR, 
             "Invalid thread number configuration: num_task[%d], num_threads[%d], num_aec_thread[%d], num_pool[%d]\n",
             mgr->num_decoders, mgr->num_total_thread, mgr->num_aec_thread, mgr->num_rec_thread);
         goto fail;
@@ -695,7 +695,7 @@ davs2_decoder_open(davs2_param_t *param)
 
         /* init the decode context */
         decoder_open(mgr, h);
-        // davs2_log(h, AVS2_LOG_WARNING, "Decoder [%2d]: %p", i, h);
+        // davs2_log(h, DAVS2_LOG_WARNING, "Decoder [%2d]: %p", i, h);
 
         h->task_info.task_id     = i;
         h->task_info.task_status = TASK_FREE;
@@ -712,13 +712,13 @@ davs2_decoder_open(davs2_param_t *param)
     }
 #endif
 
-    davs2_log(NULL, AVS2_LOG_INFO, "using %d thread(s): %d(frame/AEC)+%d(pool/REC), %d tasks", 
+    davs2_log(NULL, DAVS2_LOG_INFO, "using %d thread(s): %d(frame/AEC)+%d(pool/REC), %d tasks", 
         mgr->num_total_thread, mgr->num_aec_thread, mgr->num_rec_thread, mgr->num_decoders);
 
     return mgr;
 
 fail:
-    davs2_log(NULL, AVS2_LOG_ERROR, "failed to open decoder\n");
+    davs2_log(NULL, DAVS2_LOG_ERROR, "failed to open decoder\n");
     davs2_decoder_close(mgr);
 
     return NULL;

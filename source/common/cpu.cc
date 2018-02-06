@@ -177,7 +177,7 @@ uint32_t davs2_cpu_detect(void)
 
     // uint32_t serial[4] = { 0 };
     // davs2_cpuid_get_serial_number(0, &serial[0], &serial[1], &serial[2], &serial[3]);
-    // davs2_log(NULL, AVS2_LOG_WARNING, "CPU serial number: %08X%08X%08X%08X\n",
+    // davs2_log(NULL, DAVS2_LOG_WARNING, "CPU serial number: %08X%08X%08X%08X\n",
     //            serial[0], serial[1], serial[2], serial[3]);
 #if !ARCH_X86_64
     if (!davs2_cpu_cpuid_test()) {
@@ -365,7 +365,7 @@ uint32_t davs2_cpu_detect(void)
         } else if (cache == 64) {
             cpuid |= DAVS2_CPU_CACHELINE_64;
         } else {
-            davs2_log(NULL, AVS2_LOG_WARNING, "unable to determine cacheline size\n");
+            davs2_log(NULL, DAVS2_LOG_WARNING, "unable to determine cacheline size\n");
         }
     }
 

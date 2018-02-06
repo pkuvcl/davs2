@@ -84,29 +84,32 @@ extern "C" {    // only need to export C interface if used by C++ source code
 
 /* ---------------------------------------------------------------------------
  * picture type */
-#define AVS2DEC_PIC_I       0         /* picture-I */
-#define AVS2DEC_PIC_P       1         /* picture-P */
-#define AVS2DEC_PIC_B       2         /* picture-B */
-#define AVS2DEC_PIC_G       3         /* picture-G */
-#define AVS2DEC_PIC_F       4         /* picture-F */
-#define AVS2DEC_PIC_S       5         /* picture-S */
+enum davs2_picture_type_e {
+    DAVS2_PIC_I       = 0,         /* picture-I */
+    DAVS2_PIC_P       = 1,         /* picture-P */
+    DAVS2_PIC_B       = 2,         /* picture-B */
+    DAVS2_PIC_G       = 3,         /* picture-G */
+    DAVS2_PIC_F       = 4,         /* picture-F */
+    DAVS2_PIC_S       = 5          /* picture-S */
+};
 
 /* ---------------------------------------------------------------------------
  * profile id */
-#define PROFILE_MAIN_PIC    0x12      /* main picture profile */
-#define PROFILE_MAIN        0x20      /* main         profile */
-#define PROFILE_MAIN10      0x22      /* main 10bit   profile */
+enum davs2_profile_id_e {
+    DAVS2_PROFILE_MAIN_PIC = 0x12,      /* AVS2 main picture profile */
+    DAVS2_PROFILE_MAIN     = 0x20,      /* AVS2 main         profile */
+    DAVS2_PROFILE_MAIN10   = 0x22       /* AVS2 main 10bit   profile */
+};
 
 /* ---------------------------------------------------------------------------
  * log level
  */
 enum davs2_log_level_e {
-    AVS2_LOG_DEBUG   = 0,
-    AVS2_LOG_INFO    = 1,
-    AVS2_LOG_WARNING = 2,
-    AVS2_LOG_ERROR   = 3,
-    AVS2_LOG_FATAL   = 4,
-    AVS2_LOG_MAX     = 5
+    DAVS2_LOG_DEBUG   = 0,
+    DAVS2_LOG_INFO    = 1,
+    DAVS2_LOG_WARNING = 2,
+    DAVS2_LOG_ERROR   = 3,
+    DAVS2_LOG_MAX     = 4
 };
 
 /* ---------------------------------------------------------------------------
@@ -130,7 +133,7 @@ enum davs2_ret_e {
  * information of sequence header
  */
 typedef struct davs2_seq_info_t {
-    uint32_t        profile_id;       /* profile ID */
+    uint32_t        profile_id;       /* profile ID, davs2_profile_id_e */
     uint32_t        level_id;         /* level   ID */
     uint32_t        progressive;      /* progressive sequence (0: interlace, 1: progressive) */
     uint32_t        horizontal_size;  /* image width */
@@ -190,15 +193,16 @@ typedef struct davs2_picture_t {
  *       [in] : errCode - possible errors while decoding @pic
  *       [in] : opaque  - user data
  */
-typedef void(*davs2_output_func)(davs2_picture_t *pic, davs2_seq_info_t *headset, int errCode, void *opaque);
+typedef void(*davs2_output_f)(davs2_picture_t *pic, davs2_seq_info_t *headset, int errCode, void *opaque);
 
 /* ---------------------------------------------------------------------------
  * parameters for create an AVS2 decoder
  */
 typedef struct davs2_param_t {
     int               threads;        /* decoding threads: 0 for auto */
-    davs2_output_func    output_f;       /* decoder picture output (MUST exist) */
-    int               i_info_level;   /* 0: All; 1: Only warning and errors; 2: only errors */
+    davs2_output_f    output_f;       /* decoder picture output (MUST exist) */
+    int               i_info_level;   /* only output information which is no less then this level (davs2_log_level_e).
+                                         0: All; 1: no debug info; 2: only warning and errors; 3: only errors */
     void             *opaque;         /* user data */
 } davs2_param_t;
 #else

@@ -148,7 +148,7 @@ int parse_sequence_header(davs2_t *h)
         return -1;
     }
     if (seq->head.chroma_format == CHROMA_400) {
-        davs2_log(h, AVS2_LOG_WARNING, "Un-supported Chroma Format YUV400 as 0 for GB/T.\n");
+        davs2_log(h, DAVS2_LOG_WARNING, "Un-supported Chroma Format YUV400 as 0 for GB/T.\n");
     }
 
     /* sample bit depth */
@@ -224,7 +224,7 @@ int parse_sequence_header(davs2_t *h)
     seq->enable_pmvr               = u_flag(bs, "pmvr enabled");
 
     if (1 != u_v(bs, 1, "marker bit"))  {
-        davs2_log(h, AVS2_LOG_ERROR, "expected marker_bit 1 while received 0, FILE %s, Row %d\n", __FILE__, __LINE__);
+        davs2_log(h, DAVS2_LOG_ERROR, "expected marker_bit 1 while received 0, FILE %s, Row %d\n", __FILE__, __LINE__);
     }
 
     num_of_rps                      = u_v(bs, 6, "num_of_RPS");
@@ -251,7 +251,7 @@ int parse_sequence_header(davs2_t *h)
         }
 
         if (1 != u_v(bs, 1, "marker bit"))  {
-            davs2_log(h, AVS2_LOG_ERROR, "expected marker_bit 1 while received 0, FILE %s, Row %d\n", __FILE__, __LINE__);
+            davs2_log(h, DAVS2_LOG_ERROR, "expected marker_bit 1 while received 0, FILE %s, Row %d\n", __FILE__, __LINE__);
         }
     }
 
@@ -338,7 +338,7 @@ static int parse_picture_header_intra(davs2_t *h, davs2_bs_t *bs)
     if (h->seq_info.head.low_delay == 0) {
         h->i_display_delay              = ue_v(bs, "picture_output_delay");
         if (h->i_display_delay >= 64) {
-            davs2_log(h, AVS2_LOG_ERROR, "invalid picture output delay intra.");
+            davs2_log(h, DAVS2_LOG_ERROR, "invalid picture output delay intra.");
             return -1;
         }
     }
@@ -347,7 +347,7 @@ static int parse_picture_header_intra(davs2_t *h, davs2_bs_t *bs)
     if (predict) {
         int index                       = u_v(bs, 5, "predict for RCS");
         if (index >= h->seq_info.num_of_rps) {
-            davs2_log(h, AVS2_LOG_ERROR, "invalid rps index.");
+            davs2_log(h, DAVS2_LOG_ERROR, "invalid rps index.");
             return -1;
         }
 
@@ -356,7 +356,7 @@ static int parse_picture_header_intra(davs2_t *h, davs2_bs_t *bs)
         h->rps.refered_by_others        = u_v(bs, 1, "refered by others");
         h->rps.num_of_ref               = u_v(bs, 3, "num of reference picture");
         if (h->rps.num_of_ref > AVS2_MAX_REFS) {
-            davs2_log(h, AVS2_LOG_ERROR, "invalid number of references.");
+            davs2_log(h, DAVS2_LOG_ERROR, "invalid number of references.");
             return -1;
         }
 
@@ -470,7 +470,7 @@ static int parse_picture_header_intra(davs2_t *h, davs2_bs_t *bs)
 
     h->i_qp = h->i_picture_qp;
     if (!is_valid_qp(h, h->i_qp)) {
-        davs2_log(h, AVS2_LOG_ERROR, "Invalid I Picture QP: %d\n", h->i_qp);
+        davs2_log(h, DAVS2_LOG_ERROR, "Invalid I Picture QP: %d\n", h->i_qp);
     }
 
     /* align position in bitstream buffer */
@@ -530,7 +530,7 @@ static int parse_picture_header_inter(davs2_t *h, davs2_bs_t *bs)
     if (h->seq_info.head.low_delay == 0) {
         h->i_display_delay              = ue_v(bs, "displaydelay");
         if (h->i_display_delay >= 64) {
-            davs2_log(h, AVS2_LOG_ERROR, "invalid picture output delay inter.");
+            davs2_log(h, DAVS2_LOG_ERROR, "invalid picture output delay inter.");
             return -1;
         }
     }
@@ -540,7 +540,7 @@ static int parse_picture_header_inter(davs2_t *h, davs2_bs_t *bs)
     if (predict) {
         int index                       = u_v(bs, 5, "predict for RPS");
         if (index >= h->seq_info.num_of_rps) {
-            davs2_log(h, AVS2_LOG_ERROR, "invalid rps index.");
+            davs2_log(h, DAVS2_LOG_ERROR, "invalid rps index.");
             return -1;
         }
 
@@ -668,7 +668,7 @@ static int parse_picture_header_inter(davs2_t *h, davs2_bs_t *bs)
 
     h->i_qp = h->i_picture_qp;
     if (!is_valid_qp(h, h->i_qp)) {
-        davs2_log(h, AVS2_LOG_ERROR, "Invalid PB Picture QP: %d\n", h->i_qp);
+        davs2_log(h, DAVS2_LOG_ERROR, "Invalid PB Picture QP: %d\n", h->i_qp);
     }
 
     /* align position in bitstream buffer */
@@ -694,7 +694,7 @@ int parse_picture_header(davs2_t *h, uint32_t start_code)
     } else {
         if (mgr->outpics.output == -1) {
             /* An I frame is expected for the first frame or after the decoder is flushed. */
-            davs2_log(h, AVS2_LOG_ERROR, "sequence should start with an I frame.");
+            davs2_log(h, DAVS2_LOG_ERROR, "sequence should start with an I frame.");
             return -1;
         }
 
@@ -705,14 +705,14 @@ int parse_picture_header(davs2_t *h, uint32_t start_code)
 
     /* field picture ? */
     if (h->i_pic_coding_type != FRAME) {
-        davs2_log(h, AVS2_LOG_ERROR, "field is not supported.");
+        davs2_log(h, DAVS2_LOG_ERROR, "field is not supported.");
         return -1;
     }
 
     /* COI should be a periodically-repeated value from 0 to 255 */
     if (mgr->outpics.output != -1 &&
         h->i_coi != (mgr->i_prev_coi + 1) % AVS2_COI_CYCLE) {
-        davs2_log(h, AVS2_LOG_ERROR, "discontinuous COI (prev: %d --> curr: %d).", mgr->i_prev_coi, h->i_coi);
+        davs2_log(h, DAVS2_LOG_ERROR, "discontinuous COI (prev: %d --> curr: %d).", mgr->i_prev_coi, h->i_coi);
     }
 
     /* update COI */
@@ -734,7 +734,7 @@ int parse_picture_header(davs2_t *h, uint32_t start_code)
 
     if (mgr->outpics.output == -1 && start_code == SC_INTRA_PICTURE) {
         if (h->i_coi != 0) {
-            davs2_log(h, AVS2_LOG_INFO, "COI of the first frame is %d.", h->i_coi);
+            davs2_log(h, DAVS2_LOG_INFO, "COI of the first frame is %d.", h->i_coi);
         }
 
         mgr->outpics.output = h->i_poc;
@@ -793,7 +793,7 @@ void parse_slice_header(davs2_t *h)
     }
 
     if (!is_valid_qp(h, h->i_qp)) {
-        davs2_log(h, AVS2_LOG_ERROR, "Invalid Slice QP: %d\n", h->i_qp);
+        davs2_log(h, DAVS2_LOG_ERROR, "Invalid Slice QP: %d\n", h->i_qp);
     }
 
     if (h->b_sao) {
@@ -948,7 +948,7 @@ static void init_fdec(davs2_t *h, int64_t pts, int64_t dts)
         for (i = 0; i < h->num_of_references; i++) {
             h->fdec->dist_refs[i] = AVS2_DISTANCE_INDEX(2 * (h->fdec->i_poc - h->fref[i]->i_poc));
             if (h->fdec->dist_refs[i] <= 0) {
-                davs2_log(h, AVS2_LOG_ERROR, "invalid reference frame distance.");
+                davs2_log(h, DAVS2_LOG_ERROR, "invalid reference frame distance.");
                 h->fdec->dist_refs[i] = 1;
             }
             h->fdec->dist_scale_refs[i] = (MULTI / h->fdec->dist_refs[i]);
@@ -957,11 +957,11 @@ static void init_fdec(davs2_t *h, int64_t pts, int64_t dts)
         h->fdec->dist_refs[B_FWD] = AVS2_DISTANCE_INDEX(2 * (h->fdec->i_poc - h->fref[B_FWD]->i_poc));
         h->fdec->dist_refs[B_BWD] = AVS2_DISTANCE_INDEX(2 * (h->fref[B_BWD]->i_poc - h->fdec->i_poc));
         if (h->fdec->dist_refs[B_FWD] <= 0) {
-            davs2_log(h, AVS2_LOG_ERROR, "invalid reference frame distance. B_FWD");
+            davs2_log(h, DAVS2_LOG_ERROR, "invalid reference frame distance. B_FWD");
             h->fdec->dist_refs[B_FWD] = 1;
         }
         if (h->fdec->dist_refs[B_BWD] <= 0) {
-            davs2_log(h, AVS2_LOG_ERROR, "invalid reference frame distance. B_BWD");
+            davs2_log(h, DAVS2_LOG_ERROR, "invalid reference frame distance. B_BWD");
             h->fdec->dist_refs[B_BWD] = 1;
         }
         h->fdec->dist_scale_refs[B_FWD] = (MULTI / h->fdec->dist_refs[B_FWD]);
@@ -982,7 +982,7 @@ int task_decoder_update(davs2_t *h)
 
     /// assert(seq->valid_flag != 0);
     if (seq->valid_flag == 0) {
-        davs2_log(h, AVS2_LOG_ERROR, "failed to update decoder (invalid sequence header).");
+        davs2_log(h, DAVS2_LOG_ERROR, "failed to update decoder (invalid sequence header).");
         return -1;
     }
 
@@ -1018,11 +1018,11 @@ int task_decoder_update(davs2_t *h)
             h->i_image_width   = 0;
             h->i_image_height  = 0;
 
-            davs2_log(h, AVS2_LOG_ERROR, "failed to update the decoder(failed to alloc space).");
+            davs2_log(h, DAVS2_LOG_ERROR, "failed to update the decoder(failed to alloc space).");
 
             return -1;
         }
-        davs2_log(h, AVS2_LOG_DEBUG, "Decoder context updated. p_integral: %p", h->p_integral);
+        davs2_log(h, DAVS2_LOG_DEBUG, "Decoder context updated. p_integral: %p", h->p_integral);
     }
 
     /* update sequence header */
@@ -1048,7 +1048,7 @@ int task_decoder_update(davs2_t *h)
     g_dc_value    = 1 << (g_bit_depth - 1);
 #else
     if (g_bit_depth != h->sample_bit_depth) {
-        davs2_log(h, AVS2_LOG_ERROR, "Un-supported bit-depth %d in this version.\n", h->sample_bit_depth);
+        davs2_log(h, DAVS2_LOG_ERROR, "Un-supported bit-depth %d in this version.\n", h->sample_bit_depth);
         return -1;
     }
 #endif
@@ -1079,9 +1079,9 @@ int task_set_sequence_head(davs2_t *h)
 
         if (newres) {
             /* resolution changed : new sequence */
-            davs2_log(h, AVS2_LOG_INFO, "Sequence Resolution: %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
+            davs2_log(h, DAVS2_LOG_INFO, "Sequence Resolution: %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
             if ((seq->head.horizontal_size & 0) != 0 || (seq->head.vertical_size & 1) != 0) {
-                davs2_log(h, AVS2_LOG_ERROR, "Sequence Resolution %dx%d is not even\n",
+                davs2_log(h, DAVS2_LOG_ERROR, "Sequence Resolution %dx%d is not even\n",
                     seq->head.horizontal_size, seq->head.vertical_size);
             }
 
@@ -1100,14 +1100,14 @@ int task_set_sequence_head(davs2_t *h)
                 /* error */
                 ret = -1;
                 memset(&mgr->seq_info, 0, sizeof(davs2_seq_t));
-                davs2_log(h, AVS2_LOG_ERROR, "failed to create dpb buffers. %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
+                davs2_log(h, DAVS2_LOG_ERROR, "failed to create dpb buffers. %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
             }
             mgr->new_sps = TRUE;
         }
     } else {
         /* invalid header */
         memset(&mgr->seq_info, 0, sizeof(davs2_seq_t));
-        davs2_log(h, AVS2_LOG_ERROR, "decoded an invalid sequence header: %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
+        davs2_log(h, DAVS2_LOG_ERROR, "decoded an invalid sequence header: %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
     }
 
     davs2_thread_mutex_unlock(&mgr->mutex_mgr);
@@ -1313,7 +1313,7 @@ int task_get_references(davs2_t *h, int64_t pts, int64_t dts)
             }
 
             if (j == mgr->dpbsize) {
-                davs2_log(h, AVS2_LOG_ERROR, "reference frame of [coi: %d, poc: %d]: <COI: %d> not found.",
+                davs2_log(h, DAVS2_LOG_ERROR, "reference frame of [coi: %d, poc: %d]: <COI: %d> not found.",
                     h->i_coi, h->i_poc, ref_frame_coi);
                 goto fail;
             }
@@ -1321,7 +1321,7 @@ int task_get_references(davs2_t *h, int64_t pts, int64_t dts)
 
         if (h->i_frame_type == AVS2_B_SLICE &&
             (h->num_of_references != 2 || h->fref[0]->i_poc <= h->i_poc || h->fref[1]->i_poc >= h->i_poc)) {
-            davs2_log(h, AVS2_LOG_ERROR, "reference frames for B frame [coi: %d, poc: %d] are wrong: %d frames found",
+            davs2_log(h, DAVS2_LOG_ERROR, "reference frames for B frame [coi: %d, poc: %d] are wrong: %d frames found",
                 h->i_coi, h->i_poc, h->num_of_references);
             goto fail;
         }
@@ -1345,7 +1345,7 @@ int task_get_references(davs2_t *h, int64_t pts, int64_t dts)
 
             if (DAVS2_ABS(frame->i_poc - h->i_poc) >= MAX_POC_DISTANCE) {
                 if (frame->i_ref_count == 0) {
-                    davs2_log(h, AVS2_LOG_WARNING, "force to remove obsolete frame <poc: %d>.", frame->i_poc);
+                    davs2_log(h, DAVS2_LOG_WARNING, "force to remove obsolete frame <poc: %d>.", frame->i_poc);
                     /* no one is holding reference to this frame: clean it ! */
                     clean_one_frame(frame);
                 } else {
@@ -1353,7 +1353,7 @@ int task_get_references(davs2_t *h, int64_t pts, int64_t dts)
                     /* some task has forgot to release it ? */
                     if (frame->i_disposable == 0) {
                         frame->i_disposable = 1;
-                        davs2_log(h, AVS2_LOG_WARNING, "force to mark obsolete frame <poc: %d> as to be removed.", frame->i_poc);
+                        davs2_log(h, DAVS2_LOG_WARNING, "force to mark obsolete frame <poc: %d> as to be removed.", frame->i_poc);
                     }
                 }
             }
@@ -1393,7 +1393,7 @@ int task_get_references(davs2_t *h, int64_t pts, int64_t dts)
 
             /* DPB full ? */
             if (open_dbp_buffer_warning) {
-                davs2_log(h, AVS2_LOG_WARNING, "running out of DPB buffers, performance may suffer.");
+                davs2_log(h, DAVS2_LOG_WARNING, "running out of DPB buffers, performance may suffer.");
                 open_dbp_buffer_warning = 0;      /* avoid too many warnings */
             }
 
@@ -1424,20 +1424,20 @@ int task_get_references(davs2_t *h, int64_t pts, int64_t dts)
                     }
 
                     if (NULL == h->fdec) {
-                        davs2_log(h, AVS2_LOG_ERROR, "no frame for new task, DPB size (%d) too small(reorder delay: %d) ?", mgr->dpbsize, mgr->seq_info.picture_reorder_delay);
+                        davs2_log(h, DAVS2_LOG_ERROR, "no frame for new task, DPB size (%d) too small(reorder delay: %d) ?", mgr->dpbsize, mgr->seq_info.picture_reorder_delay);
                         goto fail;
                     }
 
                     h->fdec->i_disposable = h->rps.refered_by_others == 0 ? 1 : 0;
 
-                    davs2_log(h, AVS2_LOG_WARNING, "force one frame as the reconstruction frame.");
+                    davs2_log(h, DAVS2_LOG_WARNING, "force one frame as the reconstruction frame.");
 
                     break;
                 } else {
                     /* next frame will not be available, skip it */
                     assert(mgr->outpics.output < mgr->outpics.pics->frame->i_poc);
                     /* emit an error */
-                    davs2_log(h, AVS2_LOG_ERROR, "the expected frame %d unavailable, proceed to frame %d.", mgr->outpics.output, mgr->outpics.pics->frame->i_poc);
+                    davs2_log(h, DAVS2_LOG_ERROR, "the expected frame %d unavailable, proceed to frame %d.", mgr->outpics.output, mgr->outpics.pics->frame->i_poc);
                     /* output the next available frame */
                     mgr->outpics.output = mgr->outpics.pics->frame->i_poc;
                 }
@@ -1470,7 +1470,7 @@ int task_get_references(davs2_t *h, int64_t pts, int64_t dts)
 
 fail:
 
-    davs2_log(NULL, AVS2_LOG_ERROR, "Failed to decode frame <COI: %d, POC: %d>\n", h->i_coi, h->i_poc);
+    davs2_log(NULL, DAVS2_LOG_ERROR, "Failed to decode frame <COI: %d, POC: %d>\n", h->i_coi, h->i_poc);
     davs2_thread_mutex_unlock(&mgr->mutex_mgr);
 
     task_release_frames(h);

@@ -349,7 +349,7 @@ static int cu_read_intrapred_mode_luma(davs2_t *h, aec_t *p_aec, cu_t *p_cu, int
     real_luma_mode = (int8_t)((luma_mode < 0) ? mpm[luma_mode + 2] : luma_mode + (luma_mode >= mpm[0]) + (luma_mode + 1 >= mpm[1]));
 
     if (real_luma_mode < 0 || real_luma_mode >= NUM_INTRA_MODE) {
-        davs2_log(h, AVS2_LOG_ERROR, "invalid pred mode %2d. POC %3d, pixel (%3d, %3d), %2dx%2d",
+        davs2_log(h, DAVS2_LOG_ERROR, "invalid pred mode %2d. POC %3d, pixel (%3d, %3d), %2dx%2d",
                  real_luma_mode, h->i_poc, bi << MIN_PU_SIZE_IN_BIT, bj << MIN_PU_SIZE_IN_BIT,
                  size_in_scu << MIN_CU_SIZE_IN_BIT, size_in_scu << MIN_CU_SIZE_IN_BIT);
         real_luma_mode = (int8_t)davs2_clip3(real_luma_mode, 0, NUM_INTRA_MODE - 1);
@@ -1046,7 +1046,7 @@ static int davs2_get_inter_pred(davs2_t *h, davs2_row_rec_t *row_rec, cu_t *p_cu
                 gf_davs2.block_avg(p_pred, i_pred, p_pred, i_pred, p_temp, LCU_STRIDE, width, height);
             }
         } else {
-            davs2_log(h, AVS2_LOG_ERROR, "non-existing reference frame. PB (%d, %d)", pix_x, pix_y);
+            davs2_log(h, DAVS2_LOG_ERROR, "non-existing reference frame. PB (%d, %d)", pix_x, pix_y);
             return -1;
         }
 
@@ -1364,7 +1364,7 @@ int decode_lcu_recon(davs2_t *h, davs2_row_rec_t *row_rec, int i_level, int pix_
 
         if (p_cu->i_slice_nr == -1) {
             h->decoding_error = 1;
-            davs2_log(h, AVS2_LOG_WARNING, "invalid CU (%3d, %3d), POC %3d",
+            davs2_log(h, DAVS2_LOG_WARNING, "invalid CU (%3d, %3d), POC %3d",
                      pix_x, pix_y, h->i_poc);
         }
         cu_recon(h, row_rec, p_cu, pix_x, pix_y);

@@ -1238,9 +1238,9 @@ static ALWAYS_INLINE void *davs2_malloc(size_t i_size)
         *(((void **)align_buf) - 1) = buf;
     } else {
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-        davs2_log(NULL, AVS2_LOG_ERROR, "malloc of size %zu failed\n", i_size);
+        davs2_log(NULL, DAVS2_LOG_ERROR, "malloc of size %zu failed\n", i_size);
 #else
-        davs2_log(NULL, AVS2_LOG_ERROR, "malloc of size %lu failed\n", i_size);
+        davs2_log(NULL, DAVS2_LOG_ERROR, "malloc of size %lu failed\n", i_size);
 #endif
     }
 

@@ -94,7 +94,7 @@ int  aec_read_alf_lcu_ctrl  (aec_t *p_aec);
 #define AEC_RETURN_ON_ERROR(ret_code) \
         if (p_aec->b_bit_error) {\
             p_aec->b_bit_error = FALSE; /* reset error flag */\
-            /* davs2_log(h, AVS2_LOG_ERROR, "aec decoding error."); */\
+            /* davs2_log(h, DAVS2_LOG_ERROR, "aec decoding error."); */\
             return (ret_code);\
         }
 #endif

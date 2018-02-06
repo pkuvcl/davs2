@@ -1450,7 +1450,7 @@ void SAO_on_block_sse128(pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src,
         }
         break;
         default: {
-            davs2_log(NULL, AVS2_LOG_ERROR, "Not a supported SAO types in sao_sse128.");
+            davs2_log(NULL, DAVS2_LOG_ERROR, "Not a supported SAO types in sao_sse128.");
             assert(0);
             exit(-1);
         }

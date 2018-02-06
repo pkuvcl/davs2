@@ -194,7 +194,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
 #if DAVS2_API_VERSION < 2
     param.output_f     = &DumpFrames;
 #endif
-    param.i_info_level = 0;
+    param.i_info_level = DAVS2_LOG_DEBUG;
 
     decoder = davs2_decoder_open(&param);
 
