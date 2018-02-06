@@ -534,7 +534,6 @@ void sao_lcurow(davs2_t *h, davs2_frame_t *p_tmp_frm, davs2_frame_t *p_dec_frm, 
     const int width_in_lcu = h->i_width_in_lcu;
     int lcu_xy             = i_lcu_y * width_in_lcu;
     int lcu_x;
-    int lcu_pix_x;
 
     /* copy one decoded LCU-row */
     davs2_frame_copy_lcurow(h, p_tmp_frm, p_dec_frm, i_lcu_y, -4, 0);
