@@ -1022,7 +1022,7 @@ int task_decoder_update(davs2_t *h)
 
             return -1;
         }
-        davs2_log(h, AVS2_LOG_WARNING, "Decoder context updated. p_integral: %p", h->p_integral);
+        davs2_log(h, AVS2_LOG_DEBUG, "Decoder context updated. p_integral: %p", h->p_integral);
     }
 
     /* update sequence header */
@@ -1424,7 +1424,7 @@ int task_get_references(davs2_t *h, int64_t pts, int64_t dts)
                     }
 
                     if (NULL == h->fdec) {
-                        davs2_log(h, AVS2_LOG_FATAL, "no frame for new task, DPB size (%d) too small(reorder delay: %d) ?", mgr->dpbsize, mgr->seq_info.picture_reorder_delay);
+                        davs2_log(h, AVS2_LOG_ERROR, "no frame for new task, DPB size (%d) too small(reorder delay: %d) ?", mgr->dpbsize, mgr->seq_info.picture_reorder_delay);
                         goto fail;
                     }
 

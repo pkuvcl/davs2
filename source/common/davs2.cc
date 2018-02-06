@@ -585,7 +585,7 @@ davs2_decoder_open(davs2_param_t *param)
     int i;
 
     /* output version information */
-    davs2_log(NULL, AVS2_LOG_WARNING, "davs2: %s.%d, %s",
+    davs2_log(NULL, AVS2_LOG_INFO, "davs2: %s.%d, %s",
                XVERSION_STR, BIT_DEPTH, XBUILD_TIME);
 
 #if DAVS2_TRACE_API
@@ -613,7 +613,7 @@ davs2_decoder_open(davs2_param_t *param)
 
     /* CPU capacities */
     davs2_get_simd_capabilities(buf_cpu, cpuid);
-    davs2_log(NULL, AVS2_LOG_WARNING, "CPU Capabilities: %s\n", buf_cpu);
+    davs2_log(NULL, AVS2_LOG_INFO, "CPU Capabilities: %s\n", buf_cpu);
 
     mem_size = sizeof(davs2_mgr_t) + CACHE_LINE_SIZE
         + AVS2_THREAD_MAX * (sizeof(davs2_t) + CACHE_LINE_SIZE);
