@@ -169,7 +169,7 @@ typedef struct davs2_picture_t {
     uint8_t        *planes[3];        /* picture planes */
     int             width[3];         /* picture width in pixels */
     int             lines[3];         /* picture height in pixels */
-    /* stride等于一行图像占用的字节数, 一个颜色通道的所有像素点连续存放 */
+    /* stride = width * bytes_per_sample; samples in one line are stored continuously in memory */
     int             pic_order_count;  /* picture number */
     int             type;             /* picture type of the corresponding frame */
     int             QP;               /* QP of the corresponding picture */
@@ -194,28 +194,20 @@ typedef struct davs2_picture_t {
  *       [in] : opaque  - user data
  */
 typedef void(*davs2_output_f)(davs2_picture_t *pic, davs2_seq_info_t *headset, int errCode, void *opaque);
+#endif // #if DAVS2_API_VERSION < 2
 
 /* ---------------------------------------------------------------------------
  * parameters for create an AVS2 decoder
  */
 typedef struct davs2_param_t {
     int               threads;        /* decoding threads: 0 for auto */
+#if DAVS2_API_VERSION < 2
     davs2_output_f    output_f;       /* decoder picture output (MUST exist) */
+#endif // #if DAVS2_API_VERSION < 2
     int               i_info_level;   /* only output information which is no less then this level (davs2_log_level_e).
                                          0: All; 1: no debug info; 2: only warning and errors; 3: only errors */
     void             *opaque;         /* user data */
 } davs2_param_t;
-#else
-/* ---------------------------------------------------------------------------
- * parameters for create an AVS2 decoder
- */
-typedef struct davs2_param_t {
-    int               threads;        /* decoding threads: 0 for auto */
-    int               i_info_level;   /* 0: All; 1: Only warning and errors; 2: only errors */
-    void             *opaque;         /* used for future extension */
-} davs2_param_t;
-#endif
-
 
 /**
  * ===========================================================================
