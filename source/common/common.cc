@@ -410,11 +410,11 @@ static ALWAYS_INLINE
 void davs2_set_font_color(int color)
 {
     static const WORD colors[] = {
-        FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,       // 白色
         FOREGROUND_INTENSITY | FOREGROUND_GREEN,                   // 绿色
         FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE, // cyan
         FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN,  // 黄色
         FOREGROUND_INTENSITY | FOREGROUND_RED,                     // 红色
+        FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE,   // 紫色
     };
     color = DAVS2_MIN(4, color);
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), colors[color]);
