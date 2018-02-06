@@ -416,7 +416,6 @@ void davs2_set_font_color(int color)
         FOREGROUND_INTENSITY | FOREGROUND_RED,                     // ºìÉ«
         FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE,   // ×ÏÉ«
     };
-    color = DAVS2_MIN(4, color);
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), colors[color]);
 }
 #endif
@@ -429,8 +428,8 @@ davs2_log_default(int i_log_level, const char *psz_fmt)
 #if !defined(_MSC_VER)
     static const char str_color_clear[] = "\033[0m";  // "\033[0m"
     static const char str_color[][16] = {
-    /*  (default)     green         cyan         yellow             red     */
-        "\033[0m", "\033[1;32m", "\033[1;36m", "\033[1;33m",   "\033[1;31m"
+    /*    green         cyan         yellow             red     */
+        "\033[1;32m", "\033[1;36m", "\033[1;33m",   "\033[1;31m"
     };
     const char *cur_color = str_color[i_log_level];
 #endif
@@ -462,11 +461,7 @@ davs2_log_default(int i_log_level, const char *psz_fmt)
     fprintf(stdout, "%s%s\n", psz_prefix, psz_fmt);
     davs2_set_font_color(0);     /* restore to white color */
 #else
-    if (i_log_level != DAVS2_LOG_INFO) {
-        fprintf(stdout, "%s%s%s%s\n", cur_color, psz_prefix, psz_fmt, str_color_clear);
-    } else {
-        fprintf(stdout, "%s%s\n", psz_prefix, psz_fmt);
-    }
+    fprintf(stdout, "%s%s%s%s\n", cur_color, psz_prefix, psz_fmt, str_color_clear);
 #endif
 }
 
