@@ -2699,7 +2699,9 @@ void davs2_intra_pred_init(uint32_t cpuid, ao_funcs_t *pf)
         ipred[INTRA_ANG_XY_16] = intra_pred_ang_xy_16_avx;
         ipred[INTRA_ANG_XY_18] = intra_pred_ang_xy_18_avx;
         ipred[INTRA_ANG_XY_20] = intra_pred_ang_xy_20_avx;
+#if _MSC_VER  // TODO: 20180206 cause unextended exit on Linux
         ipred[INTRA_ANG_XY_22] = intra_pred_ang_xy_22_avx;
+#endif
         ipred[INTRA_ANG_XY_23] = intra_pred_ang_xy_23_avx;
 
         ipred[INTRA_ANG_Y_25 ] = intra_pred_ang_y_25_avx;
