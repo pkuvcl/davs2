@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asmopt", "asmopt.vcxproj", "{A9B37E3C-A8C7-4E24-BC2D-AB4D0804DAC1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libdavs2asm", "libdavs2asm.vcxproj", "{A9B37E3C-A8C7-4E24-BC2D-AB4D0804DAC1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libdavs2", "libdavs2.vcxproj", "{34C0840A-BDE6-446B-B0DF-A8281A42825B}"
 	ProjectSection(ProjectDependencies) = postProject
