@@ -8,15 +8,12 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libdavs2", "libdavs2.vcxproj", "{34C0840A-BDE6-446B-B0DF-A8281A42825B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A9B37E3C-A8C7-4E24-BC2D-AB4D0804DAC1} = {A9B37E3C-A8C7-4E24-BC2D-AB4D0804DAC1}
-		{A063DFAD-6995-4E1A-AFFF-E43DC11E95B1} = {A063DFAD-6995-4E1A-AFFF-E43DC11E95B1}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "davs2", "davs2.vcxproj", "{852EFB9B-4E73-4E80-AA57-711ADCB132AE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{34C0840A-BDE6-446B-B0DF-A8281A42825B} = {34C0840A-BDE6-446B-B0DF-A8281A42825B}
 	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pthread_lib", "pthread_lib.vcxproj", "{A063DFAD-6995-4E1A-AFFF-E43DC11E95B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,14 +47,6 @@ Global
 		{852EFB9B-4E73-4E80-AA57-711ADCB132AE}.Release|Win32.Build.0 = Release|Win32
 		{852EFB9B-4E73-4E80-AA57-711ADCB132AE}.Release|x64.ActiveCfg = Release|x64
 		{852EFB9B-4E73-4E80-AA57-711ADCB132AE}.Release|x64.Build.0 = Release|x64
-		{A063DFAD-6995-4E1A-AFFF-E43DC11E95B1}.Debug|Win32.ActiveCfg = Debug|Win32
-		{A063DFAD-6995-4E1A-AFFF-E43DC11E95B1}.Debug|Win32.Build.0 = Debug|Win32
-		{A063DFAD-6995-4E1A-AFFF-E43DC11E95B1}.Debug|x64.ActiveCfg = Debug|x64
-		{A063DFAD-6995-4E1A-AFFF-E43DC11E95B1}.Debug|x64.Build.0 = Debug|x64
-		{A063DFAD-6995-4E1A-AFFF-E43DC11E95B1}.Release|Win32.ActiveCfg = Release|Win32
-		{A063DFAD-6995-4E1A-AFFF-E43DC11E95B1}.Release|Win32.Build.0 = Release|Win32
-		{A063DFAD-6995-4E1A-AFFF-E43DC11E95B1}.Release|x64.ActiveCfg = Release|x64
-		{A063DFAD-6995-4E1A-AFFF-E43DC11E95B1}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
