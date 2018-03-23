@@ -158,6 +158,9 @@
     <ClInclude Include="..\..\source\common\primitives.h">
       <Filter>inc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\configw.h">
+      <Filter>inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\aec.h">
