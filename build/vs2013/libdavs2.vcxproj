@@ -41,8 +41,10 @@
     <ClCompile Include="..\..\source\common\sao.cc" />
     <ClCompile Include="..\..\source\common\threadpool.cc" />
     <ClCompile Include="..\..\source\common\transform.cc" />
+    <ClCompile Include="..\..\source\common\win32thread.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\common\win32thread.h" />
     <ClInclude Include="..\..\source\configw.h" />
     <ClInclude Include="..\..\source\davs2.h" />
     <ClInclude Include="..\..\source\common\aec.h" />

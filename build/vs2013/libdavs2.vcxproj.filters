@@ -81,6 +81,9 @@
     <ClCompile Include="..\..\source\common\memory.cc">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\win32thread.c">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\aec.h">
@@ -159,6 +162,9 @@
       <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\configw.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\win32thread.h">
       <Filter>inc</Filter>
     </ClInclude>
   </ItemGroup>

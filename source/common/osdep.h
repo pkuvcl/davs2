@@ -260,9 +260,9 @@ extern "C" {
  */
 #if HAVE_BEOSTHREAD
 #include <kernel/OS.h>
-#define davs2_pthread_t       thread_id
+#define davs2_thread_t       thread_id
 static int ALWAYS_INLINE
-avs2dec_pthread_create(davs2_pthread_t *t, void *a, void *(*f)(void *), void *d)
+avs2dec_pthread_create(davs2_thread_t *t, void *a, void *(*f)(void *), void *d)
 {
     *t = spawn_thread(f, "", 10, d);
     if (*t < B_NO_ERROR) {
@@ -272,7 +272,7 @@ avs2dec_pthread_create(davs2_pthread_t *t, void *a, void *(*f)(void *), void *d)
     return 0;
 }
 
-#define davs2_pthread_join(t,s)\
+#define davs2_thread_join(t,s)\
     {\
         long tmp; \
         wait_for_thread(t,(s)?(long*)(*(s)):&tmp);\
