@@ -49,8 +49,6 @@ extern "C" {    // only need to export C interface if used by C++ source code
 /* DAVS2 build version, means different API interface
  * (10 * VER_MAJOR + VER_MINOR) */
 #define DAVS2_BUILD                11
-/* DAVS2 API version, version 2 the non-caller version(truncated), version 3 save all the input bytes */
-#define DAVS2_API_VERSION          2
 
 /**
  * ===========================================================================
@@ -178,32 +176,15 @@ typedef struct davs2_picture_t {
     int             i_pic_planes;     /* number of planes */
     int             bytes_per_sample; /* number of bytes for each sample */
     int             pic_bit_depth;    /* number of bytes for each sample */
-#if DAVS2_API_VERSION >= 2
     int             ret_type;         /* return type, davs2_ret_e */
-#endif
     int             pic_decode_error; /* is there any decoding error of this frame? */
 } davs2_picture_t;
-
-#if DAVS2_API_VERSION < 2
-/* ---------------------------------------------------------------------------
- * Function   : output one picture or a sequence header
- * Parameters :
- *       [in] : pic     - picture
- *       [in] : headset - sequence header
- *       [in] : errCode - possible errors while decoding @pic
- *       [in] : opaque  - user data
- */
-typedef void(*davs2_output_f)(davs2_picture_t *pic, davs2_seq_info_t *headset, int errCode, void *opaque);
-#endif // #if DAVS2_API_VERSION < 2
 
 /* ---------------------------------------------------------------------------
  * parameters for create an AVS2 decoder
  */
 typedef struct davs2_param_t {
     int               threads;        /* decoding threads: 0 for auto */
-#if DAVS2_API_VERSION < 2
-    davs2_output_f    output_f;       /* decoder picture output (MUST exist) */
-#endif // #if DAVS2_API_VERSION < 2
     int               i_info_level;   /* only output information which is no less then this level (davs2_log_level_e).
                                          0: All; 1: no debug info; 2: only warning and errors; 3: only errors */
     void             *opaque;         /* user data */
@@ -235,13 +216,8 @@ davs2_decoder_open(davs2_param_t *param);
  * Return     : 0 for successful, otherwise -1
  * ---------------------------------------------------------------------------
  */
-#if DAVS2_API_VERSION < 2
-DAVS2_API int
-davs2_decoder_decode(void *decoder, davs2_packet_t *packet);
-#else
 DAVS2_API int
 davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *headerset, davs2_picture_t *out_frame);
-#endif
 
 /**
  * ---------------------------------------------------------------------------
@@ -251,15 +227,9 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
  * Return     : none
  * ---------------------------------------------------------------------------
  */
-#if DAVS2_API_VERSION < 2
-DAVS2_API void
-davs2_decoder_flush(void *decoder);
-#else
 DAVS2_API int
 davs2_decoder_flush(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t *out_frame);
-#endif
 
-#if DAVS2_API_VERSION >= 2
 /**
  * ---------------------------------------------------------------------------
  * Function   : release one output frame
@@ -271,7 +241,6 @@ davs2_decoder_flush(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t 
  */
 DAVS2_API void
 davs2_decoder_frame_unref(void *decoder, davs2_picture_t *out_frame);
-#endif
 
 /**
  * ---------------------------------------------------------------------------

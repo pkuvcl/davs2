@@ -100,29 +100,16 @@ davs2_input_param_t inputparam = {
 /* ---------------------------------------------------------------------------
  */
 static 
-#if DAVS2_API_VERSION >= 2
 void DumpFrames(davs2_picture_t *pic, davs2_seq_info_t *headerset, int num_frames)
-#else
-void DumpFrames(davs2_picture_t *pic, davs2_seq_info_t *headerset, int errCode, void *opaque)
-#endif
 {
     static char IMGTYPE[] = {'I', 'P', 'B', 'G', 'F', 'S', '\x0'};
     double psnr_y = 0.0f, psnr_u = 0.0f, psnr_v = 0.0f;
-
-#if DAVS2_API_VERSION < 2
-    int num_frames = (int)(intptr_t)opaque;
-    UNREFERENCED_PARAMETER(errCode);
-#endif
 
     if (headerset == NULL) {
         return;
     }
 
-#if DAVS2_API_VERSION >= 2
     if (pic == NULL || pic->ret_type == DAVS2_GOT_HEADER) {
-#else
-    if (pic == NULL) {
-#endif
         show_message(CONSOLE_GREEN,
             "  Sequence size: %dx%d; BitDepth: %d/%d, FrameRate: %.3lf Hz\n\n", 
             headerset->horizontal_size, headerset->vertical_size, 
@@ -175,11 +162,10 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
     const double f_time_fac = 1.0 / (double)CLOCKS_PER_SEC;
     davs2_param_t    param;      // decoding parameters
     davs2_packet_t   packet;     // input bitstream
-#if DAVS2_API_VERSION >= 2
     davs2_picture_t  out_frame;  // output data, frame data
     davs2_seq_info_t headerset;  // output data, sequence header
     int ret;
-#endif
+
 #if CTRL_LOOP_DEC_FILE
     uint8_t *bak_data_buf = data_buf;
     int      bak_data_len = data_len;
@@ -191,9 +177,6 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
     /* init the decoder */
     param.threads      = inputparam.g_threads;
     param.opaque       = (void *)(intptr_t)num_frames;
-#if DAVS2_API_VERSION < 2
-    param.output_f     = &DumpFrames;
-#endif
     param.i_info_level = DAVS2_LOG_DEBUG;
 
     decoder = davs2_decoder_open(&param);
@@ -215,20 +198,13 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
         packet.pts  = 0;        /* clear the user pts */
         packet.dts  = 0;        /* clear the user dts */
 
-#if DAVS2_API_VERSION < 2
-        len = davs2_decoder_decode(decoder, &packet);
-#else
         len = davs2_decoder_decode(decoder, &packet, &headerset, &out_frame);           //返回使用的码流长度
-#if DAVS2_API_VERSION == 3
-        if (len != packet.len) {
-            printf("Error: not equal: %d != %d\n", len, packet.len);
-        }
-#endif
+
         if (out_frame.ret_type != DAVS2_DEFAULT) {
             DumpFrames(&out_frame, &headerset, num_frames);
             davs2_decoder_frame_unref(decoder, &out_frame);
         }
-#endif
+
         if (len < 0) {
             printf("Error: An decoder error counted\n");
             break;
@@ -252,9 +228,6 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
     }
 
     /* flush the decoder */
-#if DAVS2_API_VERSION < 2
-    davs2_decoder_flush(decoder);
-#else
     for (;;) {
         ret = davs2_decoder_flush(decoder, &headerset, &out_frame);
         if (ret < 0) {
@@ -265,7 +238,6 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
             davs2_decoder_frame_unref(decoder, &out_frame);
         }
     }
-#endif
 
     time1 = get_time();
 

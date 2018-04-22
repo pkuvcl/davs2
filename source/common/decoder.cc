@@ -1222,66 +1222,6 @@ void *decoder_decode_picture_data(void *arg1, int arg2)
 }
 
 
-#if DAVS2_API_VERSION < 2
-/**
- * ---------------------------------------------------------------------------
- * Function   : flush the decoder
- * Parameters :
- *       [in] : mgr - pointer to struct davs2_mgr_t
- * Return     : none
- * ---------------------------------------------------------------------------
- */
-void decoder_flush(davs2_mgr_t *mgr)
-{
-    int i, poc;
-    davs2_frame_t *frame = NULL;
-
-    /* block until all input frames are dispatched. */
-    while (mgr->packets_ready.i_node_num > 0) {
-        Sleep(1);
-    }
-
-    /* block until all tasks are free */
-    for (i = 0; i < mgr->num_decoders; i++) {
-        while (mgr->decoders[i].task_info.task_status == TASK_BUSY) {
-            Sleep(1);   /* task is busy */
-        }
-    }
-
-    /* block until all pictures are delivered. */
-    davs2_thread_mutex_lock(&mgr->mutex_mgr);
-
-    while (mgr->outpics.pics) {
-        frame = mgr->outpics.pics->frame;
-        poc   = frame->i_poc;
-
-        /* all frames have been decoded and put into the output list, */
-        /* so the first frame in the output list should be the next output frame. */
-        if (mgr->outpics.output < poc) {
-            davs2_log(&mgr->decoders[0], DAVS2_LOG_ERROR, "the expected frame %d unavailable, proceed to frame %d.", mgr->outpics.output, poc);
-
-            mgr->outpics.output = poc;
-
-            /* wait until the new frame being delivered */
-            while (mgr->outpics.output == poc) {
-                davs2_thread_mutex_unlock(&mgr->mutex_mgr);
-                Sleep(1);
-                davs2_thread_mutex_lock(&mgr->mutex_mgr);
-            }
-        } else {
-            /* wait until the next frame being delivered */
-            davs2_thread_mutex_unlock(&mgr->mutex_mgr);
-            Sleep(1);
-            davs2_thread_mutex_lock(&mgr->mutex_mgr);
-        }
-    }
-
-    mgr->outpics.output = -1;
-
-    davs2_thread_mutex_unlock(&mgr->mutex_mgr);
-}
-#endif
-
 /**
  * ---------------------------------------------------------------------------
  * Function   : close the AVS2 decoder

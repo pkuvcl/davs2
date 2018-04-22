@@ -242,7 +242,6 @@ void output_list_recycle_picture(davs2_mgr_t *mgr, davs2_outpic_t *pic)
     xl_append(&mgr->pic_recycle, pic);
 }
 
-#if DAVS2_API_VERSION == 2
 /* ---------------------------------------------------------------------------
  */
 static 
@@ -254,7 +253,6 @@ int has_new_output_frame(davs2_mgr_t *mgr, davs2_t *h)
 
     return 1;  // 有图像输出返回非零，无图像输出返回0
 }
-#endif
 
 /* ---------------------------------------------------------------------------
  */
@@ -289,7 +287,7 @@ davs2_outpic_t *output_list_get_one_output_picture(davs2_mgr_t *mgr)
                     mgr->outpics.output++;
                     continue;
                 }
-#if DAVS2_API_VERSION >= 2
+
                 /* a future frame */
                 int num_delayed_frames = 1;
 
@@ -306,9 +304,6 @@ davs2_outpic_t *output_list_get_one_output_picture(davs2_mgr_t *mgr)
                     davs2_thread_mutex_lock(&mgr->mutex_mgr);
                     continue;
                 }
-#else
-                break;
-#endif
             }
 
             /* 目前输出队列的最小POC与已输出的POC之间间隔较大，将输出POC提前到当前最小POC */
@@ -327,48 +322,6 @@ davs2_outpic_t *output_list_get_one_output_picture(davs2_mgr_t *mgr)
 /* --------------------------------------------------------------------------
  * Thread of decoder output (decoded raw data)
  */
-#if DAVS2_API_VERSION < 2
-static void *proc_decoder_output(void *arg)
-{
-    davs2_mgr_t    *mgr   = (davs2_mgr_t *)arg;
-    davs2_param_t *param = &mgr->param;
-    davs2_outpic_t *pic   = NULL;
-
-    do {
-        /* check for the next frame */
-        pic = output_list_get_one_output_picture(mgr);
-
-        if (pic == NULL) {
-            /* next frame unavailable, try later */
-#if FAST_GET_SPS
-            if (mgr->new_sps) {
-                davs2_seq_info_t headset;
-                memcpy(&headset, &mgr->seq_info.head, sizeof(davs2_seq_info_t));
-                param->output_f(NULL, &headset, 0, param->opaque);
-                mgr->new_sps = FALSE; /* set flag */
-            }
-#endif
-            Sleep(1);
-            continue;
-        }
-
-        /* copy out */
-        davs2_write_a_frame(pic->pic, pic->frame);
-
-        /* release reference by 1 */
-        release_one_frame(pic->frame);
-
-        /* deliver this frame */
-        param->output_f(pic->pic, pic->head, 0, param->opaque);
-
-        /* release the output */
-        output_list_recycle_picture(mgr, pic);
-
-    } while (mgr->b_exit == 0);
-
-    return NULL;
-}
-#else
 int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_picture_t *out_frame, int is_flush)
 {
     davs2_outpic_t *pic   = NULL;
@@ -420,10 +373,7 @@ int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_pict
 
     return DAVS2_GOT_FRAME;
 }
-#endif
 
-
-#if DAVS2_API_VERSION >= 2
 /**
  * ---------------------------------------------------------------------------
  * Function   : release one output frame
@@ -446,7 +396,6 @@ davs2_decoder_frame_unref(void *decoder, davs2_picture_t *out_frame)
         output_list_recycle_picture(mgr, (davs2_outpic_t *)out_frame->magic);
     }
 }
-#endif
 
 /* --------------------------------------------------------------------------
  */
@@ -499,71 +448,6 @@ void task_unload_packet(davs2_t *h, es_unit_t *es_unit)
     davs2_thread_mutex_unlock(&mgr->mutex_mgr);
 }
 
-#if (DAVS2_API_VERSION & 1)
-/* --------------------------------------------------------------------------
- * Thread of decoding process (decoding and reconstruction)
- */
-static void *proc_decoder_decode(void *arg, int arg2)
-{
-    davs2_mgr_t  *mgr = (davs2_mgr_t *)arg;
-    davs2_t *h = NULL;
-
-    UNUSED_PARAMETER(arg2);
-#if !CTRL_AEC_THREAD
-    /* get a free task handler and run the decoder */
-    h = task_get_free_task(mgr);
-#endif
-
-    while (mgr->b_exit == 0) {
-        int b_has_picture_data = 0;
-        es_unit_t *es_unit = NULL;
-
-        davs2_thread_mutex_lock(&mgr->mutex_aec);
-        /* get one frame to decode */
-        es_unit = task_load_packet(mgr);
-
-        if (es_unit == NULL) {
-            davs2_thread_mutex_unlock(&mgr->mutex_aec);
-            /* no frame, we try later */
-            Sleep(1);
-            continue;
-        }
-
-#if CTRL_AEC_THREAD
-        /* get a free task handler and run the decoder */
-        h = task_get_free_task(mgr);
-#endif
-
-        /* task is busy */
-        h->task_info.task_status  = TASK_BUSY;
-        h->task_info.curr_es_unit = es_unit;
-        // mgr->num_active_decoders++;
-
-        /* decode this frame
-         * (1) init bs */
-        bs_init(&h->bs, es_unit->data, es_unit->len);
-
-        /* (2) parse header */
-        if (parse_header(h) == 0) {
-            b_has_picture_data = 1;
-            mgr->num_frames_in++;
-        }
-
-        if (b_has_picture_data && task_get_references(h, es_unit->pts, es_unit->dts) == 0) {
-            davs2_thread_mutex_unlock(&mgr->mutex_aec);
-            /* decode picture data */
-            decoder_decode_picture_data(h, 0);
-        } else {
-            davs2_thread_mutex_unlock(&mgr->mutex_aec);
-            /* task is free */
-            task_unload_packet(h, es_unit);
-        }
-    }   // while (mgr->b_exit == 0)
-
-    return NULL;
-}
-#endif  //  DAVS2_API_VERSION < 2
-
 
 /**
  * ===========================================================================
@@ -598,12 +482,6 @@ davs2_decoder_open(davs2_param_t *param)
         davs2_log(NULL, DAVS2_LOG_ERROR, "Invalid input parameters: Null parameters\n");
         return 0;
     }
-#if DAVS2_API_VERSION < 2
-    if (param->output_f == NULL) {
-        davs2_log(NULL, DAVS2_LOG_ERROR, "Invalid input parameters: Null output functions\n");
-        return 0;
-    }
-#endif
 
     /* init all function handlers */
 #if HAVE_MMX
@@ -655,9 +533,7 @@ davs2_decoder_open(davs2_param_t *param)
     mgr->num_rec_thread = 0;
 #endif
 
-#if DAVS2_API_VERSION >= 2
     mgr->num_decoders++;
-#endif
 
     mgr->decoders = (davs2_t *)mem_ptr;
     mem_ptr      += AVS2_THREAD_MAX * sizeof(davs2_t);
@@ -683,11 +559,6 @@ davs2_decoder_open(davs2_param_t *param)
     /* spawn the output thread */
     mgr->num_frames_in  = 0;
     mgr->num_frames_out = 0;
-#if DAVS2_API_VERSION < 2
-    if (davs2_thread_create(&mgr->thread_output, NULL, proc_decoder_output, mgr)) {
-        goto fail;
-    }
-#endif
 
     /* init all the tasks */
     for (i = 0; i < mgr->num_decoders; i++) {
@@ -704,13 +575,6 @@ davs2_decoder_open(davs2_param_t *param)
 
     /* initialize thread pool for AEC decoding and reconstruction */
     davs2_threadpool_init((davs2_threadpool_t **)&mgr->thread_pool, mgr->num_total_thread, NULL, NULL, 0);
-
-#if (DAVS2_API_VERSION & 1)
-    /* spawn every AEC decoding task */
-    for (i = 0; i < mgr->num_aec_thread; i++) {
-        davs2_threadpool_run((davs2_threadpool_t *)mgr->thread_pool, proc_decoder_decode, mgr, 0, 0);
-    }
-#endif
 
     davs2_log(NULL, DAVS2_LOG_INFO, "using %d thread(s): %d(frame/AEC)+%d(pool/REC), %d tasks", 
         mgr->num_total_thread, mgr->num_aec_thread, mgr->num_rec_thread, mgr->num_decoders);
@@ -815,13 +679,11 @@ int decoder_find_pictures(davs2_mgr_t *mgr, davs2_packet_t *packet)
 
         es_buf += (offset + HEADLEN);
         es_len -= (offset + HEADLEN);
-#if DAVS2_API_VERSION == 2
+
         if (b_picture_data_found) {
             break;
         }
-#else
-        b_picture_data_found = 0;
-#endif
+
         pre3rdbyte = 0xff;
         pre2ndbyte = 0xff;
         pre1stbyte = 0xff;
@@ -840,7 +702,6 @@ int decoder_find_pictures(davs2_mgr_t *mgr, davs2_packet_t *packet)
 #undef WRITEHEADER
 }
 
-#if DAVS2_API_VERSION >= 2
 /* ---------------------------------------------------------------------------
  */
 int decoder_decode_es_unit(davs2_mgr_t *mgr, davs2_t *h)
@@ -882,24 +743,19 @@ int decoder_decode_es_unit(davs2_mgr_t *mgr, davs2_t *h)
 
     return b_wait_output;
 }
-#endif
 
 /* ---------------------------------------------------------------------------
  */
 DAVS2_API int
-#if DAVS2_API_VERSION >= 2
 davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *headerset, davs2_picture_t *out_frame)
-#else
-davs2_decoder_decode(void *decoder, davs2_packet_t *packet)
-#endif
 {
     davs2_mgr_t *mgr = (davs2_mgr_t *)decoder;
     int num_bytes_read;
-#if DAVS2_API_VERSION >= 2
+    int b_wait_output = 0;
+
     /* clear output frame data */
     out_frame->ret_type = DAVS2_DEFAULT;
     out_frame->magic    = NULL;
-#endif
 
 #if DAVS2_TRACE_API
     if (fp_trace_bs != NULL && packet->len > 0) {
@@ -913,8 +769,6 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet)
 #endif
     num_bytes_read = decoder_find_pictures(mgr, packet);
 
-#if DAVS2_API_VERSION == 2
-    int b_wait_output = 0;
     /* 参考代码： proc_decoder_decode() */
     /* 解码一帧图像头 */
     if (mgr->packets_ready.i_node_num > 0) {
@@ -926,9 +780,6 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet)
     if (b_wait_output || mgr->new_sps) {
         decoder_get_output(mgr, headerset, out_frame, 0);
     }
-#elif DAVS2_API_VERSION == 3
-    decoder_get_output(mgr, headerset, out_frame, 0);
-#endif
 
 #if DAVS2_TRACE_API
     if (fp_trace_in) {
@@ -944,7 +795,6 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet)
 
 /* ---------------------------------------------------------------------------
  */
-#if DAVS2_API_VERSION >= 2
 DAVS2_API int
 davs2_decoder_flush(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t *out_frame)
 {
@@ -1006,18 +856,6 @@ davs2_decoder_flush(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t 
     } else {
         return DAVS2_END;
     }
-#else
-DAVS2_API void
-davs2_decoder_flush(void *decoder)
-{
-    davs2_mgr_t *mgr = (davs2_mgr_t *)decoder;
-    if (decoder == NULL) {
-        return;
-    }
-
-    mgr->b_flushing     = 1; // label the decoder being flushing
-    decoder_flush(mgr);
-#endif
 }
 
 /* ---------------------------------------------------------------------------
@@ -1053,11 +891,6 @@ davs2_decoder_close(void *decoder)
         /* free all resources of the decoder */
         decoder_close(h);
     }
-
-    /* wait until the output thread exit */
-#if DAVS2_API_VERSION < 2
-    davs2_thread_join(mgr->thread_output, NULL);
-#endif
 
     destroy_all_lists(mgr);     /* free all lists */
     destroy_dpb(mgr);           /* free dpb */

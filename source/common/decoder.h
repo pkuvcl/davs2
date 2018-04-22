@@ -40,9 +40,6 @@ extern "C" {
 
 davs2_t *decoder_open(davs2_mgr_t *mgr, davs2_t *h);
 void *decoder_decode_picture_data(void *arg1, int arg2);
-#if DAVS2_API_VERSION < 2
-void decoder_flush(davs2_mgr_t *mgr);
-#endif
 void decoder_close(davs2_t *h);
 int  create_freepictures(davs2_mgr_t *mgr, int w, int h, int size);
 void destroy_freepictures(davs2_mgr_t *mgr);
@@ -53,9 +50,7 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame);
 int  task_get_references(davs2_t *h, int64_t pts, int64_t dts);
 
 void task_unload_packet(davs2_t *h, es_unit_t *es_unit);
-#if DAVS2_API_VERSION >= 2
 int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_picture_t *out_frame, int is_flush);
-#endif
 
 #ifdef __cplusplus
 }
