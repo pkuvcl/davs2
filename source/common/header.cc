@@ -712,7 +712,7 @@ int parse_picture_header(davs2_t *h, uint32_t start_code)
     /* COI should be a periodically-repeated value from 0 to 255 */
     if (mgr->outpics.output != -1 &&
         h->i_coi != (mgr->i_prev_coi + 1) % AVS2_COI_CYCLE) {
-        davs2_log(h, DAVS2_LOG_ERROR, "discontinuous COI (prev: %d --> curr: %d).", mgr->i_prev_coi, h->i_coi);
+        davs2_log(h, DAVS2_LOG_DEBUG, "discontinuous COI (prev: %d --> curr: %d).", mgr->i_prev_coi, h->i_coi);
     }
 
     /* update COI */
@@ -978,7 +978,6 @@ int task_decoder_update(davs2_t *h)
     davs2_mgr_t *mgr  = h->task_info.taskmgr;
     davs2_seq_t *seq  = &mgr->seq_info;
 
-    /// assert(seq->valid_flag != 0);
     if (seq->valid_flag == 0) {
         davs2_log(h, DAVS2_LOG_ERROR, "failed to update decoder (invalid sequence header).");
         return -1;
@@ -1020,7 +1019,6 @@ int task_decoder_update(davs2_t *h)
 
             return -1;
         }
-        davs2_log(h, DAVS2_LOG_DEBUG, "Decoder context updated. p_integral: %p", h->p_integral);
     }
 
     /* update sequence header */
