@@ -33,17 +33,10 @@
 #ifndef DAVS2_DAVS2_H
 #define DAVS2_DAVS2_H
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {    // only need to export C interface if used by C++ source code
-#endif
-    
-#if !defined(_STDINT_H) && !defined(_STDINT_H_) && !defined(_STDINT_H_INCLUDED) && !defined(_STDINT) &&\
-    !defined(_SYS_STDINT_H_) && !defined(_INTTYPES_H) && !defined(_INTTYPES_H_) && !defined(_INTTYPES)
-# ifdef _MSC_VER
-#  pragma message("You must include stdint.h or inttypes.h before davs2.h")
-# else
-#  warning You must include stdint.h or inttypes.h before davs2.h
-# endif
 #endif
 
 /* DAVS2 build version, means different API interface

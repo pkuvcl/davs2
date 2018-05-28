@@ -40,11 +40,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#if HAVE_STDINT_H
-#include <stdint.h>
-#else
-#include <inttypes.h>
-#endif
+
 #include "davs2.h"
 #include "psnr.h"
 #include "utils.h"
