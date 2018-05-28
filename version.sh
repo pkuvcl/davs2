@@ -54,4 +54,5 @@ echo "#endif // __VERSION_H__"                                                  
 mv version.h source/version.h
 
 # show version informations
-echo "Defined davs2 version: r$api \"$VER_MAJOR.$VER_MINOR.$VER_R\",  BuildTime: $BUILD_TIME"
+echo "#define DAVS2_VERSION \"r$api\", BuildTime: $BUILD_TIME"
+echo "#define DAVS2_POINTVER \"$VER_MAJOR.$VER_MINOR.$VER_R\""
