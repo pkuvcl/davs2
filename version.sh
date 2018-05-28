@@ -8,12 +8,14 @@
 #   Falei LUO <falei.luo@gmail.com>
 # ============================================================================
 
+# setting API version
+api=12
+
 # get version of remote and local repository
 VER_R=`git rev-list --count origin/master`
 VER_SHA=`git rev-parse HEAD | cut -c -16`
 
-# get API version from "./source/davs2.h"
-api=`grep '#define DAVS2_BUILD' < ./source/davs2.h | sed 's/^.* \([1-9][0-9]*\).*$/\1/'`
+# generate version numbers
 len=`expr length $api`
 end1=`expr $len - 1`
 VER_MAJOR=`echo $api | cut -c -$end1`
@@ -54,5 +56,5 @@ echo "#endif // __VERSION_H__"                                                  
 mv version.h source/version.h
 
 # show version informations
-echo "#define DAVS2_VERSION \"r$api\", BuildTime: $BUILD_TIME"
+echo "#define DAVS2_VERSION \"r$api\""
 echo "#define DAVS2_POINTVER \"$VER_MAJOR.$VER_MINOR.$VER_R\""
