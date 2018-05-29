@@ -275,7 +275,7 @@ void xl_append(xlist_t *const xlist, void *node)
 
     davs2_thread_mutex_unlock(&xlist->list_mutex);  /* unlock */
 
-    /* all is done, notify one waing thread */
+    /* all is done, notify one waiting thread to work */
     davs2_thread_cond_signal(&xlist->list_cond);
 }
 
