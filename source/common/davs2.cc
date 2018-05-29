@@ -300,7 +300,7 @@ davs2_outpic_t *output_list_get_one_output_picture(davs2_mgr_t *mgr)
                 if (num_delayed_frames < 8) {
                     /* keep waiting */
                     davs2_thread_mutex_unlock(&mgr->mutex_mgr);
-                    Sleep(1);
+                    davs2_sleep_ms(1);
                     davs2_thread_mutex_lock(&mgr->mutex_mgr);
                     continue;
                 }
@@ -341,7 +341,7 @@ int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_pict
         pic = output_list_get_one_output_picture(mgr);
 
         if (pic == NULL) {
-            Sleep(1);
+            davs2_sleep_ms(1);
         } else {
             break;
         }

@@ -365,6 +365,12 @@ int davs2_threading_init(void);
 #define davs2_lower_thread_priority(p)
 #endif
 
+#if SYS_WINDOWS
+#define davs2_sleep_ms(x)              Sleep(x)
+#else
+#define davs2_sleep_ms(x)              usleep(x * 1000)
+#endif
+
 
 /**
  * ===========================================================================

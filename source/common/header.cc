@@ -1442,7 +1442,7 @@ int task_get_references(davs2_t *h, int64_t pts, int64_t dts)
             davs2_thread_mutex_unlock(&mgr->mutex_mgr);
 
             /* wait for the output thread to release some frames */
-            Sleep(1);
+            davs2_sleep_ms(1);
 
             /* check it again */
             davs2_thread_mutex_lock(&mgr->mutex_mgr);
