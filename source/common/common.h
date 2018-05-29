@@ -461,11 +461,11 @@ struct node_t {
  * xlist_t
  */
 typedef struct xlist_t {
-    node_t     *p_list_head;          /* pointer to head of node list */
-    node_t     *p_list_tail;          /* pointer to tail of node list */
-    semaphore_t list_sem;             /* semaphore */
-    spinlock_t  list_lock;            /* list lock */
-    int         i_node_num;           /* node number in the list */
+    node_t              *p_list_head;     /* pointer to head of node list */
+    node_t              *p_list_tail;     /* pointer to tail of node list */
+    davs2_thread_cond_t  list_cond;       /* list condition variable */
+    davs2_thread_mutex_t list_mutex;      /* list mutex lock */
+    int                  i_node_num;      /* node number in the list */
 } xlist_t;
 
 

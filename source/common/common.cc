@@ -209,68 +209,6 @@ void avs2_trace_string2(char *trace_string, int bit_pattern, int value, int len)
 }
 #endif
 
-static ALWAYS_INLINE int
-create_semaphore(semaphore_t *sem, void *attributes, int init_count, int max_count, const char *name)
-{
-#if (defined(__ICL) || defined(_MSC_VER)) && defined(_WIN32)
-    *sem = CreateSemaphore((LPSECURITY_ATTRIBUTES)attributes, init_count, max_count, name);
-
-    if (*sem == 0) {
-        return GetLastError();
-    } else {
-        return 0;
-    }
-
-#else
-    return sem_init(sem, 0, init_count);
-#endif
-}
-
-static ALWAYS_INLINE int
-release_semaphore(semaphore_t *sem)
-{
-#if (defined(__ICL) || defined(_MSC_VER)) && defined(_WIN32)
-    if (ReleaseSemaphore(*sem, 1, NULL) == TRUE) {
-        return 0;
-    } else {
-        return errno;
-    }
-
-#else
-    return sem_post(sem);
-#endif
-}
-
-static ALWAYS_INLINE int
-close_semaphore(semaphore_t *sem)
-{
-#if (defined(__ICL) || defined(_MSC_VER)) && defined(_WIN32)
-    if (CloseHandle(*sem) == TRUE) {
-        return 0;
-    }
-    else {
-        return errno;
-    }
-
-#else
-    return sem_destroy(sem);
-#endif
-}
-
-static int
-wait_for_object(void *sem)
-{
-#if (defined(__ICL) || defined(_MSC_VER)) && defined(_WIN32)
-    return WaitForSingleObject((void *)(*(semaphore_t *)sem), INFINITE);
-#else
-    int ret;
-    while ((ret = sem_wait((sem_t *)sem)) == -1/* && errno == EINTR*/) {
-        continue;
-    }
-    return ret;
-#endif
-}
-
 int xl_init(xlist_t *const xlist)
 {
     if (xlist == NULL) {
@@ -284,11 +222,12 @@ int xl_init(xlist_t *const xlist)
     /* set node number */
     xlist->i_node_num = 0;
 
-    /* create semaphore */
-    create_semaphore(&(xlist->list_sem), NULL, 0, 1 << 30, NULL);
-
-    /* init list lock */
-    SPIN_INIT(xlist->list_lock);
+    /* create lock and conditions */
+    if (davs2_thread_mutex_init(&xlist->list_mutex, NULL) < 0 ||
+        davs2_thread_cond_init(&xlist->list_cond, NULL) < 0) {
+        davs2_log(NULL, DAVS2_LOG_ERROR, "Failed to init lock for xl_init()");
+        return -1;
+    }
 
     return 0;
 }
@@ -299,11 +238,9 @@ void xl_destroy(xlist_t *const xlist)
         return;
     }
 
-    /* destroy the spin lock */
-    SPIN_DESTROY(xlist->list_lock);
-
-    /* close handles */
-    close_semaphore(&(xlist->list_sem));
+    /* create lock and conditions */
+    davs2_thread_mutex_destroy(&xlist->list_mutex);
+    davs2_thread_cond_destroy(&xlist->list_cond);
 
     /* clear */
     memset(xlist, 0, sizeof(xlist_t));
@@ -319,9 +256,9 @@ void xl_append(xlist_t *const xlist, void *node)
 
     new_node->next = NULL;            /* set NULL */
 
-    /* append this node */
-    SPIN_LOCK(xlist->list_lock);
+    davs2_thread_mutex_lock(&xlist->list_mutex);   /* lock */
 
+    /* append this node */
     if (xlist->p_list_tail != NULL) {
         /* append this node at tail */
         xlist->p_list_tail->next = new_node;
@@ -331,10 +268,11 @@ void xl_append(xlist_t *const xlist, void *node)
 
     xlist->p_list_tail = new_node;    /* point to the tail node */
     xlist->i_node_num++;              /* increase the node number */
-    SPIN_UNLOCK(xlist->list_lock);
 
-    /* all is done, release a semaphore */
-    release_semaphore(&(xlist->list_sem));
+    davs2_thread_mutex_unlock(&xlist->list_mutex);  /* unlock */
+
+    /* all is done, notify one waing thread */
+    davs2_thread_cond_signal(&xlist->list_cond);
 }
 
 void *xl_remove_head(xlist_t *const xlist, const int wait)
@@ -345,11 +283,11 @@ void *xl_remove_head(xlist_t *const xlist, const int wait)
         return NULL;                  /* error */
     }
 
-    if (wait) {
-        wait_for_object(&(xlist->list_sem));
-    }
+    davs2_thread_mutex_lock(&xlist->list_mutex);
 
-    SPIN_LOCK(xlist->list_lock);
+    if (wait && !xlist->i_node_num) {
+        davs2_thread_cond_wait(&xlist->list_cond, &xlist->list_mutex);
+    }
 
     /* remove the header node */
     if (xlist->i_node_num > 0) {
@@ -366,7 +304,7 @@ void *xl_remove_head(xlist_t *const xlist, const int wait)
         xlist->i_node_num--;          /* decrease the number */
     }
 
-    SPIN_UNLOCK(xlist->list_lock);
+    davs2_thread_mutex_unlock(&xlist->list_mutex);
 
     return node;
 }
