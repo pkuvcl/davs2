@@ -43,9 +43,7 @@
  * macros
  * ===========================================================================
  */
-#define CONSOLE_WHITE  0
-#define CONSOLE_YELLOW 1
-#define CONSOLE_RED    2
+
 
 /**
  * ===========================================================================
@@ -209,6 +207,8 @@ void avs2_trace_string2(char *trace_string, int bit_pattern, int value, int len)
 }
 #endif
 
+/* ---------------------------------------------------------------------------
+ */
 int xl_init(xlist_t *const xlist)
 {
     if (xlist == NULL) {
@@ -232,13 +232,15 @@ int xl_init(xlist_t *const xlist)
     return 0;
 }
 
+/* ---------------------------------------------------------------------------
+ */
 void xl_destroy(xlist_t *const xlist)
 {
     if (xlist == NULL) {
         return;
     }
 
-    /* create lock and conditions */
+    /* destroy lock and conditions */
     davs2_thread_mutex_destroy(&xlist->list_mutex);
     davs2_thread_cond_destroy(&xlist->list_cond);
 
@@ -246,6 +248,8 @@ void xl_destroy(xlist_t *const xlist)
     memset(xlist, 0, sizeof(xlist_t));
 }
 
+/* ---------------------------------------------------------------------------
+ */
 void xl_append(xlist_t *const xlist, void *node)
 {
     node_t *new_node = (node_t *)node;
@@ -275,6 +279,8 @@ void xl_append(xlist_t *const xlist, void *node)
     davs2_thread_cond_signal(&xlist->list_cond);
 }
 
+/* ---------------------------------------------------------------------------
+ */
 void *xl_remove_head(xlist_t *const xlist, const int wait)
 {
     node_t *node = NULL;
@@ -309,6 +315,8 @@ void *xl_remove_head(xlist_t *const xlist, const int wait)
     return node;
 }
 
+/* ---------------------------------------------------------------------------
+ */
 void *xl_remove_head_ex(xlist_t *const xlist)
 {
     node_t *node = NULL;
