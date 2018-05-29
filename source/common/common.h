@@ -933,7 +933,7 @@ struct davs2_mgr_t {
     /* --- task ---------------------------------------------------- */
     int                 num_decoders;        /* number of decoders in total */
     int                 num_active_decoders; /* number of active decoders currently */
-    davs2_t           *decoders;            /* frame decoder contexts */
+    davs2_t            *decoders;            /* frame decoder contexts */
     int                 num_frames_in;       /* number of frames: input */
     int                 num_frames_out;      /* number of frames: output */
 

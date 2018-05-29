@@ -615,8 +615,8 @@ int decoder_find_pictures(davs2_mgr_t *mgr, davs2_packet_t *packet)
     int      b_picture_data_found = 0;
 
     /* check the input parameter: packet */
-    assert(packet != NULL && packet->data > 0 && packet->len > 0);
-    if (packet == NULL || packet->data == 0 || packet->len <= 0) {
+    if (packet == NULL || packet->data == NULL || packet->len <= 0) {
+        davs2_log(mgr->decoders, DAVS2_LOG_DEBUG, "Null input packet");
         return -1;              /* error */
     }
 
