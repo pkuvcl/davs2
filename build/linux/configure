@@ -602,6 +602,8 @@ case $host_os in
         if [ "$pic" = "no" ]; then
             cc_check "" -mdynamic-no-pic && CFLAGS="$CFLAGS -mdynamic-no-pic"
         fi
+        # TODO: Fix compiling error under mac osx (force disabled now)
+        asm="no"
         ;;
     freebsd*)
         SYS="FREEBSD"
@@ -1246,7 +1248,11 @@ if cc_check '' -Wshadow ; then
 fi
 
 if cc_check '' -Wmaybe-uninitialized ; then
-    CFLAGS="-Wno-maybe-uninitialized $CFLAGS"
+   if [ $SYS = "MACOSX" ] ; then
+        CFLAGS="$CFLAGS"
+   else
+        CFLAGS="-Wno-maybe-uninitialized $CFLAGS"
+   fi
 fi
 
 if [ $compiler = ICC -o $compiler = ICL ] ; then

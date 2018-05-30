@@ -164,8 +164,6 @@ char *davs2_get_simd_capabilities(char *buf, uint32_t cpuid)
     return buf;
 }
 
-/* ªÒ»°–Ú¡–∫≈ */
-void davs2_cpuid_get_serial_number(int op, uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx);
 #if !ARCH_X86_64
 /*  */
 int  davs2_cpu_cpuid_test(void);
@@ -378,7 +376,7 @@ uint32_t davs2_cpu_detect(void)
 
     return cpuid;
 }
-#endif // if X265_ARCH_X86
+#endif // if DAVS2_ARCH_X86
 
 #if SYS_LINUX && !(defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__))
 /* ---------------------------------------------------------------------------
