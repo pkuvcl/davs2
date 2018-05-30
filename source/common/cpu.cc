@@ -9,31 +9,38 @@
  *    davs2 - video encoder of AVS2/IEEE1857.4 video coding standard
  *    Copyright (C) 2018~ VCL, NELVT, Peking University
  *
- *    Authors: Falei LUO <falei.luo@gmail.com>
- *             etc.
+ * Authors: Falei LUO     <falei.luo@gmail.com>
  *
- *    This program is free software; you can redistribute it and/or modify
- *    it under the terms of the GNU General Public License as published by
- *    the Free Software Foundation; either version 2 of the License, or
- *    (at your option) any later version.
+ * --------------------------------------------------------------------------
+ * Copyright (C) 2013-2017 MulticoreWare, Inc
  *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU General Public License for more details.
+ * Authors: Loren Merritt <lorenm@u.washington.edu>
+ *          Laurent Aimar <fenrir@via.ecp.fr>
+ *          Fiona Glaser  <fiona@x264.com>
+ *          Steve Borho   <steve@borho.org>
  *
- *    You should have received a copy of the GNU General Public License
- *    along with this program; if not, write to the Free Software
- *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111, USA.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *    This program is also available under a commercial proprietary license.
- *    For more information, contact us at sswang @ pku.edu.cn.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111, USA.
+ *
+ * This program is also available under a commercial proprietary license.
+ * For more information, contact us at license @ x265.com.
  */
 
 #include "common.h"
 #include "cpu.h"
 
-#if MACOS || SYS_FREEBSD
+#if SYS_MACOSX || SYS_FREEBSD
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #endif
@@ -175,10 +182,6 @@ uint32_t davs2_cpu_detect(void)
     uint32_t vendor[4] = { 0 };
     uint32_t max_extended_cap, max_basic_cap;
 
-    // uint32_t serial[4] = { 0 };
-    // davs2_cpuid_get_serial_number(0, &serial[0], &serial[1], &serial[2], &serial[3]);
-    // davs2_log(NULL, DAVS2_LOG_WARNING, "CPU serial number: %08X%08X%08X%08X\n",
-    //            serial[0], serial[1], serial[2], serial[3]);
 #if !ARCH_X86_64
     if (!davs2_cpu_cpuid_test()) {
         return 0;
