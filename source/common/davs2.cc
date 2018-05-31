@@ -657,7 +657,8 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
     /* decode one frame */
     if (mgr->packets_ready.i_node_num > 0) {
         davs2_t *h = task_get_free_task(mgr);
-        b_wait_output = decoder_decode_es_unit(mgr, h);
+        mgr->h_dec = h;
+        b_wait_output = decoder_decode_es_unit(mgr, mgr->h_dec);
     }
 
     /* get one frame or sequence header */
