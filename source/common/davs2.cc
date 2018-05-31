@@ -97,9 +97,9 @@ es_unit_free(es_unit_t *es_unit)
 /* ---------------------------------------------------------------------------
  */
 static int
-es_unit_pack(assembler_t *assembler, uint8_t *data, int len, int64_t pts, int64_t dts)
+es_unit_pack(davs2_mgr_t *mgr, uint8_t *data, int len, int64_t pts, int64_t dts)
 {
-    es_unit_t *es_unit = assembler->es_unit;
+    es_unit_t *es_unit = mgr->es_unit;
 
     if (len > 0) {
         if (es_unit->size < es_unit->len + len) {
@@ -116,7 +116,7 @@ es_unit_pack(assembler_t *assembler, uint8_t *data, int len, int64_t pts, int64_
 
             es_unit_free(es_unit);
 
-            assembler->es_unit = es_unit = new_es_unit;
+            mgr->es_unit = es_unit = new_es_unit;
         }
 
         /* copy stream data */
@@ -132,19 +132,20 @@ es_unit_pack(assembler_t *assembler, uint8_t *data, int len, int64_t pts, int64_
 /* ---------------------------------------------------------------------------
  * push byte stream data of one frame to input list
  */
-static int es_unit_push(davs2_mgr_t *mgr, assembler_t *assembler)
+static
+int es_unit_push(davs2_mgr_t *mgr)
 {
     es_unit_t *es_unit = NULL;
 
     /* check the pseudo start code */
-    es_unit = assembler->es_unit;
+    es_unit = mgr->es_unit;
     es_unit->len = bs_dispose_pseudo_code(es_unit->data, es_unit->data, es_unit->len);
 
     /* append current node to the ready list */
     xl_append(&mgr->packets_ready, (node_t *)(es_unit));
 
     /* fetch a node again from idle list */
-    assembler->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
+    mgr->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
     
 
     return 1;
@@ -185,9 +186,9 @@ destroy_all_lists(davs2_mgr_t *mgr)
         davs2_free(pic);
     }
 
-    if (mgr->assembler.es_unit) {
-        es_unit_free(mgr->assembler.es_unit);
-        mgr->assembler.es_unit = NULL;
+    if (mgr->es_unit) {
+        es_unit_free(mgr->es_unit);
+        mgr->es_unit = NULL;
     }
 
     xl_destroy(&mgr->packets_idle);
@@ -588,22 +589,20 @@ fail:
 static 
 int decoder_find_pictures(davs2_mgr_t *mgr, davs2_packet_t *packet)
 {
-    assembler_t *assembler = &mgr->assembler;
-
     /* check the input parameter: packet */
     if (packet == NULL || packet->data == NULL || packet->len <= 0) {
         davs2_log(mgr->decoders, DAVS2_LOG_DEBUG, "Null input packet");
         return -1;              /* error */
     }
 
-    if (assembler->es_unit == NULL) {
-        assembler->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
+    if (mgr->es_unit == NULL) {
+        mgr->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
     }
 
-    if (!es_unit_pack(assembler, packet->data, packet->len, packet->pts, packet->dts)) {
+    if (!es_unit_pack(mgr, packet->data, packet->len, packet->pts, packet->dts)) {
         return -1;
     }
-    if (!es_unit_push(mgr, assembler)) {
+    if (!es_unit_push(mgr)) {
         return -1;
     }
 

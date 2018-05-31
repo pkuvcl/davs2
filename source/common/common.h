@@ -878,15 +878,6 @@ typedef struct es_unit_t {
     uint8_t       data[1];            /* byte stream buffer */
 } es_unit_t;
 
-
-/* ---------------------------------------------------------------------------
- * assembler_t
- */
-typedef struct assembler_t {
-    es_unit_t  *es_unit;
-} assembler_t;
-
-
 /* ---------------------------------------------------------------------------
  * decoder task
  */
@@ -906,9 +897,9 @@ struct davs2_mgr_t {
     volatile int        b_exit;       /* app signal to exit */
     volatile int        b_flushing;   /* is being flushing */
 
-    davs2_param_t    param;        /* decoder param */
-    assembler_t         assembler;    /* frame assembler */
-    davs2_seq_t        seq_info;     /* latest sequence head */
+    davs2_param_t       param;        /* decoder param */
+    es_unit_t          *es_unit;      /* next input ES unit pointer */
+    davs2_seq_t         seq_info;     /* latest sequence head */
 
     int                 i_tr_wrap_cnt;/* COI wrap count */
     int                 i_prev_coi;   /* previous COI */
