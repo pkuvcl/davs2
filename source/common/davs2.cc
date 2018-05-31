@@ -598,6 +598,7 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
     davs2_mgr_t *mgr = (davs2_mgr_t *)decoder;
     es_unit_t *es_unit = NULL;
     int b_wait_output = 0;
+    int start_code = 0;
 
     /* clear output frame data */
     out_frame->ret_type = DAVS2_DEFAULT;
@@ -619,18 +620,43 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
         davs2_log(mgr->decoders, DAVS2_LOG_DEBUG, "Null input packet");
         return -1;              /* error */
     }
+    /* check packet length */
+    if (packet->len < 4) {
+        davs2_log(mgr->decoders, DAVS2_LOG_DEBUG, "Invalid packet, 4 bytes are needed for one packet (including start_code). Len = %d",
+                  packet->len);
+        return DAVS2_ERROR;              /* error */
+    }
+    /* check the first 3 bytes are START_CODE */
+    if (packet->data[0] != 0x00 || packet->data[1] != 0x00 || packet->data[2] != 0x01) {
+        davs2_log(mgr->decoders, DAVS2_LOG_ERROR, "Invalid input Byte-Stream, not start code: %02x%02x%02x",
+                  packet->data[0], packet->data[1], packet->data[2]);
+        return DAVS2_ERROR;
+    }
 
     /* generate one es_unit for current byte-stream buffer */
     es_unit = davs2_pack_es_unit(mgr, packet->data, packet->len, packet->pts, packet->dts);
     if (es_unit == NULL) {
-        return -1;
+        davs2_log(mgr->decoders, DAVS2_LOG_ERROR, "Failed to create an ES_UNIT, input Byte-Stream length %d",
+                  packet->len);
+        return DAVS2_ERROR;
     }
 
     /* decode one frame */
-    if (es_unit->data[3]) {
+    start_code = packet->data[3];
+    if (start_code == SC_SEQUENCE_HEADER ||
+        start_code == SC_INTER_PICTURE ||
+        start_code == SC_INTRA_PICTURE) {
         davs2_t *h = task_get_free_task(mgr);
         mgr->h_dec = h;
         b_wait_output = decoder_decode_es_unit(mgr, mgr->h_dec, es_unit);
+    } else {
+        // TO be different
+        davs2_t *h = task_get_free_task(mgr);
+        mgr->h_dec = h;
+        b_wait_output = decoder_decode_es_unit(mgr, mgr->h_dec, es_unit);
+    }
+
+    if (es_unit->data[3]) {
     }
 
     /* get one frame or sequence header */
