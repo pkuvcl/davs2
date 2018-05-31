@@ -1248,11 +1248,11 @@ if cc_check '' -Wshadow ; then
 fi
 
 if cc_check '' -Wmaybe-uninitialized ; then
-   if [ $SYS = "MACOSX" ] ; then
-        CFLAGS="$CFLAGS"
-   else
+    if [ $SYS = MACOSX ] ; then
+        CFLAGS="-Wno-uninitialized $CFLAGS"
+    else
         CFLAGS="-Wno-maybe-uninitialized $CFLAGS"
-   fi
+    fi
 fi
 
 if [ $compiler = ICC -o $compiler = ICL ] ; then
