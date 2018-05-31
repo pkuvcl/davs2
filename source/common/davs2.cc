@@ -693,9 +693,8 @@ davs2_decoder_flush(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t 
 #endif
 
     if (decoder == NULL) {
-        return DAVS2_END;
+        return DAVS2_ERROR;
     }
-
 
     mgr->b_flushing     = 1; // label the decoder being flushing
     out_frame->magic    = NULL;
@@ -722,7 +721,7 @@ davs2_decoder_flush(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t 
     }
 #endif
 
-    if (ret != DAVS2_DEFAULT && ret != DAVS2_END) {
+    if (ret != DAVS2_DEFAULT) {
         return ret;
     } else {
         return DAVS2_END;

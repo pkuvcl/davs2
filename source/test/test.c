@@ -242,7 +242,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
     /* flush the decoder */
     for (;;) {
         ret = davs2_decoder_flush(decoder, &headerset, &out_frame);
-        if (ret < 0) {
+        if (ret < 0 || ret == DAVS2_END) {
             break;
         }
         if (out_frame.ret_type != DAVS2_DEFAULT) {

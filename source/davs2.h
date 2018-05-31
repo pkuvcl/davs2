@@ -103,11 +103,12 @@ enum davs2_log_level_e {
  * information of return value for decode/flush()
  */
 enum davs2_ret_e {
-    DAVS2_END         = -1,   /* Decoding ended: no more bit-stream to decode and no more frames to output */
+    DAVS2_ERROR       = -1,   /* Decoding error occurs */
     DAVS2_DEFAULT     = 0,    /* Decoding but no output */
     DAVS2_GOT_FRAME   = 1,    /* Decoding get frame */
     DAVS2_GOT_HEADER  = 2,    /* Decoding get sequence header */
     DAVS2_GOT_BOTH    = 3,    /* Decoding get sequence header and frame together */
+    DAVS2_END         = 4,    /* Decoding ended: no more bit-stream to decode and no more frames to output */
 };
 
 /**
