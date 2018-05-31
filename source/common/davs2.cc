@@ -600,14 +600,14 @@ int decoder_find_pictures(davs2_mgr_t *mgr, davs2_packet_t *packet)
         assembler->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
     }
 
-    if (!es_unit_pack(assembler, packet->data, es_len, packet->pts, packet->dts)) {
+    if (!es_unit_pack(assembler, packet->data, packet->len, packet->pts, packet->dts)) {
         return -1;
     }
     if (!es_unit_push(mgr, assembler)) {
         return -1;
     }
-    es_len = 0;
-    return packet->len - es_len;
+
+    return packet->len;
 }
 
 /* ---------------------------------------------------------------------------
