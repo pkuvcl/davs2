@@ -135,11 +135,6 @@ es_unit_pack(assembler_t *assembler, uint8_t *data, int len, int64_t pts, int64_
 static int es_unit_push(davs2_mgr_t *mgr, assembler_t *assembler)
 {
     es_unit_t *es_unit = NULL;
-    /* check flag */
-    if (!assembler->header_found) {
-        return 0;
-    }
-    assembler->header_found = FALSE;
 
     /* check the pseudo start code */
     es_unit = assembler->es_unit;
@@ -593,26 +588,7 @@ fail:
 static 
 int decoder_find_pictures(davs2_mgr_t *mgr, davs2_packet_t *packet)
 {
-    /* write new header */
-#define HEADLEN             4         /* header length */
-#define WRITEHEADER(x1, x2, x3, x4)\
-{\
-    assembler->es_unit->data[0] = (x1);\
-    assembler->es_unit->data[1] = (x2);\
-    assembler->es_unit->data[2] = (x3);\
-    assembler->es_unit->data[3] = (x4);\
-    assembler->es_unit->len     = HEADLEN;\
-    assembler->header_found     = TRUE;\
-}
-
     assembler_t *assembler = &mgr->assembler;
-    uint8_t  pre3rdbyte = 0xff;
-    uint8_t  pre2ndbyte = 0xff;
-    uint8_t  pre1stbyte = 0xff;
-    uint8_t *es_buf;
-    int      es_len;
-    int      offset;
-    int      b_picture_data_found = 0;
 
     /* check the input parameter: packet */
     if (packet == NULL || packet->data == NULL || packet->len <= 0) {
@@ -620,86 +596,18 @@ int decoder_find_pictures(davs2_mgr_t *mgr, davs2_packet_t *packet)
         return -1;              /* error */
     }
 
-    es_buf = packet->data;
-    es_len = packet->len;
-
     if (assembler->es_unit == NULL) {
         assembler->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
     }
 
-    if (assembler->es_unit->len >= 3) {
-        pre3rdbyte = assembler->es_unit->data[assembler->es_unit->len - 3];
-        pre2ndbyte = assembler->es_unit->data[assembler->es_unit->len - 2];
-        pre1stbyte = assembler->es_unit->data[assembler->es_unit->len - 1];
-    } else if (assembler->es_unit->len == 2) {
-        pre2ndbyte = assembler->es_unit->data[assembler->es_unit->len - 2];
-        pre1stbyte = assembler->es_unit->data[assembler->es_unit->len - 1];
-    } else if (assembler->es_unit->len == 1) {
-        pre1stbyte = assembler->es_unit->data[assembler->es_unit->len - 1];
+    if (!es_unit_pack(assembler, packet->data, es_len, packet->pts, packet->dts)) {
+        return -1;
     }
-
-    for (; (offset = find_pic_start_code(pre3rdbyte, pre2ndbyte, pre1stbyte, es_buf, es_len)) < es_len;) {
-        if (offset < 0) {
-            assert(offset > -HEADLEN);
-
-            assembler->es_unit->len += offset;
-            b_picture_data_found = assembler->header_found;
-
-            if (assembler->header_found) {
-                if (!es_unit_push(mgr, assembler)) {
-                    return -1;
-                }
-            }
-
-            /* write start code to packet header */
-            if (offset == -3) {
-                WRITEHEADER(pre3rdbyte, pre2ndbyte, pre1stbyte, es_buf[0]);
-            } else if (offset == -2) {
-                WRITEHEADER(pre2ndbyte, pre1stbyte, es_buf[0], es_buf[1]);
-            } else if (offset == -1) {
-                WRITEHEADER(pre1stbyte, es_buf[0], es_buf[1], es_buf[2]);
-            }
-        } else {
-            b_picture_data_found = assembler->header_found;
-
-            if (assembler->header_found) {
-                assert(assembler->es_unit->len > 0);
-
-                if (!es_unit_pack(assembler, es_buf, offset, packet->pts, packet->dts)) {
-                    return -1;
-                }
-
-                if (!es_unit_push(mgr, assembler)) {
-                    return -1;
-                }
-            }
-            /* write start code to packet header */
-            WRITEHEADER(es_buf[offset], es_buf[offset + 1], es_buf[offset + 2], es_buf[offset + 3]);
-        }
-
-        es_buf += (offset + HEADLEN);
-        es_len -= (offset + HEADLEN);
-
-        if (b_picture_data_found) {
-            break;
-        }
-
-        pre3rdbyte = 0xff;
-        pre2ndbyte = 0xff;
-        pre1stbyte = 0xff;
+    if (!es_unit_push(mgr, assembler)) {
+        return -1;
     }
-
-    /* when no start-code is found, copy remaining bytes */
-    if (!b_picture_data_found) {
-        if (!es_unit_pack(assembler, packet->data + (packet->len - es_len), es_len, packet->pts, packet->dts)) {
-            return -1;
-        }
-        es_len = 0;
-    }
-
+    es_len = 0;
     return packet->len - es_len;
-#undef HEADLEN
-#undef WRITEHEADER
 }
 
 /* ---------------------------------------------------------------------------
@@ -816,19 +724,6 @@ davs2_decoder_flush(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t 
     mgr->b_flushing     = 1; // label the decoder being flushing
     out_frame->magic    = NULL;
     out_frame->ret_type = DAVS2_DEFAULT;
-
-    /* the last packet of the bitstream; decoding ends here */
-    if (mgr->assembler.header_found && mgr->assembler.es_unit->len > 0) {
-        if (!es_unit_push(mgr, &mgr->assembler)) {
-#if DAVS2_TRACE_API
-            if (fp_trace_in) {
-                fprintf(fp_trace_in, "Ret %d\n", -1);
-                fflush(fp_trace_in);
-            }
-#endif
-            return -1;
-        }
-    }
 
     /* check is there any packets left? */
     if (mgr->packets_ready.i_node_num > 0) {

@@ -44,7 +44,7 @@
 /* ---------------------------------------------------------------------------
  */
 #define ISPIC(x)  ((x) == 0xB3 || (x) == 0xB6)
-#define ISUNIT(x) ((x) == 0xB0 || (x) == 0xB1 || ISPIC(x))
+#define ISUNIT(x) ((x) == 0xB0 || (x) == 0xB1 || (x) == 0xB7 || ISPIC(x))
 
 /* ---------------------------------------------------------------------------
  */
@@ -58,6 +58,31 @@ find_start_code(const uint8_t *data, int len)
     }
 
     return len >= 4 ? data : 0;
+}
+
+/* ---------------------------------------------------------------------------
+ */
+static __inline 
+const uint8_t *
+find_start_code_pic(const uint8_t *data, int len) 
+{
+    const uint8_t *data0 = data;
+    const uint8_t *p = data + len;
+
+    if (len <= 4) {
+        return data + len;
+    }
+
+    for (;;) {
+        p = (uint8_t *)find_start_code(data, len);
+        len -= (p - data) + 4;
+        data = p + 4;
+        if (ISUNIT(p[3])) {
+            break;
+        }
+    }
+
+    return p;
 }
 
 /* ---------------------------------------------------------------------------

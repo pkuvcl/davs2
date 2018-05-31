@@ -884,7 +884,6 @@ typedef struct es_unit_t {
  */
 typedef struct assembler_t {
     es_unit_t  *es_unit;
-    int         header_found;         /* picture or sequence header is found? */
 } assembler_t;
 
 
