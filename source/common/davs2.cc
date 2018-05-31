@@ -95,11 +95,18 @@ es_unit_free(es_unit_t *es_unit)
 }
 
 /* ---------------------------------------------------------------------------
+ * push byte stream data of one frame to input list
  */
-static int
-es_unit_pack(davs2_mgr_t *mgr, uint8_t *data, int len, int64_t pts, int64_t dts)
+static
+int es_unit_push(davs2_mgr_t *mgr, uint8_t *data, int len, int64_t pts, int64_t dts)
 {
-    es_unit_t *es_unit = mgr->es_unit;
+    es_unit_t *es_unit = NULL;
+
+    if (mgr->es_unit == NULL) {
+        mgr->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
+    }
+
+    es_unit = mgr->es_unit;
 
     if (len > 0) {
         if (es_unit->size < es_unit->len + len) {
@@ -126,19 +133,7 @@ es_unit_pack(davs2_mgr_t *mgr, uint8_t *data, int len, int64_t pts, int64_t dts)
         es_unit->dts  = dts;
     }
 
-    return 1;
-}
-
-/* ---------------------------------------------------------------------------
- * push byte stream data of one frame to input list
- */
-static
-int es_unit_push(davs2_mgr_t *mgr)
-{
-    es_unit_t *es_unit = NULL;
-
     /* check the pseudo start code */
-    es_unit = mgr->es_unit;
     es_unit->len = bs_dispose_pseudo_code(es_unit->data, es_unit->data, es_unit->len);
 
     /* append current node to the ready list */
@@ -146,7 +141,6 @@ int es_unit_push(davs2_mgr_t *mgr)
 
     /* fetch a node again from idle list */
     mgr->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
-    
 
     return 1;
 }
@@ -655,19 +649,12 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
         return -1;              /* error */
     }
 
-    if (mgr->es_unit == NULL) {
-        mgr->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
-    }
-
-    if (!es_unit_pack(mgr, packet->data, packet->len, packet->pts, packet->dts)) {
-        return -1;
-    }
-    if (!es_unit_push(mgr)) {
+    /* generate one es_unit for current byte-stream buffer */
+    if (!es_unit_push(mgr, packet->data, packet->len, packet->pts, packet->dts)) {
         return -1;
     }
 
-    /* 参考代码： proc_decoder_decode() */
-    /* 解码一帧图像头 */
+    /* decode one frame */
     if (mgr->packets_ready.i_node_num > 0) {
         davs2_t *h = task_get_free_task(mgr);
         b_wait_output = decoder_decode_es_unit(mgr, h);
