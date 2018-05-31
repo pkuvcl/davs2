@@ -98,7 +98,7 @@ es_unit_free(es_unit_t *es_unit)
  * push byte stream data of one frame to input list
  */
 static
-int es_unit_push(davs2_mgr_t *mgr, uint8_t *data, int len, int64_t pts, int64_t dts)
+es_unit_t *davs2_pack_es_unit(davs2_mgr_t *mgr, uint8_t *data, int len, int64_t pts, int64_t dts)
 {
     es_unit_t *es_unit = NULL;
 
@@ -115,7 +115,7 @@ int es_unit_push(davs2_mgr_t *mgr, uint8_t *data, int len, int64_t pts, int64_t 
             es_unit_t *new_es_unit;
 
             if ((new_es_unit = es_unit_alloc(new_size)) == NULL) {
-                return 0;
+                return NULL;
             }
 
             memcpy(new_es_unit, es_unit, sizeof(es_unit_t));   /* copy ES Unit information */
@@ -136,13 +136,10 @@ int es_unit_push(davs2_mgr_t *mgr, uint8_t *data, int len, int64_t pts, int64_t 
     /* check the pseudo start code */
     es_unit->len = bs_dispose_pseudo_code(es_unit->data, es_unit->data, es_unit->len);
 
-    /* append current node to the ready list */
-    xl_append(&mgr->packets_ready, (node_t *)(es_unit));
-
     /* fetch a node again from idle list */
     mgr->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
 
-    return 1;
+    return es_unit;
 }
 
 /* ---------------------------------------------------------------------------
@@ -152,15 +149,6 @@ destroy_all_lists(davs2_mgr_t *mgr)
 {
     es_unit_t *es_unit = NULL;
     davs2_picture_t *pic = NULL;
-
-    /* ready list */
-    for (;;) {
-        if ((es_unit = (es_unit_t *)xl_remove_head_ex(&mgr->packets_ready)) == NULL) {
-            break;
-        }
-
-        es_unit_free(es_unit);
-    }
 
     /* idle list */
     for (;;) {
@@ -186,7 +174,6 @@ destroy_all_lists(davs2_mgr_t *mgr)
     }
 
     xl_destroy(&mgr->packets_idle);
-    xl_destroy(&mgr->packets_ready);
     xl_destroy(&mgr->pic_recycle);
 }
 
@@ -199,7 +186,6 @@ create_all_lists(davs2_mgr_t *mgr)
     int i;
 
     if (xl_init(&mgr->packets_idle ) != 0 || 
-        xl_init(&mgr->packets_ready) != 0 ||
         xl_init(&mgr->pic_recycle  ) != 0) {
         goto fail;
     }
@@ -272,7 +258,7 @@ davs2_outpic_t *output_list_get_one_output_picture(davs2_mgr_t *mgr)
              */
             if (frame->i_poc > mgr->outpics.output) {
                 /* the end of the stream occurs */
-                if (mgr->b_flushing && mgr->packets_ready.i_node_num == 0 &&
+                if (mgr->b_flushing &&
                     mgr->num_frames_in == mgr->num_frames_out + mgr->outpics.num_output_pic) {
                     mgr->outpics.output++;
                     continue;
@@ -315,9 +301,9 @@ davs2_outpic_t *output_list_get_one_output_picture(davs2_mgr_t *mgr)
 int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_picture_t *out_frame, int is_flush)
 {
     davs2_outpic_t *pic   = NULL;
-    int b_wait_new_frame = mgr->num_frames_in + mgr->packets_ready.i_node_num - mgr->num_frames_out > 8 + mgr->num_aec_thread;
+    int b_wait_new_frame = mgr->num_frames_in + mgr->num_decoders - mgr->num_frames_out > 8 + mgr->num_aec_thread;
 
-    while (mgr->num_frames_in + mgr->packets_ready.i_node_num > mgr->num_frames_out && /* no more output */
+    while (mgr->num_frames_in > mgr->num_frames_out && /* no more output */
            (b_wait_new_frame || is_flush)) {
         if (mgr->new_sps) {
             memcpy(headerset, &mgr->seq_info.head, sizeof(davs2_seq_info_t));
@@ -407,18 +393,6 @@ static davs2_t *task_get_free_task(davs2_mgr_t *mgr)
     }
 
     return NULL;
-}
-
-/* --------------------------------------------------------------------------
- */
-static es_unit_t *task_load_packet(davs2_mgr_t *mgr)
-{
-    es_unit_t *es_unit = NULL;
-
-    /* try to get one frame to decode */
-    es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_ready, 0);
-
-    return es_unit;
 }
 
 /* --------------------------------------------------------------------------
@@ -580,16 +554,12 @@ fail:
 
 /* ---------------------------------------------------------------------------
  */
-int decoder_decode_es_unit(davs2_mgr_t *mgr, davs2_t *h)
+int decoder_decode_es_unit(davs2_mgr_t *mgr, davs2_t *h, es_unit_t *es_unit)
 {
-    es_unit_t *es_unit;
     int b_wait_output = 0;
 
     davs2_thread_mutex_lock(&mgr->mutex_aec);
-    /* get one frame to decode */
-    es_unit = task_load_packet(mgr);
-    assert(es_unit != NULL);
-
+ 
     /* task is busy */
     h->task_info.task_status = TASK_BUSY;
     h->task_info.curr_es_unit = es_unit;
@@ -626,6 +596,7 @@ DAVS2_API int
 davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *headerset, davs2_picture_t *out_frame)
 {
     davs2_mgr_t *mgr = (davs2_mgr_t *)decoder;
+    es_unit_t *es_unit = NULL;
     int b_wait_output = 0;
 
     /* clear output frame data */
@@ -650,15 +621,16 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
     }
 
     /* generate one es_unit for current byte-stream buffer */
-    if (!es_unit_push(mgr, packet->data, packet->len, packet->pts, packet->dts)) {
+    es_unit = davs2_pack_es_unit(mgr, packet->data, packet->len, packet->pts, packet->dts);
+    if (es_unit == NULL) {
         return -1;
     }
 
     /* decode one frame */
-    if (mgr->packets_ready.i_node_num > 0) {
+    if (es_unit->data[3]) {
         davs2_t *h = task_get_free_task(mgr);
         mgr->h_dec = h;
-        b_wait_output = decoder_decode_es_unit(mgr, mgr->h_dec);
+        b_wait_output = decoder_decode_es_unit(mgr, mgr->h_dec, es_unit);
     }
 
     /* get one frame or sequence header */
@@ -700,12 +672,6 @@ davs2_decoder_flush(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t 
     mgr->b_flushing     = 1; // label the decoder being flushing
     out_frame->magic    = NULL;
     out_frame->ret_type = DAVS2_DEFAULT;
-
-    /* check is there any packets left? */
-    if (mgr->packets_ready.i_node_num > 0) {
-        davs2_t *h = task_get_free_task(mgr);
-        decoder_decode_es_unit(mgr, h);
-    }
 
 #if DAVS2_TRACE_API
     if (fp_trace_in) {

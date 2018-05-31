@@ -914,7 +914,6 @@ struct davs2_mgr_t {
     int     coi_remove_frame[8];      /* COI of frames to be removed */
 
     /* --- lists (input & output) ---------------------------------- */
-    xlist_t             packets_ready;/* bit-stream: frames ready to be decoded */
     xlist_t             packets_idle; /* bit-stream: free buffers for input packets */
 
     xlist_t             pic_recycle;  /* output_picture: free pictures recycle bin */
