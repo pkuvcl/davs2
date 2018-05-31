@@ -586,31 +586,6 @@ fail:
 
 /* ---------------------------------------------------------------------------
  */
-static 
-int decoder_find_pictures(davs2_mgr_t *mgr, davs2_packet_t *packet)
-{
-    /* check the input parameter: packet */
-    if (packet == NULL || packet->data == NULL || packet->len <= 0) {
-        davs2_log(mgr->decoders, DAVS2_LOG_DEBUG, "Null input packet");
-        return -1;              /* error */
-    }
-
-    if (mgr->es_unit == NULL) {
-        mgr->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
-    }
-
-    if (!es_unit_pack(mgr, packet->data, packet->len, packet->pts, packet->dts)) {
-        return -1;
-    }
-    if (!es_unit_push(mgr)) {
-        return -1;
-    }
-
-    return packet->len;
-}
-
-/* ---------------------------------------------------------------------------
- */
 int decoder_decode_es_unit(davs2_mgr_t *mgr, davs2_t *h)
 {
     es_unit_t *es_unit;
@@ -657,7 +632,6 @@ DAVS2_API int
 davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *headerset, davs2_picture_t *out_frame)
 {
     davs2_mgr_t *mgr = (davs2_mgr_t *)decoder;
-    int num_bytes_read;
     int b_wait_output = 0;
 
     /* clear output frame data */
@@ -674,7 +648,23 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
         fflush(fp_trace_in);
     }
 #endif
-    num_bytes_read = decoder_find_pictures(mgr, packet);
+
+    /* check the input parameter: packet */
+    if (packet == NULL || packet->data == NULL || packet->len <= 0) {
+        davs2_log(mgr->decoders, DAVS2_LOG_DEBUG, "Null input packet");
+        return -1;              /* error */
+    }
+
+    if (mgr->es_unit == NULL) {
+        mgr->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
+    }
+
+    if (!es_unit_pack(mgr, packet->data, packet->len, packet->pts, packet->dts)) {
+        return -1;
+    }
+    if (!es_unit_push(mgr)) {
+        return -1;
+    }
 
     /* 参考代码： proc_decoder_decode() */
     /* 解码一帧图像头 */
@@ -691,12 +681,12 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
 #if DAVS2_TRACE_API
     if (fp_trace_in) {
         fprintf(fp_trace_in, "\t%8d\t%2d\t%4d\t%3d\t%3d\n", 
-                num_bytes_read, out_frame->ret_type, out_frame->pic_order_count,
+                packet->len, out_frame->ret_type, out_frame->pic_order_count,
                 mgr->num_frames_in, mgr->num_frames_out);
         fflush(fp_trace_in);
     }
 #endif
-    return num_bytes_read;
+    return packet->len;
 }
 
 
