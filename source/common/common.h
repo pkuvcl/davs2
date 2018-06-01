@@ -873,6 +873,7 @@ typedef struct davs2_output_t {
  */
 typedef struct es_unit_t {
     ALIGN16(void *magic);             /* must be the 1st member variable. do not change it */
+    davs2_bs_t    bs;                 /* bit-stream reader of this es_unit */
     int64_t       pts;                /* presentation time stamp */
     int64_t       dts;                /* decoding time stamp */
     int           len;                /* length of valid data in byte stream buffer */
@@ -1022,7 +1023,7 @@ struct davs2_t {
 
     /* -------------------------------------------------------------
      * decoding */
-    davs2_bs_t   bs;                 /* bitstream VLC decoder */
+    davs2_bs_t   *p_bs;               /* input bitstream pointer */
     aec_t         aec;                /* arithmetic entropy decoder */
     int           decoding_error;     /* 非零值表示遇到了解码错误 */
 

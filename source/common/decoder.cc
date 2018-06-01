@@ -1139,7 +1139,7 @@ davs2_t *decoder_open(davs2_mgr_t *mgr, davs2_t *h)
 void *decoder_decode_picture_data(void *arg1, int arg2)
 {
     davs2_t *h     = (davs2_t *)arg1;
-    davs2_bs_t *bs = &h->bs;
+    davs2_bs_t *bs = h->p_bs;
 
     UNUSED_PARAMETER(arg2);
     /* decode one frame */
