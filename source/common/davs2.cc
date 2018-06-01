@@ -100,7 +100,10 @@ es_unit_free(es_unit_t *es_unit)
 static
 es_unit_t *davs2_pack_es_unit(davs2_mgr_t *mgr, uint8_t *data, int len, int64_t pts, int64_t dts)
 {
-    es_unit_t *es_unit = NULL;
+#define DAVS2_ISUNIT(x) ((x) == 0xB0 || (x) == 0xB1 || (x) == 0xB7 || (x) == 0xB3 || (x) == 0xB6)
+    es_unit_t *es_unit     = NULL;
+    es_unit_t *ret_es_unit = NULL;
+    int start_code = data[3];
 
     if (mgr->es_unit == NULL) {
         mgr->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
@@ -127,6 +130,12 @@ es_unit_t *davs2_pack_es_unit(davs2_mgr_t *mgr, uint8_t *data, int len, int64_t 
         }
 
         /* copy stream data */
+        if (DAVS2_ISUNIT(start_code) && es_unit->len > 0) {
+            ret_es_unit = es_unit;
+            /* fetch a node again from idle list */
+            es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
+            mgr->es_unit = es_unit;
+        }
         memcpy(es_unit->data + es_unit->len, data, len * sizeof(uint8_t));
         es_unit->len += len;
         es_unit->pts  = pts;
@@ -134,12 +143,12 @@ es_unit_t *davs2_pack_es_unit(davs2_mgr_t *mgr, uint8_t *data, int len, int64_t 
     }
 
     /* check the pseudo start code */
-    es_unit->len = bs_dispose_pseudo_code(es_unit->data, es_unit->data, es_unit->len);
+    if (ret_es_unit != NULL) {
+        ret_es_unit->len = bs_dispose_pseudo_code(ret_es_unit->data, ret_es_unit->data, ret_es_unit->len);
+    }
 
-    /* fetch a node again from idle list */
-    mgr->es_unit = (es_unit_t *)xl_remove_head(&mgr->packets_idle, 1);
-
-    return es_unit;
+#undef DAVS2_ISUNIT
+    return ret_es_unit;
 }
 
 /* ---------------------------------------------------------------------------
@@ -635,10 +644,14 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
 
     /* generate one es_unit for current byte-stream buffer */
     es_unit = davs2_pack_es_unit(mgr, packet->data, packet->len, packet->pts, packet->dts);
-    if (es_unit == NULL) {
+    if (es_unit == NULL && mgr->es_unit == NULL) {
         davs2_log(mgr->decoders, DAVS2_LOG_ERROR, "Failed to create an ES_UNIT, input Byte-Stream length %d",
                   packet->len);
         return DAVS2_ERROR;
+    } else if (es_unit == NULL) {
+        davs2_log(mgr->decoders, DAVS2_LOG_DEBUG, "Buffered byte-stream length: %d",
+                  packet->len);
+        return packet->len;
     }
 
     /* decode one frame */
@@ -705,6 +718,16 @@ davs2_decoder_flush(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t 
         fflush(fp_trace_in);
     }
 #endif
+
+    // flush buffered bit-stream
+    if (mgr->es_unit != NULL && mgr->es_unit->len >= 4) {
+        davs2_t *h = task_get_free_task(mgr);
+        es_unit_t *es_unit = mgr->es_unit;
+        mgr->es_unit = NULL;
+        mgr->h_dec = h;
+        decoder_decode_es_unit(mgr, mgr->h_dec, es_unit);
+    }
+
     ret = decoder_get_output(mgr, headerset, out_frame, 1);
 
 #if DAVS2_TRACE_API
