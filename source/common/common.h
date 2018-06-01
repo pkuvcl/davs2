@@ -660,6 +660,8 @@ typedef struct davs2_seq_t {
     int     encoding_precision;       /* encoding precision */
     int     bit_rate_lower;           /* bitrate (lower) */
     int     bit_rate_upper;           /* bitrate (upper) */
+    int     i_enc_width;              /* sequence encoding width */
+    int     i_enc_height;             /* sequence encoding height */
     int     log2_lcu_size;            /* largest coding block size */
     bool_t  b_field_coding;           /* field coded sequence? */
     bool_t  b_temporal_id_exist;      /* temporal id exist flag */

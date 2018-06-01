@@ -266,6 +266,9 @@ int parse_sequence_header(davs2_t *h)
 
     seq->head.bitrate    = ((seq->bit_rate_upper << 18) + seq->bit_rate_lower) * 400;
     seq->head.frame_rate = FRAME_RATE[seq->head.frame_rate_code - 1];
+
+    seq->i_enc_width     = ((seq->head.horizontal_size + MIN_CU_SIZE - 1) >> MIN_CU_SIZE_IN_BIT) << MIN_CU_SIZE_IN_BIT;
+    seq->i_enc_height    = ((seq->head.vertical_size   + MIN_CU_SIZE - 1) >> MIN_CU_SIZE_IN_BIT) << MIN_CU_SIZE_IN_BIT;
     h->seq_info.valid_flag = 1;
 
     return 0;
@@ -990,17 +993,16 @@ int task_decoder_update(davs2_t *h)
         /* resolution changed */
         decoder_free_extra_buffer(h);
 
+        /* key properties of the video sequence: size and color format */
         h->i_lcu_level      = seq->log2_lcu_size;
         h->i_lcu_size       = 1 << h->i_lcu_level;
         h->i_lcu_size_sub1  = (1 << h->i_lcu_level) - 1;
         h->i_chroma_format  = seq->head.chroma_format;
         h->i_image_width    = seq->head.horizontal_size;
         h->i_image_height   = seq->head.vertical_size;
-        h->b_sao            = seq->enable_sao;
-        h->b_alf            = seq->enable_alf;
+        h->i_width          = seq->i_enc_width;
+        h->i_height         = seq->i_enc_height;
 
-        h->i_width          = ((h->i_image_width  + MIN_CU_SIZE - 1) >> MIN_CU_SIZE_IN_BIT) << MIN_CU_SIZE_IN_BIT;
-        h->i_height         = ((h->i_image_height + MIN_CU_SIZE - 1) >> MIN_CU_SIZE_IN_BIT) << MIN_CU_SIZE_IN_BIT;
         h->i_width_in_scu   = h->i_width  >> MIN_CU_SIZE_IN_BIT;
         h->i_height_in_scu  = h->i_height >> MIN_CU_SIZE_IN_BIT;
         h->i_size_in_scu    = h->i_width_in_scu * h->i_height_in_scu;
@@ -1008,6 +1010,10 @@ int task_decoder_update(davs2_t *h)
         h->i_height_in_spu  = h->i_height >> MIN_PU_SIZE_IN_BIT;
         h->i_width_in_lcu   = (h->i_width + h->i_lcu_size_sub1) >> h->i_lcu_level;
         h->i_height_in_lcu  = (h->i_height + h->i_lcu_size_sub1) >> h->i_lcu_level;
+
+        /* encoding tools configuration */
+        h->b_sao            = seq->enable_sao;
+        h->b_alf            = seq->enable_alf;
 
         if (decoder_alloc_extra_buffer(h) < 0) {
             h->i_lcu_level     = 0;
