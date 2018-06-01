@@ -1483,20 +1483,20 @@ fail:
 
 /* ---------------------------------------------------------------------------
  */
-int parse_header(davs2_t *h)
+int parse_header(davs2_t *h, davs2_bs_t *p_bs)
 {
-    const uint8_t *data      = h->bs.p_stream;
-    int           *bitpos    = &h->bs.i_bit_pos;
-    int            len       = h->bs.i_stream;
-    const uint8_t *unitStart = 0;
+    const uint8_t *data   = p_bs->p_stream;
+    int           *bitpos = &p_bs->i_bit_pos;
+    int            len    = p_bs->i_stream;
+    const uint8_t *p_start_code = 0;
 
     if (len <= 4) {
         return -1;  // at least 4 bytes are needed for decoding
     }
 
-    while ((unitStart = find_start_code(data + (*bitpos >> 3), len - (*bitpos >> 3))) != 0) {
+    while ((p_start_code = find_start_code(data + (*bitpos >> 3), len - (*bitpos >> 3))) != 0) {
         uint32_t start_code;
-        *bitpos = (int)((unitStart - data) << 3);
+        *bitpos = (int)((p_start_code - data) << 3);
 
         if ((*bitpos >> 3) + 4 > len) {
             break;

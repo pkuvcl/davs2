@@ -578,7 +578,7 @@ int decoder_decode_es_unit(davs2_mgr_t *mgr, davs2_t *h, es_unit_t *es_unit)
     bs_init(&h->bs, es_unit->data, es_unit->len);
 
     /* (2) parse header */
-    if (parse_header(h) == 0) {
+    if (parse_header(h, &h->bs) == 0) {
         /* TODO: 分析该图像头信息，确定当前时刻是否需要输出图像 */
         /* prepare the reference list and the reconstruction buffer */
         if (task_get_references(h, es_unit->pts, es_unit->dts) == 0) {
