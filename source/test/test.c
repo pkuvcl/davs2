@@ -96,7 +96,7 @@ davs2_input_param_t inputparam = {
 /* ---------------------------------------------------------------------------
  */
 static 
-void DumpFrames(davs2_picture_t *pic, davs2_seq_info_t *headerset, int num_frames)
+void output_decoded_frame(davs2_picture_t *pic, davs2_seq_info_t *headerset, int num_frames)
 {
     static char IMGTYPE[] = {'I', 'P', 'B', 'G', 'F', 'S', '\x0'};
     double psnr_y = 0.0f, psnr_u = 0.0f, psnr_v = 0.0f;
@@ -213,7 +213,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
 #endif
 
         if (out_frame.ret_type != DAVS2_DEFAULT) {
-            DumpFrames(&out_frame, &headerset, num_frames);
+            output_decoded_frame(&out_frame, &headerset, num_frames);
             davs2_decoder_frame_unref(decoder, &out_frame);
         }
 
@@ -246,7 +246,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
             break;
         }
         if (out_frame.ret_type != DAVS2_DEFAULT) {
-            DumpFrames(&out_frame, &headerset, num_frames);
+            output_decoded_frame(&out_frame, &headerset, num_frames);
             davs2_decoder_frame_unref(decoder, &out_frame);
         }
     }
