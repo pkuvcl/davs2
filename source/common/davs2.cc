@@ -649,8 +649,8 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
                   packet->len);
         return DAVS2_ERROR;
     } else if (es_unit == NULL) {
-        davs2_log(mgr->decoders, DAVS2_LOG_DEBUG, "Buffered byte-stream length: %d",
-                  packet->len);
+        // davs2_log(mgr->decoders, DAVS2_LOG_DEBUG, "Buffered byte-stream length: %d",
+        //           packet->len);
         return packet->len;
     }
 
@@ -667,9 +667,6 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
         davs2_t *h = task_get_free_task(mgr);
         mgr->h_dec = h;
         b_wait_output = decoder_decode_es_unit(mgr, mgr->h_dec, es_unit);
-    }
-
-    if (es_unit->data[3]) {
     }
 
     /* get one frame or sequence header */

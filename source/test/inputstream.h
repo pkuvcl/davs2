@@ -71,18 +71,9 @@ find_start_code_pic(const uint8_t *data, int len)
 
     if (len <= 4) {
         return data + len;
+    } else {
+        return find_start_code(data, len);
     }
-
-    for (;;) {
-        p = (uint8_t *)find_start_code(data, len);
-        len -= (p - data) + 4;
-        data = p + 4;
-        if (ISUNIT(p[3])) {
-            break;
-        }
-    }
-
-    return p;
 }
 
 /* ---------------------------------------------------------------------------
