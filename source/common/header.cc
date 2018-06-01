@@ -116,13 +116,12 @@ void davs2_reconfigure_decoder(davs2_mgr_t *h)
  * sequence header
  */
 static
-int parse_sequence_header(davs2_t *h)
+int parse_sequence_header(davs2_t *h, davs2_bs_t *bs)
 {
     static const float FRAME_RATE[8] = {
         24000.0f / 1001.0f, 24.0f, 25.0f, 30000.0f / 1001.0f, 30.0f, 50.0f, 60000.0f / 1001.0f, 60.0f
     };
     davs2_seq_t *seq = &h->seq_info;
-    davs2_bs_t  *bs = &h->bs;
     rps_t *p_rps      = NULL;
 
     int i, j;
@@ -683,10 +682,9 @@ static int parse_picture_header_inter(davs2_t *h, davs2_bs_t *bs)
 /* ---------------------------------------------------------------------------
  */
 static
-int parse_picture_header(davs2_t *h, uint32_t start_code)
+int parse_picture_header(davs2_t *h, davs2_bs_t *bs, uint32_t start_code)
 {
     davs2_mgr_t *mgr = h->task_info.taskmgr;
-    davs2_bs_t  *bs  = &h->bs;
 
     assert(start_code == SC_INTRA_PICTURE || start_code == SC_INTER_PICTURE);
 
@@ -1510,7 +1508,7 @@ int parse_header(davs2_t *h, davs2_bs_t *p_bs)
             }
 
             /* decode the picture header */
-            if (parse_picture_header(h, start_code) < 0) {
+            if (parse_picture_header(h, p_bs, start_code) < 0) {
                 return -1;
             }
 
@@ -1518,7 +1516,7 @@ int parse_header(davs2_t *h, davs2_bs_t *p_bs)
 
         case SC_SEQUENCE_HEADER:
             /* decode the sequence head */
-            if (parse_sequence_header(h) < 0) {
+            if (parse_sequence_header(h, p_bs) < 0) {
                 davs2_log(h, NULL, "Invalid sequence header.");
                 return -1;
             }
