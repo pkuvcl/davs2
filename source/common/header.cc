@@ -888,7 +888,8 @@ void destroy_dpb(davs2_mgr_t *mgr)
 /* ---------------------------------------------------------------------------
  * create decoding picture buffer(DPB)
  */
-static int create_dpb(davs2_mgr_t *mgr, davs2_t *h)
+static INLINE
+int create_dpb(davs2_mgr_t *mgr)
 {
     davs2_seq_t *seq = &mgr->seq_info;
     uint8_t      *mem_ptr = NULL;
@@ -899,8 +900,8 @@ static int create_dpb(davs2_mgr_t *mgr, davs2_t *h)
     mgr->dpbsize += 8;  // FIXME: ÐèÒª¼õÉÙ
 
     mem_size = mgr->dpbsize * sizeof(davs2_frame_t *)
-        + davs2_frame_get_size(h->i_width, h->i_height, h->i_chroma_format, 1) * mgr->dpbsize
-        + davs2_frame_get_size(h->i_width, h->i_height, h->i_chroma_format, 0)
+        + davs2_frame_get_size(seq->i_enc_width, seq->i_enc_height, seq->head.chroma_format, 1) * mgr->dpbsize
+        + davs2_frame_get_size(seq->i_enc_width, seq->i_enc_height, seq->head.chroma_format, 0)
         + CACHE_LINE_SIZE * (mgr->dpbsize + 2);
 
     mem_ptr = (uint8_t *)davs2_malloc(mem_size);
@@ -913,7 +914,7 @@ static int create_dpb(davs2_mgr_t *mgr, davs2_t *h)
     ALIGN_POINTER(mem_ptr);
 
     for (i = 0; i < mgr->dpbsize; i++) {
-        mgr->dpb[i] = davs2_frame_new(h->i_width, h->i_height, h->i_chroma_format, &mem_ptr, 1);
+        mgr->dpb[i] = davs2_frame_new(seq->i_enc_width, seq->i_enc_height, seq->head.chroma_format, &mem_ptr, 1);
         ALIGN_POINTER(mem_ptr);
 
         if (mgr->dpb[i] == NULL) {
@@ -1098,7 +1099,7 @@ int task_set_sequence_head(davs2_t *h)
                 ret = -1;
             }
 
-            if (create_dpb(mgr, h) < 0) {
+            if (create_dpb(mgr) < 0) {
                 /* error */
                 ret = -1;
                 memset(&mgr->seq_info, 0, sizeof(davs2_seq_t));
