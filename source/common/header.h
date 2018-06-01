@@ -36,8 +36,9 @@
 extern "C" {
 #endif
 
-void parse_slice_header(davs2_t *h);
+void parse_slice_header(davs2_t *h, davs2_bs_t *bs);
 int  parse_header(davs2_t *h, davs2_bs_t *p_bs);
+
 void release_one_frame(davs2_frame_t *frame);
 void task_release_frames(davs2_t *h);
 

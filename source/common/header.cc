@@ -755,10 +755,8 @@ int parse_picture_header(davs2_t *h, uint32_t start_code)
 
 /* ---------------------------------------------------------------------------
  */
-void parse_slice_header(davs2_t *h)
+void parse_slice_header(davs2_t *h, davs2_bs_t *bs)
 {
-    davs2_bs_t *bs = &h->bs;
-
     int slice_vertical_position;
     int slice_vertical_position_extension = 0;
     int slice_horizontal_positon;

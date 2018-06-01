@@ -352,7 +352,7 @@ int check_slice_header(davs2_t *h, davs2_bs_t *bs, int lcu_y)
         bs->i_bit_pos = (((bs->i_bit_pos + 7) >> 3) << 3);
         h->i_slice_index++;
 
-        parse_slice_header(h);
+        parse_slice_header(h, bs);
         aec_init_contexts(p_aec);
         aec_new_slice(h);
         aec_start_decoding(p_aec, bs->p_stream, ((bs->i_bit_pos + 7) / 8), bs->i_stream);
