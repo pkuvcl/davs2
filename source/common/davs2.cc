@@ -567,15 +567,13 @@ int decoder_decode_es_unit(davs2_mgr_t *mgr, davs2_t *h, es_unit_t *es_unit)
 {
     int b_wait_output = 0;
 
-    davs2_thread_mutex_lock(&mgr->mutex_aec);
- 
-    /* task is busy */
-    h->task_info.task_status = TASK_BUSY;
-    h->task_info.curr_es_unit = es_unit;
-
     /* decode this frame
-    * (1) init bs */
+     * (1) init bs */
     bs_init(&es_unit->bs, es_unit->data, es_unit->len);
+
+    davs2_thread_mutex_lock(&mgr->mutex_aec);
+
+    h->task_info.curr_es_unit = es_unit;     /* record the ES_unit to be decoded */
 
     /* (2) parse header */
     if (parse_header(h, &es_unit->bs) == 0) {
