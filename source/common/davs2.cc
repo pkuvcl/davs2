@@ -477,7 +477,7 @@ davs2_decoder_open(davs2_param_t *param)
 
     /* init log module */
     mgr->module_log.i_log_level = param->i_info_level;
-    sprintf(mgr->module_log.module_name, "Manager %06llx", mgr);
+    sprintf(mgr->module_log.module_name, "Manager %06llx", (intptr_t)(mgr));
 
     if (mgr->param.threads <= 0) {
         mgr->param.threads = davs2_cpu_num_processors();
