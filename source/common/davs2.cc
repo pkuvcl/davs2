@@ -292,7 +292,7 @@ davs2_outpic_t *output_list_get_one_output_picture(davs2_mgr_t *mgr)
             }
 
             /* 目前输出队列的最小POC与已输出的POC之间间隔较大，将输出POC提前到当前最小POC */
-            davs2_log(&mgr->decoders[0], DAVS2_LOG_WARNING, "Advance to discontinuous POC: %d\n", frame->i_poc);
+            davs2_log(mgr, DAVS2_LOG_WARNING, "Advance to discontinuous POC: %d\n", frame->i_poc);
             mgr->outpics.output = frame->i_poc;
         }
     }
@@ -464,7 +464,7 @@ davs2_decoder_open(davs2_param_t *param)
 
     /* CPU capacities */
     davs2_get_simd_capabilities(buf_cpu, cpuid);
-    davs2_log(NULL, DAVS2_LOG_INFO, "CPU Capabilities: %s", buf_cpu);
+    davs2_log(mgr, DAVS2_LOG_INFO, "CPU Capabilities: %s", buf_cpu);
 
     mem_size = sizeof(davs2_mgr_t) + CACHE_LINE_SIZE
         + AVS2_THREAD_MAX * (sizeof(davs2_t) + CACHE_LINE_SIZE);
@@ -484,7 +484,7 @@ davs2_decoder_open(davs2_param_t *param)
     }
     if (mgr->param.threads > max_num_thread) {
         mgr->param.threads = max_num_thread;
-        davs2_log(NULL, DAVS2_LOG_WARNING, "Max number of thread reached, forcing to be %d\n", max_num_thread);
+        davs2_log(mgr, DAVS2_LOG_WARNING, "Max number of thread reached, forcing to be %d\n", max_num_thread);
     }
 
     /* init members that could not be zero */
@@ -527,9 +527,9 @@ davs2_decoder_open(davs2_param_t *param)
     if (mgr->num_total_thread < 1 || mgr->num_decoders < mgr->num_aec_thread ||
         mgr->num_rec_thread < 0 ||
         mgr->num_aec_thread < 1 || mgr->num_aec_thread > mgr->num_total_thread) {
-        davs2_log(NULL, DAVS2_LOG_ERROR, 
-            "Invalid thread number configuration: num_task[%d], num_threads[%d], num_aec_thread[%d], num_pool[%d]\n",
-            mgr->num_decoders, mgr->num_total_thread, mgr->num_aec_thread, mgr->num_rec_thread);
+        davs2_log(mgr, DAVS2_LOG_ERROR,
+                  "Invalid thread number configuration: num_task[%d], num_threads[%d], num_aec_thread[%d], num_pool[%d]\n",
+                  mgr->num_decoders, mgr->num_total_thread, mgr->num_aec_thread, mgr->num_rec_thread);
         goto fail;
     }
 
@@ -553,7 +553,7 @@ davs2_decoder_open(davs2_param_t *param)
     /* initialize thread pool for AEC decoding and reconstruction */
     davs2_threadpool_init((davs2_threadpool_t **)&mgr->thread_pool, mgr->num_total_thread, NULL, NULL, 0);
 
-    davs2_log(NULL, DAVS2_LOG_INFO, "using %d thread(s): %d(frame/AEC)+%d(pool/REC), %d tasks", 
+    davs2_log(mgr, DAVS2_LOG_INFO, "using %d thread(s): %d(frame/AEC)+%d(pool/REC), %d tasks", 
         mgr->num_total_thread, mgr->num_aec_thread, mgr->num_rec_thread, mgr->num_decoders);
 
     return mgr;
@@ -634,13 +634,13 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
     }
     /* check packet length */
     if (packet->len < 4) {
-        davs2_log(mgr->decoders, DAVS2_LOG_DEBUG, "Invalid packet, 4 bytes are needed for one packet (including start_code). Len = %d",
+        davs2_log(mgr, DAVS2_LOG_DEBUG, "Invalid packet, 4 bytes are needed for one packet (including start_code). Len = %d",
                   packet->len);
         return DAVS2_ERROR;              /* error */
     }
     /* check the first 3 bytes are START_CODE */
     if (packet->data[0] != 0x00 || packet->data[1] != 0x00 || packet->data[2] != 0x01) {
-        davs2_log(mgr->decoders, DAVS2_LOG_ERROR, "Invalid input Byte-Stream, not start code: %02x%02x%02x",
+        davs2_log(mgr, DAVS2_LOG_ERROR, "Invalid input Byte-Stream, not start code: %02x%02x%02x",
                   packet->data[0], packet->data[1], packet->data[2]);
         return DAVS2_ERROR;
     }
@@ -648,11 +648,11 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
     /* generate one es_unit for current byte-stream buffer */
     es_unit = davs2_pack_es_unit(mgr, packet->data, packet->len, packet->pts, packet->dts);
     if (es_unit == NULL && mgr->es_unit == NULL) {
-        davs2_log(mgr->decoders, DAVS2_LOG_ERROR, "Failed to create an ES_UNIT, input Byte-Stream length %d",
+        davs2_log(mgr, DAVS2_LOG_ERROR, "Failed to create an ES_UNIT, input Byte-Stream length %d",
                   packet->len);
         return DAVS2_ERROR;
     } else if (es_unit == NULL) {
-        // davs2_log(mgr->decoders, DAVS2_LOG_DEBUG, "Buffered byte-stream length: %d",
+        // davs2_log(mgr, DAVS2_LOG_DEBUG, "Buffered byte-stream length: %d",
         //           packet->len);
         return packet->len;
     }
