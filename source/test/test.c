@@ -172,9 +172,6 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
 
     const uint8_t *data = data_buf;
     const uint8_t *data_next_start_code;
-#if _DEBUG
-    int count_send = 0;
-#endif
 
     /* init the decoder */
     param.threads      = inputparam.g_threads;
@@ -188,6 +185,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
     /* do decoding */
     for (;;) {
         int len;
+        int got_frame;
 
         data_next_start_code = find_start_code_pic(data + 4, data_len - 4);
 
@@ -204,22 +202,15 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
         packet.pts  = 0;        /* clear the user pts */
         packet.dts  = 0;        /* clear the user dts */
 
-        len = davs2_decoder_decode(decoder, &packet, &headerset, &out_frame);
-#if _DEBUG
-        if (len != packet.len) {
-            printf("error [%4d]: byte-stream were not totally sent to decoder, %d/%d\n", count_send, len, packet.len);
-        }
-        count_send++;
-#endif
-
-        if (out_frame.ret_type != DAVS2_DEFAULT) {
-            output_decoded_frame(&out_frame, &headerset, num_frames);
-            davs2_decoder_frame_unref(decoder, &out_frame);
-        }
-
-        if (len < 0) {
+        got_frame = davs2_decoder_decode(decoder, &packet, &headerset, &out_frame);
+        if (got_frame == DAVS2_ERROR) {
             printf("Error: An decoder error counted\n");
             break;
+        }
+
+        if (got_frame != DAVS2_DEFAULT) {
+            output_decoded_frame(&out_frame, &headerset, num_frames);
+            davs2_decoder_frame_unref(decoder, &out_frame);
         }
 
         data_len -= len;

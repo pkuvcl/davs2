@@ -201,9 +201,10 @@ davs2_decoder_open(davs2_param_t *param);
  * ---------------------------------------------------------------------------
  * Function   : decode one frame
  * Parameters :
- *       [in] : decoder - pointer to the AVS2 decoder handler
- *   [in/out] : packet  - pointer to struct davs2_packet_t
- * Return     : 0 for successful, otherwise -1
+ *       [in] : decoder   - pointer to the AVS2 decoder handler
+ *       [in] : packet    - pointer to struct davs2_packet_t
+ *      [out] : out_frame - pointer to output frame information
+ * Return     : see definition of davs2_ret_e
  * ---------------------------------------------------------------------------
  */
 DAVS2_API int
@@ -213,8 +214,9 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
  * ---------------------------------------------------------------------------
  * Function   : flush the decoder
  * Parameters :
- *       [in] : decoder - decoder handle
- * Return     : none
+ *       [in] : decoder   - decoder handle
+ *      [out] : out_frame - pointer to output frame information
+ * Return     : see definition of davs2_ret_e
  * ---------------------------------------------------------------------------
  */
 DAVS2_API int

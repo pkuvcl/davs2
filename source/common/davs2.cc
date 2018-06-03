@@ -630,8 +630,9 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
     /* check the input parameter: packet */
     if (packet == NULL || packet->data == NULL || packet->len <= 0) {
         davs2_log(mgr->decoders, DAVS2_LOG_DEBUG, "Null input packet");
-        return -1;              /* error */
+        return DAVS2_ERROR;              /* error */
     }
+
     /* check packet length */
     if (packet->len < 4) {
         davs2_log(mgr, DAVS2_LOG_DEBUG, "Invalid packet, 4 bytes are needed for one packet (including start_code). Len = %d",
@@ -654,7 +655,7 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
     } else if (es_unit == NULL) {
         // davs2_log(mgr, DAVS2_LOG_DEBUG, "Buffered byte-stream length: %d",
         //           packet->len);
-        return packet->len;
+        return DAVS2_DEFAULT;
     }
 
     /* decode one frame */
@@ -685,7 +686,7 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
         fflush(fp_trace_in);
     }
 #endif
-    return packet->len;
+    return out_frame->ret_type;
 }
 
 

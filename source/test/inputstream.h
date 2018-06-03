@@ -66,9 +66,6 @@ static __inline
 const uint8_t *
 find_start_code_pic(const uint8_t *data, int len) 
 {
-    const uint8_t *data0 = data;
-    const uint8_t *p = data + len;
-
     if (len <= 4) {
         return data + len;
     } else {
