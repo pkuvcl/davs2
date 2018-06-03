@@ -1508,13 +1508,14 @@ int parse_header(davs2_t *h, davs2_bs_t *p_bs)
             return 0; /// !!! we only decode one frame for a single call.
 
         case SC_SEQUENCE_HEADER:
+            davs2_seq_t new_seq;
             /* decode the sequence head */
-            if (parse_sequence_header(h->task_info.taskmgr, &h->seq_info, p_bs) < 0) {
+            if (parse_sequence_header(h->task_info.taskmgr, &new_seq, p_bs) < 0) {
                 davs2_log(h, NULL, "Invalid sequence header.");
                 return -1;
             }
             /* update the task manager */
-            if (task_set_sequence_head(h->task_info.taskmgr, &h->seq_info) < 0) {
+            if (task_set_sequence_head(h->task_info.taskmgr, &new_seq) < 0) {
                 return -1;
             }
 
