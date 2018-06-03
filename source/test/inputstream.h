@@ -62,19 +62,6 @@ find_start_code(const uint8_t *data, int len)
 
 /* ---------------------------------------------------------------------------
  */
-static __inline 
-const uint8_t *
-find_start_code_pic(const uint8_t *data, int len) 
-{
-    if (len <= 4) {
-        return data + len;
-    } else {
-        return find_start_code(data, len);
-    }
-}
-
-/* ---------------------------------------------------------------------------
- */
 static int
 check_frame(const uint8_t *data, int len)
 {
