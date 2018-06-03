@@ -116,12 +116,11 @@ void davs2_reconfigure_decoder(davs2_mgr_t *h)
  * sequence header
  */
 static
-int parse_sequence_header(davs2_t *h, davs2_bs_t *bs)
+int parse_sequence_header(davs2_t *h, davs2_seq_t *seq, davs2_bs_t *bs)
 {
     static const float FRAME_RATE[8] = {
         24000.0f / 1001.0f, 24.0f, 25.0f, 30000.0f / 1001.0f, 30.0f, 50.0f, 60000.0f / 1001.0f, 60.0f
     };
-    davs2_seq_t *seq = &h->seq_info;
     rps_t *p_rps      = NULL;
 
     int i, j;
@@ -268,7 +267,7 @@ int parse_sequence_header(davs2_t *h, davs2_bs_t *bs)
 
     seq->i_enc_width     = ((seq->head.horizontal_size + MIN_CU_SIZE - 1) >> MIN_CU_SIZE_IN_BIT) << MIN_CU_SIZE_IN_BIT;
     seq->i_enc_height    = ((seq->head.vertical_size   + MIN_CU_SIZE - 1) >> MIN_CU_SIZE_IN_BIT) << MIN_CU_SIZE_IN_BIT;
-    h->seq_info.valid_flag = 1;
+    seq->valid_flag = 1;
 
     return 0;
 }
@@ -1061,10 +1060,8 @@ int task_decoder_update(davs2_t *h)
 /* ---------------------------------------------------------------------------
  */
 static
-int task_set_sequence_head(davs2_t *h)
+int task_set_sequence_head(davs2_mgr_t *mgr, davs2_t *h, davs2_seq_t *seq)
 {
-    davs2_mgr_t *mgr = h->task_info.taskmgr;
-    davs2_seq_t *seq = &h->seq_info;
     int ret = 0;
 
     davs2_thread_mutex_lock(&mgr->mutex_mgr);
@@ -1516,13 +1513,12 @@ int parse_header(davs2_t *h, davs2_bs_t *p_bs)
 
         case SC_SEQUENCE_HEADER:
             /* decode the sequence head */
-            if (parse_sequence_header(h, p_bs) < 0) {
+            if (parse_sequence_header(h, &h->seq_info, p_bs) < 0) {
                 davs2_log(h, NULL, "Invalid sequence header.");
                 return -1;
             }
-
             /* update the task manager */
-            if (task_set_sequence_head(h) < 0) {
+            if (task_set_sequence_head(h->task_info.taskmgr, h, &h->seq_info) < 0) {
                 return -1;
             }
 
