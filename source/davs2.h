@@ -165,7 +165,6 @@ typedef struct davs2_picture_t {
     int             i_pic_planes;     /* number of planes */
     int             bytes_per_sample; /* number of bytes for each sample */
     int             pic_bit_depth;    /* number of bytes for each sample */
-    int             ret_type;         /* return type, davs2_ret_e */
     int             pic_decode_error; /* is there any decoding error of this frame? */
 } davs2_picture_t;
 

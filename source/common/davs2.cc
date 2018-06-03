@@ -317,7 +317,6 @@ int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_pict
         if (mgr->new_sps) {
             memcpy(headerset, &mgr->seq_info.head, sizeof(davs2_seq_info_t));
             mgr->new_sps = FALSE; /* set flag */
-            out_frame->ret_type = DAVS2_GOT_HEADER;
             out_frame->magic = NULL;
             return DAVS2_GOT_HEADER;
         }
@@ -336,7 +335,6 @@ int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_pict
         if (mgr->new_sps) {
             memcpy(headerset, &mgr->seq_info.head, sizeof(davs2_seq_info_t));
             mgr->new_sps = FALSE; /* set flag */
-            out_frame->ret_type = DAVS2_GOT_HEADER;
             out_frame->magic = NULL;
             return DAVS2_GOT_HEADER;
         }
@@ -354,9 +352,7 @@ int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_pict
     /* deliver this frame */
     memcpy(out_frame, pic->pic, sizeof(davs2_picture_t));
     out_frame->magic       = pic;
-    out_frame->ret_type    = mgr->new_sps ? DAVS2_GOT_BOTH : DAVS2_GOT_FRAME;
-
-    return DAVS2_GOT_FRAME;
+    return mgr->new_sps ? DAVS2_GOT_BOTH : DAVS2_GOT_FRAME;
 }
 
 /**
@@ -611,9 +607,9 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
     es_unit_t *es_unit = NULL;
     int b_wait_output = 0;
     int start_code = 0;
+    int ret_type = DAVS2_DEFAULT;
 
     /* clear output frame data */
-    out_frame->ret_type = DAVS2_DEFAULT;
     out_frame->magic    = NULL;
 
 #if DAVS2_TRACE_API
@@ -675,18 +671,18 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
 
     /* get one frame or sequence header */
     if (b_wait_output || mgr->new_sps) {
-        decoder_get_output(mgr, headerset, out_frame, 0);
+        ret_type = decoder_get_output(mgr, headerset, out_frame, 0);
     }
 
 #if DAVS2_TRACE_API
     if (fp_trace_in) {
         fprintf(fp_trace_in, "\t%8d\t%2d\t%4d\t%3d\t%3d\n", 
-                packet->len, out_frame->ret_type, out_frame->pic_order_count,
+                packet->len, ret_type, out_frame->pic_order_count,
                 mgr->num_frames_in, mgr->num_frames_out);
         fflush(fp_trace_in);
     }
 #endif
-    return out_frame->ret_type;
+    return ret_type;
 }
 
 
@@ -711,7 +707,7 @@ davs2_decoder_flush(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t 
 
     mgr->b_flushing     = 1; // label the decoder being flushing
     out_frame->magic    = NULL;
-    out_frame->ret_type = DAVS2_DEFAULT;
+    ret = DAVS2_DEFAULT;
 
 #if DAVS2_TRACE_API
     if (fp_trace_in) {

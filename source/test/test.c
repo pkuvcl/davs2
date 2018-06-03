@@ -96,7 +96,7 @@ davs2_input_param_t inputparam = {
 /* ---------------------------------------------------------------------------
  */
 static 
-void output_decoded_frame(davs2_picture_t *pic, davs2_seq_info_t *headerset, int num_frames)
+void output_decoded_frame(davs2_picture_t *pic, davs2_seq_info_t *headerset, int ret_type, int num_frames)
 {
     static char IMGTYPE[] = {'I', 'P', 'B', 'G', 'F', 'S', '\x0'};
     double psnr_y = 0.0f, psnr_u = 0.0f, psnr_v = 0.0f;
@@ -105,7 +105,7 @@ void output_decoded_frame(davs2_picture_t *pic, davs2_seq_info_t *headerset, int
         return;
     }
 
-    if (pic == NULL || pic->ret_type == DAVS2_GOT_HEADER) {
+    if (pic == NULL || ret_type == DAVS2_GOT_HEADER) {
         show_message(CONSOLE_GREEN,
             "  Sequence size: %dx%d; BitDepth: %d/%d, FrameRate: %.3lf Hz\n\n", 
             headerset->horizontal_size, headerset->vertical_size, 
@@ -161,7 +161,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
     davs2_packet_t   packet;     // input bitstream
     davs2_picture_t  out_frame;  // output data, frame data
     davs2_seq_info_t headerset;  // output data, sequence header
-    int ret;
+    int got_frame;
 
 #if CTRL_LOOP_DEC_FILE
     uint8_t *bak_data_buf = data_buf;
@@ -187,7 +187,6 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
     /* do decoding */
     for (;;) {
         int len;
-        int got_frame;
 
         data_next_start_code = find_start_code(data + 4, data_len - 4);
 
@@ -212,7 +211,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
         }
 
         if (got_frame != DAVS2_DEFAULT) {
-            output_decoded_frame(&out_frame, &headerset, num_frames);
+            output_decoded_frame(&out_frame, &headerset, got_frame, num_frames);
             davs2_decoder_frame_unref(decoder, &out_frame);
         }
 
@@ -235,12 +234,12 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
 
     /* flush the decoder */
     for (;;) {
-        ret = davs2_decoder_flush(decoder, &headerset, &out_frame);
-        if (ret < 0 || ret == DAVS2_END) {
+        got_frame = davs2_decoder_flush(decoder, &headerset, &out_frame);
+        if (got_frame == DAVS2_ERROR || got_frame == DAVS2_END) {
             break;
         }
-        if (out_frame.ret_type != DAVS2_DEFAULT) {
-            output_decoded_frame(&out_frame, &headerset, num_frames);
+        if (got_frame != DAVS2_DEFAULT) {
+            output_decoded_frame(&out_frame, &headerset, got_frame, num_frames);
             davs2_decoder_frame_unref(decoder, &out_frame);
         }
     }
