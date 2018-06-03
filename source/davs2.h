@@ -143,7 +143,6 @@ typedef struct davs2_seq_info_t {
 typedef struct davs2_packet_t {
     uint8_t        *data;             /* bitstream */
     int             len;              /* bytes of the bitstream */
-    int             marker;           /* force a frame boundary after this packet */
     int64_t         pts;              /* presentation time stamp */
     int64_t         dts;              /* decoding time stamp */
 } davs2_packet_t;

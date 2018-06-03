@@ -191,10 +191,8 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
 
         if (data_next_start_code) {
             len = data_next_start_code - data;
-            packet.marker = 0;
         } else {
             len = data_len;
-            packet.marker = 1;
         }
 
         packet.data = (uint8_t *) data;
