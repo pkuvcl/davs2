@@ -116,7 +116,7 @@ void davs2_reconfigure_decoder(davs2_mgr_t *h)
  * sequence header
  */
 static
-int parse_sequence_header(davs2_t *h, davs2_seq_t *seq, davs2_bs_t *bs)
+int parse_sequence_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
 {
     static const float FRAME_RATE[8] = {
         24000.0f / 1001.0f, 24.0f, 25.0f, 30000.0f / 1001.0f, 30.0f, 50.0f, 60000.0f / 1001.0f, 60.0f
@@ -146,7 +146,7 @@ int parse_sequence_header(davs2_t *h, davs2_seq_t *seq, davs2_bs_t *bs)
         return -1;
     }
     if (seq->head.chroma_format == CHROMA_400) {
-        davs2_log(h, DAVS2_LOG_WARNING, "Un-supported Chroma Format YUV400 as 0 for GB/T.\n");
+        davs2_log(mgr, DAVS2_LOG_WARNING, "Un-supported Chroma Format YUV400 as 0 for GB/T.\n");
     }
 
     /* sample bit depth */
@@ -180,6 +180,7 @@ int parse_sequence_header(davs2_t *h, davs2_seq_t *seq, davs2_bs_t *bs)
     seq->log2_lcu_size             = u_v(bs, 3, "Largest Coding Block Size");
 
     if (seq->log2_lcu_size < 4 || seq->log2_lcu_size > 6) {
+        davs2_log(mgr, DAVS2_LOG_ERROR, "Invalid LCU size: %d\n", seq->log2_lcu_size);
         return -1;
     }
 
@@ -222,7 +223,7 @@ int parse_sequence_header(davs2_t *h, davs2_seq_t *seq, davs2_bs_t *bs)
     seq->enable_pmvr               = u_flag(bs, "pmvr enabled");
 
     if (1 != u_v(bs, 1, "marker bit"))  {
-        davs2_log(h, DAVS2_LOG_ERROR, "expected marker_bit 1 while received 0, FILE %s, Row %d\n", __FILE__, __LINE__);
+        davs2_log(mgr, DAVS2_LOG_ERROR, "expected marker_bit 1 while received 0, FILE %s, Row %d\n", __FILE__, __LINE__);
     }
 
     num_of_rps                      = u_v(bs, 6, "num_of_RPS");
@@ -249,7 +250,7 @@ int parse_sequence_header(davs2_t *h, davs2_seq_t *seq, davs2_bs_t *bs)
         }
 
         if (1 != u_v(bs, 1, "marker bit"))  {
-            davs2_log(h, DAVS2_LOG_ERROR, "expected marker_bit 1 while received 0, FILE %s, Row %d\n", __FILE__, __LINE__);
+            davs2_log(mgr, DAVS2_LOG_ERROR, "expected marker_bit 1 while received 0, FILE %s, Row %d\n", __FILE__, __LINE__);
         }
     }
 
@@ -1060,7 +1061,7 @@ int task_decoder_update(davs2_t *h)
 /* ---------------------------------------------------------------------------
  */
 static
-int task_set_sequence_head(davs2_mgr_t *mgr, davs2_t *h, davs2_seq_t *seq)
+int task_set_sequence_head(davs2_mgr_t *mgr, davs2_seq_t *seq)
 {
     int ret = 0;
 
@@ -1075,9 +1076,9 @@ int task_set_sequence_head(davs2_mgr_t *mgr, davs2_t *h, davs2_seq_t *seq)
 
         if (newres) {
             /* resolution changed : new sequence */
-            davs2_log(h, DAVS2_LOG_INFO, "Sequence Resolution: %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
+            davs2_log(mgr, DAVS2_LOG_INFO, "Sequence Resolution: %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
             if ((seq->head.horizontal_size & 0) != 0 || (seq->head.vertical_size & 1) != 0) {
-                davs2_log(h, DAVS2_LOG_ERROR, "Sequence Resolution %dx%d is not even\n",
+                davs2_log(mgr, DAVS2_LOG_ERROR, "Sequence Resolution %dx%d is not even\n",
                     seq->head.horizontal_size, seq->head.vertical_size);
             }
 
@@ -1091,14 +1092,14 @@ int task_set_sequence_head(davs2_mgr_t *mgr, davs2_t *h, davs2_seq_t *seq)
                 /* error */
                 ret = -1;
                 memset(&mgr->seq_info, 0, sizeof(davs2_seq_t));
-                davs2_log(h, DAVS2_LOG_ERROR, "failed to create dpb buffers. %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
+                davs2_log(mgr, DAVS2_LOG_ERROR, "failed to create dpb buffers. %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
             }
             mgr->new_sps = TRUE;
         }
     } else {
         /* invalid header */
         memset(&mgr->seq_info, 0, sizeof(davs2_seq_t));
-        davs2_log(h, DAVS2_LOG_ERROR, "decoded an invalid sequence header: %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
+        davs2_log(mgr, DAVS2_LOG_ERROR, "decoded an invalid sequence header: %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
     }
 
     davs2_thread_mutex_unlock(&mgr->mutex_mgr);
@@ -1508,12 +1509,12 @@ int parse_header(davs2_t *h, davs2_bs_t *p_bs)
 
         case SC_SEQUENCE_HEADER:
             /* decode the sequence head */
-            if (parse_sequence_header(h, &h->seq_info, p_bs) < 0) {
+            if (parse_sequence_header(h->task_info.taskmgr, &h->seq_info, p_bs) < 0) {
                 davs2_log(h, NULL, "Invalid sequence header.");
                 return -1;
             }
             /* update the task manager */
-            if (task_set_sequence_head(h->task_info.taskmgr, h, &h->seq_info) < 0) {
+            if (task_set_sequence_head(h->task_info.taskmgr, &h->seq_info) < 0) {
                 return -1;
             }
 
