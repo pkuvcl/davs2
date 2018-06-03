@@ -563,13 +563,17 @@ fail:
 
 /* ---------------------------------------------------------------------------
  */
-int decoder_decode_es_unit(davs2_mgr_t *mgr, davs2_t *h, es_unit_t *es_unit)
+int decoder_decode_es_unit(davs2_mgr_t *mgr, es_unit_t *es_unit)
 {
+    davs2_t *h = NULL;
     int b_wait_output = 0;
 
     /* decode this frame
      * (1) init bs */
     bs_init(&es_unit->bs, es_unit->data, es_unit->len);
+
+    h = task_get_free_task(mgr);
+    mgr->h_dec = h;
 
     davs2_thread_mutex_lock(&mgr->mutex_aec);
 
@@ -606,7 +610,6 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
     davs2_mgr_t *mgr = (davs2_mgr_t *)decoder;
     es_unit_t *es_unit = NULL;
     int b_wait_output = 0;
-    int start_code = 0;
     int ret_type = DAVS2_DEFAULT;
 
     /* clear output frame data */
@@ -655,19 +658,7 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
     }
 
     /* decode one frame */
-    start_code = packet->data[3];
-    if (start_code == SC_SEQUENCE_HEADER ||
-        start_code == SC_INTER_PICTURE ||
-        start_code == SC_INTRA_PICTURE) {
-        davs2_t *h = task_get_free_task(mgr);
-        mgr->h_dec = h;
-        b_wait_output = decoder_decode_es_unit(mgr, mgr->h_dec, es_unit);
-    } else {
-        // TO be different
-        davs2_t *h = task_get_free_task(mgr);
-        mgr->h_dec = h;
-        b_wait_output = decoder_decode_es_unit(mgr, mgr->h_dec, es_unit);
-    }
+    b_wait_output = decoder_decode_es_unit(mgr, es_unit);
 
     /* get one frame or sequence header */
     if (b_wait_output || mgr->new_sps) {
@@ -718,11 +709,9 @@ davs2_decoder_flush(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t 
 
     // flush buffered bit-stream
     if (mgr->es_unit != NULL && mgr->es_unit->len >= 4) {
-        davs2_t *h = task_get_free_task(mgr);
         es_unit_t *es_unit = mgr->es_unit;
         mgr->es_unit = NULL;
-        mgr->h_dec = h;
-        decoder_decode_es_unit(mgr, mgr->h_dec, es_unit);
+        decoder_decode_es_unit(mgr, es_unit);
     }
 
     ret = decoder_get_output(mgr, headerset, out_frame, 1);
