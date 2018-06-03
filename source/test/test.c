@@ -127,9 +127,10 @@ void output_decoded_frame(davs2_picture_t *pic, davs2_seq_info_t *headerset, int
         } else {
             if (inputparam.g_verbose || psnr) {
                 show_message(psnr ? CONSOLE_RED : CONSOLE_WHITE,
-                    "%5d(%d)\t(%c) %3d\t%8.4lf %8.4lf %8.4lf\t\t\n", 
+                    "%5d(%d)\t(%c) %3d\t%8.4lf %8.4lf %8.4lf \t%6lld %6lld\n", 
                     g_frmcount, pic->pic_order_count,
-                    IMGTYPE[pic->type], pic->QP, psnr_y, psnr_u, psnr_v);
+                    IMGTYPE[pic->type], pic->QP, psnr_y, psnr_u, psnr_v,
+                    pic->pts, pic->dts);
             }
         }
     } else if (inputparam.g_verbose) {
@@ -172,6 +173,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
 
     const uint8_t *data = data_buf;
     const uint8_t *data_next_start_code;
+    int user_dts = 0;  // only used to check the returning value of DTS and PTS
 
     /* init the decoder */
     param.threads      = inputparam.g_threads;
@@ -197,8 +199,11 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
 
         packet.data = (uint8_t *) data;
         packet.len  = len;
-        packet.pts  = 0;        /* clear the user pts */
-        packet.dts  = 0;        /* clear the user dts */
+
+        // set PTS/DTS, which was only used to check whether they could be passed out rightly
+        packet.pts  =  user_dts;
+        packet.dts  = -user_dts;
+        user_dts++;
 
         got_frame = davs2_decoder_decode(decoder, &packet, &headerset, &out_frame);
         if (got_frame == DAVS2_ERROR) {
