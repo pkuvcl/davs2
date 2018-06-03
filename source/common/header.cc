@@ -1087,11 +1087,6 @@ int task_set_sequence_head(davs2_mgr_t *mgr, davs2_t *h, davs2_seq_t *seq)
 
             destroy_dpb(mgr);
 
-            /* update the decoder */
-            if (task_decoder_update(h) < 0) {
-                ret = -1;
-            }
-
             if (create_dpb(mgr) < 0) {
                 /* error */
                 ret = -1;

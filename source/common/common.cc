@@ -416,11 +416,11 @@ davs2_log_default(int i_log_level, const char *psz_fmt)
  */
 void davs2_log(void *handle, int level, const char *format, ...)
 {
-    davs2_t *h = (davs2_t *)handle;
+    davs2_log_t *h = (davs2_log_t *)handle;
     int i_enable_level = 0;
 
     if (h != NULL) {
-        i_enable_level = h->task_info.taskmgr->param.i_info_level;
+        i_enable_level = h->i_log_level;
     }
 
     assert(level >= 0 && level < DAVS2_LOG_MAX);
@@ -429,7 +429,7 @@ void davs2_log(void *handle, int level, const char *format, ...)
         char message[2048] = { 0 };
         
         if (h != NULL) {
-            sprintf(message, "Dec[%d] %06llx: ", h->task_info.task_id, (uint64_t)(h));
+            sprintf(message, "%s: ", h->module_name);
         }
 
         va_list arg_ptr;

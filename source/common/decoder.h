@@ -38,7 +38,7 @@ extern "C" {
 
 #include "common.h"
 
-davs2_t *decoder_open(davs2_mgr_t *mgr, davs2_t *h);
+davs2_t *decoder_open(davs2_mgr_t *mgr, davs2_t *h, int idx_decoder);
 void *decoder_decode_picture_data(void *arg1, int arg2);
 void decoder_close(davs2_t *h);
 int  create_freepictures(davs2_mgr_t *mgr, int w, int h, int size);

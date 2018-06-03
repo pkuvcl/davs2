@@ -475,6 +475,10 @@ davs2_decoder_open(davs2_param_t *param)
     ALIGN_POINTER(mem_ptr);
     memcpy(&mgr->param, param, sizeof(davs2_param_t));
 
+    /* init log module */
+    mgr->module_log.i_log_level = param->i_info_level;
+    sprintf(mgr->module_log.module_name, "Manager %06llx", mgr);
+
     if (mgr->param.threads <= 0) {
         mgr->param.threads = davs2_cpu_num_processors();
     }
@@ -538,7 +542,7 @@ davs2_decoder_open(davs2_param_t *param)
         davs2_t *h = &mgr->decoders[i];
 
         /* init the decode context */
-        decoder_open(mgr, h);
+        decoder_open(mgr, h, i);
         // davs2_log(h, DAVS2_LOG_WARNING, "Decoder [%2d]: %p", i, h);
 
         h->task_info.task_id     = i;

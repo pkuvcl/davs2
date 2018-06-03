@@ -74,9 +74,10 @@ typedef int16_t                 mct_t;       /* motion compensation temp*/
 typedef uint8_t                 bool_t;     /* type for flag */
 
 typedef struct cu_t             cu_t;
-typedef struct davs2_t         davs2_t;
-typedef struct davs2_mgr_t     davs2_mgr_t;
-typedef struct davs2_outpic_t  davs2_outpic_t;
+typedef struct davs2_log_t      davs2_log_t;
+typedef struct davs2_t          davs2_t;
+typedef struct davs2_mgr_t      davs2_mgr_t;
+typedef struct davs2_outpic_t   davs2_outpic_t;
 
 
 /**
@@ -892,11 +893,19 @@ typedef struct davs2_task_t {
     davs2_thread_t  thread_decode;    /* handle of the decoding thread */
 } davs2_task_t;
 
+/* ---------------------------------------------------------------------------
+ */
+struct davs2_log_t {
+    int         i_log_level;          /* log level */
+    char        module_name[60];      /* module name */
+};
 
 /* ---------------------------------------------------------------------------
  * decoder manager
  */
 struct davs2_mgr_t {
+    davs2_log_t         module_log;   /* log module */
+
     volatile int        b_exit;       /* app signal to exit */
     volatile int        b_flushing;   /* is being flushing */
 
@@ -988,9 +997,11 @@ typedef struct davs2_row_rec_t {
 /* ---------------------------------------------------------------------------
  */
 struct davs2_t {
+    davs2_log_t  module_log;         /* log module */
+
     /* -------------------------------------------------------------
      * task information */
-    ALIGN32(davs2_task_t task_info); /* task information */
+    davs2_task_t task_info;          /* task information */
 
     /* -------------------------------------------------------------
      * sequence */
