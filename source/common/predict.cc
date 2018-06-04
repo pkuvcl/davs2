@@ -514,19 +514,17 @@ static void fill_mv_bskip(davs2_t *h, cu_t *p_cu, int pix_x, int pix_y, int size
         switch (ds_mode) {
         case DS_B_SYM:
         case DS_B_BID:
-            ref_idx.r[0] = 0;
-            ref_idx.r[1] = 0;
+            ref_idx.r[0] = B_FWD;
+            ref_idx.r[1] = B_BWD;
             break;
         case DS_B_BWD:
-            ref_idx.r[0] = -1;
-            ref_idx.r[1] = 0;
+            ref_idx.r[0] = INVALID_REF;
+            ref_idx.r[1] = B_BWD;
             break;
-        case DS_B_FWD:
-            ref_idx.r[0] = 0;
-            ref_idx.r[1] = -1;
-            break;
+        // case DS_B_FWD:
         default:
-            ref_idx.v = 0;
+            ref_idx.r[0] = B_FWD;
+            ref_idx.r[1] = INVALID_REF;
             break;
         }
 
@@ -553,24 +551,28 @@ static void fill_mv_bskip(davs2_t *h, cu_t *p_cu, int pix_x, int pix_y, int size
         int size_cu = size_in_scu << MIN_CU_SIZE_IN_BIT;
         int size_pu = size_cu >> (p_cu->num_pu == 4);
         int size_pu_in_spu = size_pu >> MIN_PU_SIZE_IN_BIT;
+        ref_idx_t ref_idx;
+
+        ref_idx.r[0] = B_FWD;
+        ref_idx.r[1] = B_BWD;
 
         for (i = 0; i < p_cu->num_pu; i++) {
             int i8 = i8_1st + (i &  1) * size_in_scu;
             int j8 = j8_1st + (i >> 1) * size_in_scu;
             int r, c;
             int offset_spu = j8 * width_in_spu + i8;
-            int8_t *refbuf = h->fref[0]->refbuf;
+            const int8_t *refbuf = h->fref[0]->refbuf;
+            int refframe = refbuf[j8 * width_in_spu + i8];
 
             p_mv_1st  = h->p_tmv_1st + offset_spu;
             p_mv_2nd  = h->p_tmv_2nd + offset_spu;
             p_ref_1st = h->p_ref_idx + offset_spu;
             p_dirpred  = h->p_dirpred + offset_spu;
 
-            if (refbuf[offset_spu] == -1) {
+            if (refframe == -1) {
                 get_mvp_default(h, p_cu, pix_x, pix_y, &mv_1st, 0, 0, size_cu, 0);
                 get_mvp_default(h, p_cu, pix_x, pix_y, &mv_2nd, 1, 0, size_cu, 0);
             } else { // next P is skip or inter mode
-                int refframe = refbuf[j8 * width_in_spu + i8];
                 int iTRp     = h->fref[0]->dist_refs[refframe];
                 int iTRp_src = h->fref[0]->dist_scale_refs[refframe];
                 int iTRd     = get_distance_index_b(h, B_BWD);  // bwd
@@ -586,14 +588,14 @@ static void fill_mv_bskip(davs2_t *h, cu_t *p_cu, int pix_x, int pix_y, int size
 
             p_cu->mv[i][0].v = mv_1st.v;
             p_cu->mv[i][1].v = mv_2nd.v;
-            p_cu->ref_idx[i].v = 0;
+            p_cu->ref_idx[i].v = ref_idx.v;
 
             for (r = 0; r < size_pu_in_spu; r++) {
                 for (c = 0; c < size_pu_in_spu; c++) {
                     p_mv_1st [c] = mv_1st;
                     p_mv_2nd [c] = mv_2nd;
 
-                    p_ref_1st[c].v = 0;
+                    p_ref_1st[c].v = ref_idx.v;
                     p_dirpred[c] = PDIR_SYM;
                 }
                 p_ref_1st += width_in_spu;

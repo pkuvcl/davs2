@@ -1293,7 +1293,12 @@ static INLINE void cu_set_pdir_Bframe(cu_t *p_cu, int pdir)
 {
     static const int8_t pdir0[16] = { PDIR_FWD, PDIR_BWD, PDIR_FWD, PDIR_BWD, PDIR_FWD, PDIR_BWD, PDIR_SYM, PDIR_SYM, PDIR_SYM, PDIR_FWD, PDIR_BWD, PDIR_SYM, PDIR_BID, PDIR_BID, PDIR_BID, PDIR_BID };
     static const int8_t pdir1[16] = { PDIR_FWD, PDIR_BWD, PDIR_BWD, PDIR_FWD, PDIR_SYM, PDIR_SYM, PDIR_FWD, PDIR_BWD, PDIR_SYM, PDIR_BID, PDIR_BID, PDIR_BID, PDIR_FWD, PDIR_BWD, PDIR_SYM, PDIR_BID };
-    static const int8_t pdir2refidx[4][2] = { { 0, INVALID_REF }, { INVALID_REF, 0 }, { 0, 0 }, { 0, 0 } };
+    static const int8_t pdir2refidx[4][2] = {
+        { B_FWD, INVALID_REF },  // PDIR_FWD
+        { INVALID_REF, B_BWD },  // PDIR_BWD
+        { B_FWD, B_BWD },
+        { B_FWD, B_BWD }
+    };
     int i_cu_type = p_cu->i_cu_type;
     int8_t *b8pdir = p_cu->b8pdir;
     int i;
