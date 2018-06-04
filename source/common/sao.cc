@@ -120,187 +120,233 @@ static ALWAYS_INLINE void sao_copy_param(sao_t *dst, sao_t *src)
 /* ---------------------------------------------------------------------------
  */
 static
-void sao_block_c(pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src,
-    int i_block_w, int i_block_h, int sample_bit_depth,
-    int *lcu_avail, sao_param_t *sao_param)
+void sao_block_eo_0_c(pel_t *p_dst, int i_dst,
+                      const pel_t *p_src, int i_src,
+                      int i_block_w, int i_block_h,
+                      int bit_depth, const int *lcu_avail, const int *sao_offset)
+{
+    const int max_pel_val = (1 << bit_depth) - 1;
+    int left_sign, right_sign;
+    int edge_type;
+    int x, y;
+    int pel_diff;
+
+    int sx = lcu_avail[SAO_L] ? 0 : 1;
+    int ex = lcu_avail[SAO_R] ? i_block_w : (i_block_w - 1);
+    for (y = 0; y < i_block_h; y++) {
+        pel_diff = p_src[sx] - p_src[sx - 1];
+        left_sign = pel_diff > 0? 1 : (pel_diff < 0? -1 : 0);
+        for (x = sx; x < ex; x++) {
+            pel_diff = p_src[x] - p_src[x + 1];
+            right_sign = pel_diff > 0? 1 : (pel_diff < 0? -1 : 0);
+            edge_type = left_sign + right_sign + 2;
+            left_sign = -right_sign;
+            p_dst[x] = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
+        }
+        p_src += i_src;
+        p_dst += i_dst;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ */
+static
+void sao_block_eo_90_c(pel_t *p_dst, int i_dst,
+                       const pel_t *p_src, int i_src,
+                       int i_block_w, int i_block_h,
+                       int bit_depth, const int *lcu_avail, const int *sao_offset)
+{
+    const int max_pel_val = (1 << bit_depth) - 1;
+    int edge_type;
+    int x, y;
+
+    int sy = lcu_avail[SAO_T] ? 0 : 1;
+    int ey = lcu_avail[SAO_D] ? i_block_h : (i_block_h - 1);
+    for (x = 0; x < i_block_w; x++) {
+        int pel_diff = p_src[sy * i_src + x] - p_src[(sy - 1) * i_src + x];
+        int top_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+        for (y = sy; y < ey; y++) {
+            int pel_diff = p_src[y * i_src + x] - p_src[(y + 1) * i_src + x];
+            int down_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+            edge_type = down_sign + top_sign + 2;
+            top_sign = -down_sign;
+            p_dst[y * i_dst + x] = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[y * i_src + x] + sao_offset[edge_type]);
+        }
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ */
+static
+void sao_block_eo_135_c(pel_t *p_dst, int i_dst,
+                        const pel_t *p_src, int i_src,
+                        int i_block_w, int i_block_h,
+                        int bit_depth, const int *lcu_avail, const int *sao_offset)
 {
     int8_t SIGN_BUF[MAX_CU_SIZE + 32];  // sign of top line
     int8_t *UPROW_S = SIGN_BUF + 16;
-    int  *sao_offset = sao_param->offset;
-    const int max_pel_val = (1 << sample_bit_depth) - 1;//sample_bit_depth，每个像素点的精度。是 8 bit 还是 10bit，还是12，一般为8，即由0-255的数值代表像素
+    const int max_pel_val = (1 << bit_depth) - 1;
     int reg = 0;
-    int sx, sy, ex, ey;               // start/end (x, y)
+    int sx, ex;               // start/end (x, y)
     int sx_0, ex_0, sx_n, ex_n;       // start/end x for first and last row
-    int left_sign, right_sign, top_sign, down_sign;
+    int top_sign, down_sign;
     int edge_type;
     int pel_diff;
     int x, y;
 
-    assert(sao_param->modeIdc == SAO_MODE_NEW);
+    sx = lcu_avail[SAO_L] ? 0 : 1;
+    ex = lcu_avail[SAO_R] ? i_block_w : (i_block_w - 1);
 
-    switch (sao_param->typeIdc) {
-    case SAO_TYPE_EO_0://代表5种相邻位置模板
-        sx = lcu_avail[SAO_L] ? 0 : 1;   //确定样本点分类，属于5种中的哪一个,从而确定offset
-        ex = lcu_avail[SAO_R] ? i_block_w : (i_block_w - 1);
-        for (y = 0; y < i_block_h; y++) {
-            pel_diff  = p_src[sx] - p_src[sx - 1];
-            left_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
-            //
-            for (x = sx; x < ex; x++) {
-                pel_diff   = p_src[x] - p_src[x + 1];
-                right_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
-                edge_type  = left_sign + right_sign + 2;//每个像素点对应一个edge_type，对应一个offset
-                left_sign  = -right_sign;
-                p_dst[x]   = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);//确保样本补偿后的像素值在规定范围内
-            }
-            p_src += i_src;//i_src 代表原图像的每行像素点数
-            p_dst += i_dst;//i_dst 代表重构图像的每行像素点数，重构图像左右边界需要padding，padding的大小不一定相同
-        }
-        break;
-    case SAO_TYPE_EO_90:
-        sy = lcu_avail[SAO_T] ? 0 : 1;
-        ey = lcu_avail[SAO_D] ? i_block_h : (i_block_h - 1);
-        for (x = 0; x < i_block_w; x++) {
-            pel_diff = p_src[sy * i_src + x] - p_src[(sy - 1) * i_src + x];
-            top_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
-            for (y = sy; y < ey; y++) {
-                pel_diff  = p_src[y * i_src + x] - p_src[(y + 1) * i_src + x];
-                down_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
-                edge_type = down_sign + top_sign + 2;
-                top_sign  = -down_sign;
-                p_dst[y * i_dst + x] = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[y * i_src + x] + sao_offset[edge_type]);
-            }
-        }
-        break;
-    case SAO_TYPE_EO_135:
-        sx = lcu_avail[SAO_L] ? 0 : 1;
-        ex = lcu_avail[SAO_R] ? i_block_w : (i_block_w - 1);
+    // init the line buffer
+    for (x = sx; x < ex; x++) {
+        pel_diff = p_src[i_src + x + 1] - p_src[x];
+        top_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+        UPROW_S[x + 1] = (int8_t)top_sign;
+    }
 
-        // init the line buffer
-        for (x = sx; x < ex; x++) {
-            pel_diff = p_src[i_src + x + 1] - p_src[x];
-            top_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
-            UPROW_S[x + 1] = (int8_t)top_sign;
-        }
+    // first row
+    sx_0 = lcu_avail[SAO_TL] ? 0 : 1;
+    ex_0 = lcu_avail[SAO_T] ? (lcu_avail[SAO_R] ? i_block_w : (i_block_w - 1)) : 1;
+    for (x = sx_0; x < ex_0; x++) {
+        pel_diff = p_src[x] - p_src[-i_src + x - 1];
+        top_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+        edge_type = top_sign - UPROW_S[x + 1] + 2;
+        p_dst[x] = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
+    }
 
-        // first row
-        sx_0 = lcu_avail[SAO_TL] ? 0 : 1;
-        ex_0 = lcu_avail[SAO_T ] ? (lcu_avail[SAO_R] ? i_block_w : (i_block_w - 1)) : 1;
-        for (x = sx_0; x < ex_0; x++) {
-            pel_diff  = p_src[x] - p_src[-i_src + x - 1];
-            top_sign  = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
-            edge_type = top_sign - UPROW_S[x + 1] + 2;
-            p_dst[x]  = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
-        }
-
-        // middle rows
-        for (y = 1; y < i_block_h - 1; y++) {
-            p_src += i_src;
-            p_dst += i_dst;
-            for (x = sx; x < ex; x++) {
-                if (x == sx) {
-                    pel_diff   = p_src[x] - p_src[-i_src + x - 1];
-                    top_sign   = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
-                    UPROW_S[x] = (int8_t)top_sign;
-                }
-                pel_diff   = p_src[x] - p_src[i_src + x + 1];
-                down_sign  = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
-                edge_type  = down_sign + UPROW_S[x] + 2;
-                p_dst[x]   = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
-                UPROW_S[x] = (int8_t)reg;
-                reg        = -down_sign;
-            }
-        }
-
-        // last row
-        sx_n = lcu_avail[SAO_D] ? (lcu_avail[SAO_L] ? 0 : 1) : (i_block_w - 1);
-        ex_n = lcu_avail[SAO_DR] ? i_block_w : (i_block_w - 1);
+    // middle rows
+    for (y = 1; y < i_block_h - 1; y++) {
         p_src += i_src;
         p_dst += i_dst;
-        for (x = sx_n; x < ex_n; x++) {
+        for (x = sx; x < ex; x++) {
             if (x == sx) {
-                pel_diff   = p_src[x] - p_src[-i_src + x - 1];
-                top_sign   = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+                pel_diff = p_src[x] - p_src[-i_src + x - 1];
+                top_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
                 UPROW_S[x] = (int8_t)top_sign;
             }
-            pel_diff  = p_src[x] - p_src[i_src + x + 1];
+            pel_diff = p_src[x] - p_src[i_src + x + 1];
             down_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
             edge_type = down_sign + UPROW_S[x] + 2;
-            p_dst[x]  = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
+            p_dst[x] = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
+            UPROW_S[x] = (int8_t)reg;
+            reg = -down_sign;
         }
-        break;
-    case SAO_TYPE_EO_45:
-        sx = lcu_avail[SAO_L] ? 0 : 1;
-        ex = lcu_avail[SAO_R] ? i_block_w : (i_block_w - 1);
+    }
 
-        // init the line buffer
-        for (x = sx; x < ex; x++) {
-            pel_diff       = p_src[i_src + x - 1] - p_src[x];
-            top_sign       = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
-            UPROW_S[x - 1] = (int8_t)top_sign;
+    // last row
+    sx_n = lcu_avail[SAO_D] ? (lcu_avail[SAO_L] ? 0 : 1) : (i_block_w - 1);
+    ex_n = lcu_avail[SAO_DR] ? i_block_w : (i_block_w - 1);
+    p_src += i_src;
+    p_dst += i_dst;
+    for (x = sx_n; x < ex_n; x++) {
+        if (x == sx) {
+            pel_diff = p_src[x] - p_src[-i_src + x - 1];
+            top_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+            UPROW_S[x] = (int8_t)top_sign;
         }
+        pel_diff = p_src[x] - p_src[i_src + x + 1];
+        down_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+        edge_type = down_sign + UPROW_S[x] + 2;
+        p_dst[x] = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
+    }
+}
 
-        // first row
-        sx_0 = lcu_avail[SAO_T] ? (lcu_avail[SAO_L] ? 0 : 1) : (i_block_w - 1);
-        ex_0 = lcu_avail[SAO_TR] ? i_block_w : (i_block_w - 1);
-        for (x = sx_0; x < ex_0; x++) {
-            pel_diff  = p_src[x] - p_src[-i_src + x + 1];
-            top_sign  = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
-            edge_type = top_sign - UPROW_S[x - 1] + 2;
-            p_dst[x]  = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
-        }
+/* ---------------------------------------------------------------------------
+ */
+static
+void sao_block_eo_45_c(pel_t *p_dst, int i_dst,
+                       const pel_t *p_src, int i_src,
+                       int i_block_w, int i_block_h,
+                       int bit_depth, const int *lcu_avail, const int *sao_offset)
+{
+    int8_t SIGN_BUF[MAX_CU_SIZE + 32];  // sign of top line
+    int8_t *UPROW_S = SIGN_BUF + 16;
+    const int max_pel_val = (1 << bit_depth) - 1;
+    int sx, ex;               // start/end (x, y)
+    int sx_0, ex_0, sx_n, ex_n;       // start/end x for first and last row
+    int top_sign, down_sign;
+    int edge_type;
+    int pel_diff;
+    int x, y;
 
-        // middle rows
-        for (y = 1; y < i_block_h - 1; y++) {
-            p_src += i_src;
-            p_dst += i_dst;
-            for (x = sx; x < ex; x++) {
-                if (x == ex - 1) {
-                    pel_diff   = p_src[x] - p_src[-i_src + x + 1];
-                    top_sign   = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
-                    UPROW_S[x] = (int8_t)top_sign;
-                }
-                pel_diff  = p_src[x] - p_src[i_src + x - 1];
-                down_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
-                edge_type = down_sign + UPROW_S[x] + 2;
-                p_dst[x]  = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
-                UPROW_S[x - 1] = (int8_t)(-down_sign);
-            }
-        }
+    sx = lcu_avail[SAO_L] ? 0 : 1;
+    ex = lcu_avail[SAO_R] ? i_block_w : (i_block_w - 1);
 
-        // last row
-        sx_n  = lcu_avail[SAO_DL] ? 0 : 1;
-        ex_n  = lcu_avail[SAO_D] ? (lcu_avail[SAO_R] ? i_block_w : (i_block_w - 1)) : 1;
+    // init the line buffer
+    for (x = sx; x < ex; x++) {
+        pel_diff = p_src[i_src + x - 1] - p_src[x];
+        top_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+        UPROW_S[x - 1] = (int8_t)top_sign;
+    }
+
+    // first row
+    sx_0 = lcu_avail[SAO_T] ? (lcu_avail[SAO_L] ? 0 : 1) : (i_block_w - 1);
+    ex_0 = lcu_avail[SAO_TR] ? i_block_w : (i_block_w - 1);
+    for (x = sx_0; x < ex_0; x++) {
+        pel_diff = p_src[x] - p_src[-i_src + x + 1];
+        top_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+        edge_type = top_sign - UPROW_S[x - 1] + 2;
+        p_dst[x] = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
+    }
+
+    // middle rows
+    for (y = 1; y < i_block_h - 1; y++) {
         p_src += i_src;
         p_dst += i_dst;
-        for (x = sx_n; x < ex_n; x++) {
+        for (x = sx; x < ex; x++) {
             if (x == ex - 1) {
-                pel_diff   = p_src[x] - p_src[-i_src + x + 1];
-                top_sign   = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+                pel_diff = p_src[x] - p_src[-i_src + x + 1];
+                top_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
                 UPROW_S[x] = (int8_t)top_sign;
             }
-            pel_diff  = p_src[x] - p_src[i_src + x - 1];
+            pel_diff = p_src[x] - p_src[i_src + x - 1];
             down_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
             edge_type = down_sign + UPROW_S[x] + 2;
-            p_dst[x]  = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
+            p_dst[x] = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
+            UPROW_S[x - 1] = (int8_t)(-down_sign);
         }
-        break;
+    }
 
-    case SAO_TYPE_BO:
-        pel_diff = sample_bit_depth - NUM_SAO_BO_CLASSES_IN_BIT;  // bit different
-        for (y = 0; y < i_block_h; y++) {
-            for (x = 0; x < i_block_w; x++) {
-                edge_type = p_src[x] >> pel_diff;
-                p_dst[x]  = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
-            }
-            p_src += i_src;
-            p_dst += i_dst;
+    // last row
+    sx_n = lcu_avail[SAO_DL] ? 0 : 1;
+    ex_n = lcu_avail[SAO_D] ? (lcu_avail[SAO_R] ? i_block_w : (i_block_w - 1)) : 1;
+    p_src += i_src;
+    p_dst += i_dst;
+    for (x = sx_n; x < ex_n; x++) {
+        if (x == ex - 1) {
+            pel_diff = p_src[x] - p_src[-i_src + x + 1];
+            top_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+            UPROW_S[x] = (int8_t)top_sign;
         }
-        break;
-    default:
-        davs2_log(NULL, DAVS2_LOG_ERROR, "Not a supported SAO types.");
-        assert(0);
-        exit(-1);
+        pel_diff = p_src[x] - p_src[i_src + x - 1];
+        down_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+        edge_type = down_sign + UPROW_S[x] + 2;
+        p_dst[x] = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ */
+static
+void sao_block_bo_c(pel_t *p_dst, int i_dst,
+                    const pel_t *p_src, int i_src,
+                    int i_block_w, int i_block_h,
+                    int bit_depth, const sao_param_t *sao_param)
+{
+    const int max_pel_val = (1 << bit_depth) - 1;
+    const int *sao_offset = sao_param->offset;
+    int edge_type;
+    int x, y;
+
+    const int band_shift = g_bit_depth - NUM_SAO_BO_CLASSES_IN_BIT;
+
+    for (y = 0; y < i_block_h; y++) {
+        for (x = 0; x < i_block_w; x++) {
+            edge_type = p_src[x] >> band_shift;
+            p_dst[x] = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[x] + sao_offset[edge_type]);
+        }
+        p_src += i_src;
+        p_dst += i_dst;
     }
 }
 
@@ -403,7 +449,8 @@ void sao_read_lcu_param(davs2_t *h, int lcu_xy, bool_t *slice_sao_on, sao_t *sao
 
 /* ---------------------------------------------------------------------------
 */
-static void sao_get_neighbor_avail(davs2_t *h, sao_region_t *p_avail, int i_lcu_x, int i_lcu_y)
+static
+void sao_get_neighbor_avail(davs2_t *h, sao_region_t *p_avail, int i_lcu_x, int i_lcu_y)
 {
     int i_lcu_level = h->i_lcu_level;
     int pix_x = i_lcu_x << i_lcu_level;
@@ -421,7 +468,7 @@ static void sao_get_neighbor_avail(davs2_t *h, sao_region_t *p_avail, int i_lcu_
     p_avail->b_top  = i_lcu_y != 0;
     p_avail->b_right = (i_lcu_x < h->i_width_in_lcu - 1);
     p_avail->b_down  = (i_lcu_y < h->i_height_in_lcu - 1);
-    
+
     if (h->seq_info.cross_loop_filter_flag == FALSE) {
         int scu_x = i_lcu_x << (h->i_lcu_level - MIN_CU_SIZE_IN_BIT);
         int scu_y = i_lcu_y << (h->i_lcu_level - MIN_CU_SIZE_IN_BIT);
@@ -506,24 +553,32 @@ void sao_lcu(davs2_t *h, davs2_frame_t *p_tmp_frm, davs2_frame_t *p_dec_frm, int
             continue;
         }
 
+        int filter_type = lcu_param->planes[comp_idx].typeIdc;
+        assert(filter_type >= SAO_TYPE_EO_0 && filter_type <= SAO_TYPE_BO);
+
         int pix_y = region.pix_y[comp_idx];
         int pix_x = region.pix_x[comp_idx];
         const int bit_depth = h->sample_bit_depth;
         int blkoffset = pix_y * p_dec_frm->i_stride[comp_idx] + pix_x;
         pel_t *dst = p_dec_frm->planes[comp_idx] + blkoffset;
         pel_t *src = p_tmp_frm->planes[comp_idx] + blkoffset;
-        int avail[8];
-        avail[0] = region.b_top;
-        avail[1] = region.b_down;
-        avail[2] = region.b_left;
-        avail[3] = region.b_right;
-        avail[4] = region.b_top_left;
-        avail[5] = region.b_top_right;
-        avail[6] = region.b_down_left;
-        avail[7] = region.b_right_down;
-        gf_davs2.sao_block(dst, p_dec_frm->i_stride[comp_idx], src, p_dec_frm->i_stride[comp_idx],
-                            region.width[comp_idx], region.height[comp_idx], bit_depth,
-                            avail, &lcu_param->planes[comp_idx]);
+        if (filter_type == SAO_TYPE_BO) {
+            sao_block_bo_c(dst, p_dec_frm->i_stride[comp_idx], src, p_dec_frm->i_stride[comp_idx],
+                           region.width[comp_idx], region.height[comp_idx], bit_depth, &lcu_param->planes[comp_idx]);
+        } else {
+            int avail[8];
+            avail[0] = region.b_top;
+            avail[1] = region.b_down;
+            avail[2] = region.b_left;
+            avail[3] = region.b_right;
+            avail[4] = region.b_top_left;
+            avail[5] = region.b_top_right;
+            avail[6] = region.b_down_left;
+            avail[7] = region.b_right_down;
+            gf_davs2.sao_filter_eo[filter_type](dst, p_dec_frm->i_stride[comp_idx], src, p_dec_frm->i_stride[comp_idx],
+                                                region.width[comp_idx], region.height[comp_idx],
+                                                bit_depth, avail, lcu_param->planes[comp_idx].offset);
+        }
     }
 }
 
@@ -548,6 +603,8 @@ void sao_lcurow(davs2_t *h, davs2_frame_t *p_tmp_frm, davs2_frame_t *p_dec_frm, 
             if (h->slice_sao_on[comp_idx] == 0 || lcu_param->planes[comp_idx].modeIdc == SAO_MODE_OFF){
                 continue;
             }
+            int filter_type = lcu_param->planes[comp_idx].typeIdc;
+            assert(filter_type >= SAO_TYPE_EO_0 && filter_type <= SAO_TYPE_BO);
 
             int pix_y = region.pix_y[comp_idx];
             int pix_x = region.pix_x[comp_idx];
@@ -555,18 +612,23 @@ void sao_lcurow(davs2_t *h, davs2_frame_t *p_tmp_frm, davs2_frame_t *p_dec_frm, 
             int blkoffset = pix_y * p_dec_frm->i_stride[comp_idx] + pix_x;
             pel_t *dst = p_dec_frm->planes[comp_idx] + blkoffset;
             pel_t *src = p_tmp_frm->planes[comp_idx] + blkoffset;
-            int avail[8];
-            avail[0] = region.b_top;
-            avail[1] = region.b_down;
-            avail[2] = region.b_left;
-            avail[3] = region.b_right;
-            avail[4] = region.b_top_left;
-            avail[5] = region.b_top_right;
-            avail[6] = region.b_down_left;
-            avail[7] = region.b_right_down;
-            gf_davs2.sao_block(dst, p_dec_frm->i_stride[comp_idx], src, p_dec_frm->i_stride[comp_idx],
-                region.width[comp_idx], region.height[comp_idx], bit_depth,
-                avail, &lcu_param->planes[comp_idx]);
+            if (filter_type == SAO_TYPE_BO) {
+                gf_davs2.sao_block_bo(dst, p_dec_frm->i_stride[comp_idx], src, p_dec_frm->i_stride[comp_idx],
+                                      region.width[comp_idx], region.height[comp_idx], bit_depth, &lcu_param->planes[comp_idx]);
+            } else {
+                int avail[8];
+                avail[0] = region.b_top;
+                avail[1] = region.b_down;
+                avail[2] = region.b_left;
+                avail[3] = region.b_right;
+                avail[4] = region.b_top_left;
+                avail[5] = region.b_top_right;
+                avail[6] = region.b_down_left;
+                avail[7] = region.b_right_down;
+                gf_davs2.sao_filter_eo[filter_type](dst, p_dec_frm->i_stride[comp_idx], src, p_dec_frm->i_stride[comp_idx],
+                                                    region.width[comp_idx], region.height[comp_idx],
+                                                    bit_depth, avail, lcu_param->planes[comp_idx].offset);
+            }
         }
     }
 }
@@ -576,19 +638,28 @@ void sao_lcurow(davs2_t *h, davs2_frame_t *p_tmp_frm, davs2_frame_t *p_dec_frm, 
 void davs2_sao_init(uint32_t cpuid, ao_funcs_t *fh)
 {
     /* init c function handles */
-    fh->sao_block = sao_block_c;
+    fh->sao_block_bo                   = sao_block_bo_c;
+    fh->sao_filter_eo[SAO_TYPE_EO_0]   = sao_block_eo_0_c;
+    fh->sao_filter_eo[SAO_TYPE_EO_45]  = sao_block_eo_45_c;
+    fh->sao_filter_eo[SAO_TYPE_EO_90]  = sao_block_eo_90_c;
+    fh->sao_filter_eo[SAO_TYPE_EO_135] = sao_block_eo_135_c;
 
     /* init asm function handles */
 #if HAVE_MMX
     if (cpuid & DAVS2_CPU_SSE4) {
-        fh->sao_block = SAO_on_block_sse128;
+        fh->sao_block_bo                   = SAO_on_block_bo_sse128;
+        fh->sao_filter_eo[SAO_TYPE_EO_0]   = SAO_on_block_eo_0_sse128;
+        fh->sao_filter_eo[SAO_TYPE_EO_45]  = SAO_on_block_eo_45_sse128;
+        fh->sao_filter_eo[SAO_TYPE_EO_90]  = SAO_on_block_eo_90_sse128;
+        fh->sao_filter_eo[SAO_TYPE_EO_135] = SAO_on_block_eo_135_sse128;
     }
-#if HIGH_BIT_DEPTH
-#else
     if (cpuid & DAVS2_CPU_AVX2) {
-        fh->sao_block = sao_on_block_avx2;
+        fh->sao_block_bo                   = SAO_on_block_bo_avx2;
+        fh->sao_filter_eo[SAO_TYPE_EO_0]   = SAO_on_block_eo_0_avx2;
+        fh->sao_filter_eo[SAO_TYPE_EO_45]  = SAO_on_block_eo_45_avx2;
+        fh->sao_filter_eo[SAO_TYPE_EO_90]  = SAO_on_block_eo_90_avx2;
+        fh->sao_filter_eo[SAO_TYPE_EO_135] = SAO_on_block_eo_135_avx2;
     }
-#endif
 #endif
 }
 

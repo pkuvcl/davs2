@@ -248,15 +248,31 @@ void idct_16x64_quad_avx2(const coeff_t *src, coeff_t *dst, int i_dst);
 void idct_64x16_quad_avx2(const coeff_t *src, coeff_t *dst, int i_dst);
 
 
-void SAO_on_block_sse128(pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src,
-    int i_block_w, int i_block_h, int sample_bit_depth, int *lcu_avail, sao_param_t *sao_param);
-void sao_on_block_avx2(pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, 
-    int i_block_w, int i_block_h, int sample_bit_depth, int *lcu_avail, sao_param_t *sao_param);
+/* ---------------------------------------------------------------------------
+ * SAO
+ */
+void SAO_on_block_bo_sse128    (pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, int i_block_w, int i_block_h, int bit_depth, const sao_param_t *sao_param);
+void SAO_on_block_eo_0_sse128  (pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, int i_block_w, int i_block_h, int bit_depth, const int *lcu_avail, const int *sao_offset);
+void SAO_on_block_eo_45_sse128 (pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, int i_block_w, int i_block_h, int bit_depth, const int *lcu_avail, const int *sao_offset);
+void SAO_on_block_eo_90_sse128 (pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, int i_block_w, int i_block_h, int bit_depth, const int *lcu_avail, const int *sao_offset);
+void SAO_on_block_eo_135_sse128(pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, int i_block_w, int i_block_h, int bit_depth, const int *lcu_avail, const int *sao_offset);
+void SAO_on_block_bo_avx2    (pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, int i_block_w, int i_block_h, int bit_depth, const sao_param_t *sao_param);
+void SAO_on_block_eo_0_avx2  (pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, int i_block_w, int i_block_h, int bit_depth, const int *lcu_avail, const int *sao_offset);
+void SAO_on_block_eo_45_avx2 (pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, int i_block_w, int i_block_h, int bit_depth, const int *lcu_avail, const int *sao_offset);
+void SAO_on_block_eo_90_avx2 (pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, int i_block_w, int i_block_h, int bit_depth, const int *lcu_avail, const int *sao_offset);
+void SAO_on_block_eo_135_avx2(pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, int i_block_w, int i_block_h, int bit_depth, const int *lcu_avail, const int *sao_offset);
+
+/* ---------------------------------------------------------------------------
+ * ALF
+ */
 void alf_filter_block_sse128(pel_t *p_dst, const pel_t *p_src, int stride,
     int lcu_pix_x, int lcu_pix_y, int lcu_width, int lcu_height,
     int *alf_coef, int b_top_avail, int b_down_avail);
 
 
+/* ---------------------------------------------------------------------------
+ * Intra Prediction
+ */
 void fill_edge_samples_0_sse128 (const pel_t *pTL, int i_TL, const pel_t *pLcuEP, pel_t *EP, uint32_t i_avai, int bsx, int bsy);
 void fill_edge_samples_x_sse128 (const pel_t *pTL, int i_TL, const pel_t *pLcuEP, pel_t *EP, uint32_t i_avai, int bsx, int bsy);
 void fill_edge_samples_y_sse128 (const pel_t *pTL, int i_TL, const pel_t *pLcuEP, pel_t *EP, uint32_t i_avai, int bsx, int bsy);

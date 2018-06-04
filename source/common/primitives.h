@@ -85,6 +85,10 @@ typedef void(*pixel_add_ps_t)(pel_t* dst, intptr_t dstride, const pel_t* b0, con
 
 typedef void(*lcu_deblock_t)(davs2_t *h, davs2_frame_t *frm, int i_lcu_x, int i_lcu_y);
 
+typedef void(*sao_flt_bo_t)(pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, int i_block_w, int i_block_h, int bit_depth, const sao_param_t *sao_param);
+typedef void(*sao_flt_eo_t)(pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src, int i_block_w, int i_block_h, int bit_depth, const int *lcu_avail, const int *sao_offset);
+
+
 /* ---------------------------------------------------------------------------
  * assembly optimization functions
  */
@@ -138,9 +142,8 @@ typedef struct ao_funcs_t {
 #endif
 
     /* SAO filter */
-    void(*sao_block) (pel_t *p_dst, int i_dst, const pel_t *p_src, int i_src,
-        int i_block_w, int i_block_h, int sample_bit_depth,
-        int *lcu_avail, sao_param_t *sao_param);
+    sao_flt_bo_t     sao_block_bo;          /* filter for bo type */
+    sao_flt_eo_t     sao_filter_eo[4];      /* SAO filter for eo types */
 
     /* alf */
     void(*alf_block[2])(pel_t *p_dst, const pel_t *p_src, int stride,
