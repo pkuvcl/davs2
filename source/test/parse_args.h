@@ -46,6 +46,7 @@ typedef struct davs2_input_param_t {
     const char *s_infile;
     const char *s_outfile;
     const char *s_recfile;
+    const char *s_md5;
 
     int g_verbose;
     int g_psnr;
@@ -57,12 +58,13 @@ typedef struct davs2_input_param_t {
 #endif
 
 /* 包含附加参数的，在字母后面需要加上冒号 */
-static const char *optString = "i:o:r:t:vh?";
+static const char *optString = "i:o:r:m:t:vh?";
 
 static const struct option longOpts[] = {
     {"input",   required_argument, NULL, 'i'},
     {"output",  required_argument, NULL, 'o'},
     {"psnr",    required_argument, NULL, 'r'},
+    {"ref_md5", required_argument, NULL, 'm'},
     {"threads", required_argument, NULL, 't'},
     {"verbose", no_argument, NULL, 'v'},
     {"help",    no_argument, NULL, 'h'},
@@ -81,6 +83,7 @@ static void display_usage(void)
     show_message(CONSOLE_RED, " --input=test.avs 或 -i test.avs          设置输入文件路径\n");
     show_message(CONSOLE_RED, " --output=test_dec.yuv 或 -o test_dec.yuv 设置输出路径\n");
     show_message(CONSOLE_RED, " --psnr=test_rec.yuv 或 -r test_rec,yuv   设置编码参考文件，用于计算是否匹配\n");
+    show_message(CONSOLE_RED, " --md5=md5 或 -m md5                      设置编码参考MD5，用于计算是否匹配\n");
     show_message(CONSOLE_RED, " --threads=N 或 -t N                      设置解码线程数，默认1\n");
     show_message(CONSOLE_RED, " --verbose 或 -v                          设置显示每帧解码数据\n");
     show_message(CONSOLE_RED, " --help 或 -h                             显示此提示信息\n");
@@ -110,6 +113,7 @@ static int parse_args(davs2_input_param_t *p_param, int argc, char **argv)
     p_param->s_infile  = NULL;
     p_param->s_outfile = NULL;
     p_param->s_recfile = NULL;
+    p_param->s_md5     = NULL;
     p_param->g_infile  = NULL;
     p_param->g_outfile = NULL;
     p_param->g_recfile = NULL;
@@ -128,6 +132,9 @@ static int parse_args(davs2_input_param_t *p_param, int argc, char **argv)
             break;
         case 'r':
             p_param->s_recfile = optarg;
+            break;
+        case 'm':
+            p_param->s_md5 = optarg;
             break;
         case 'v':
             p_param->g_verbose = 1;
@@ -183,6 +190,11 @@ static int parse_args(davs2_input_param_t *p_param, int argc, char **argv)
     /* open output file */
     if (p_param->s_outfile != NULL && p_param->g_outfile == NULL) {
         show_message(CONSOLE_RED, "ERROR: failed to open output file: %s\n", p_param->s_outfile);
+    }
+
+    /* get md5 */
+    if (p_param->s_md5 && strlen(p_param->s_md5) != 32) {
+        show_message(CONSOLE_RED, "ERROR: invalid md5 value");
     }
 
     show_message(CONSOLE_WHITE, "--------------------------------------------------\n");

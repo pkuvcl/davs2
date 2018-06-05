@@ -46,6 +46,7 @@
 #include "utils.h"
 #include "parse_args.h"
 #include "inputstream.h"
+#include "md5.h"
 
 #if defined(_MSC_VER)
 #pragma comment(lib, "libdavs2.lib")
@@ -81,6 +82,8 @@ extern "C" {
  */
 int g_frmcount = 0;
 int g_psnrfail = 0;
+unsigned int   MD5val[4];
+char           MD5str[33];
 
 davs2_input_param_t inputparam = {
     NULL, NULL, NULL, 0, 0, 0
@@ -284,6 +287,10 @@ int main(int argc, char *argv[])
     clock_t tm_start = clock();
     int size;
     int frames;
+    long long filelength;
+
+    memset(MD5val, 0, 16);
+    memset(MD5str, 0, 33);
 
     /* parse params */
     if (parse_args(&inputparam, argc, argv) < 0) {
@@ -324,7 +331,20 @@ fail:
         fclose(inputparam.g_outfile);
     }
 
-    printf(" Decoder Exit, Time: %.3lf s\n", (clock() - tm_start) / (double)(CLOCKS_PER_SEC));
+    /* calculate MD5 */
+    if (inputparam.s_md5 && strlen(inputparam.s_md5) == 32) {
+        filelength = FileMD5(inputparam.s_outfile, MD5val);
+        sprintf (MD5str,"%08X%08X%08X%08X", MD5val[0], MD5val[1], MD5val[2], MD5val[3]);
+        if (strcmp(MD5str,inputparam.s_md5)) {
+            printf("\n  MD5 match failed\n");
+            printf("  Input  MD5 : %s \n", inputparam.s_md5);
+            printf("  Output MD5 : %s \n", MD5str);
+        } else {
+            printf("\n  MD5 match success \n");
+        }
+    }
+
+    printf("\n Decoder Exit, Time: %.3lf s\n", (clock() - tm_start) / (double)(CLOCKS_PER_SEC));
     return 0;
 }
 
