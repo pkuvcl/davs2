@@ -128,6 +128,8 @@ int parse_sequence_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
 
     bs->i_bit_pos += 32; /* skip start code */
 
+    memset(seq, 0, sizeof(davs2_seq_t));  // reset all value
+
     seq->head.profile_id       = u_v(bs, 8, "profile_id");
     seq->head.level_id         = u_v(bs, 8, "level_id");
     seq->head.progressive      = u_v(bs, 1, "progressive_sequence");
