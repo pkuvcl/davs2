@@ -162,21 +162,6 @@ extern "C" {
 #endif
 #endif
 
-#if defined(_MSC_VER) || defined(__INTEL_COMPILER)
-#undef  fseek
-#undef  ftell
-#undef  isfinite
-#undef  fileno
-#define fseek                   _fseeki64
-#define ftell                   _ftelli64
-#define isfinite                _finite
-#define fileno                  _fileno
-#endif
-
-#if !defined(isfinite) && (SYS_OPENBSD || SYS_SunOS)
-#define isfinite                finite
-#endif
-
 // #if defined(_WIN32)
 // /* POSIX says that rename() removes the destination, but win32 doesn't. */
 // #define rename(src,dst)         (unlink(dst), rename(src,dst))
