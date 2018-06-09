@@ -30,8 +30,8 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#ifndef __CAVS_CONFIGW_H__
-#define __CAVS_CONFIGW_H__
+#ifndef DAVS2_CONFIGW_H
+#define DAVS2_CONFIGW_H
 
 #if defined(__ICL) || defined(_MSC_VER)
 
@@ -89,4 +89,4 @@
 #define HAVE_AVS                0
 
 #endif
-#endif // __CAVS_CONFIGW_H__
+#endif // DAVS2_CONFIGW_H
