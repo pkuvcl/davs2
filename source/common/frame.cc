@@ -196,8 +196,8 @@ size_t davs2_frame_get_size(int width, int height, int chroma_format, int b_extr
      * +PAD for extra data for MC */
     stride_l = align_stride(width + AVS2_PAD * 2, align, disalign);
     stride_c = align_stride(width_c + AVS2_PAD, align, disalign);
-    size_l   = align_plane_size(stride_l * (height + AVS2_PAD * 2), disalign);
-    size_c   = align_plane_size(stride_c * (height_c + AVS2_PAD), disalign);
+    size_l   = align_plane_size(stride_l * (height + AVS2_PAD * 2) + CACHE_LINE_SIZE, disalign);
+    size_c   = align_plane_size(stride_c * (height_c + AVS2_PAD) + CACHE_LINE_SIZE,   disalign);
 
     /* compute space size and alloc memory */
     mem_size = sizeof(davs2_frame_t)                      + /* M0, size of frame handle */
@@ -239,8 +239,8 @@ davs2_frame_t *davs2_frame_new(int width, int height, int chroma_format, uint8_t
      * +PAD for extra data for MC */
     stride_l = align_stride(width + AVS2_PAD * 2, align, disalign);
     stride_c = align_stride(width_c + AVS2_PAD, align, disalign);
-    size_l   = align_plane_size(stride_l * (height + AVS2_PAD * 2), disalign);
-    size_c   = align_plane_size(stride_c * (height_c + AVS2_PAD), disalign);
+    size_l   = align_plane_size(stride_l * (height + AVS2_PAD * 2) + CACHE_LINE_SIZE, disalign);
+    size_c   = align_plane_size(stride_c * (height_c + AVS2_PAD) + CACHE_LINE_SIZE,   disalign);
 
     /* compute space size and alloc memory */
     mem_size = sizeof(davs2_frame_t)                       + /* M0, size of frame handle */
@@ -288,6 +288,9 @@ davs2_frame_t *davs2_frame_new(int width, int height, int chroma_format, uint8_t
     frame->planes[0] += frame->i_stride[0] * (AVS2_PAD    ) + (AVS2_PAD    );
     frame->planes[1] += frame->i_stride[1] * (AVS2_PAD / 2) + (AVS2_PAD / 2);
     frame->planes[2] += frame->i_stride[2] * (AVS2_PAD / 2) + (AVS2_PAD / 2);
+    ALIGN_POINTER(frame->planes[0]);
+    ALIGN_POINTER(frame->planes[1]);
+    ALIGN_POINTER(frame->planes[2]);
 
     if (b_extra) {
         /* M2, reference index buffer (in SPU) */
