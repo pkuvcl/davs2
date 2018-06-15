@@ -139,24 +139,11 @@ BLOCK_OP_C( 4,  8)
 BLOCK_OP_C( 4,  4)  /* 4x4 */
 
 #define DECL_PIXELS(cpu) \
-    FUNCDEF_PU(int,         pixel_ssd,    cpu, const pel_t*, intptr_t, const pel_t*, intptr_t);\
-    FUNCDEF_PU(int,         pixel_sa8d,   cpu, const pel_t*, intptr_t, const pel_t*, intptr_t);\
-    FUNCDEF_PU(void,        pixel_sad_x3, cpu, const pel_t*, const pel_t*, const pel_t*, const pel_t*,               intptr_t, int32_t*);\
-    FUNCDEF_PU(void,        pixel_sad_x4, cpu, const pel_t*, const pel_t*, const pel_t*, const pel_t*, const pel_t*, intptr_t, int32_t*);\
     FUNCDEF_PU(void,        pixel_avg,    cpu, pel_t* dst, intptr_t dstride, const pel_t* src0, intptr_t sstride0, const pel_t* src1, intptr_t sstride1, int);\
     FUNCDEF_PU(void,        pixel_add_ps, cpu, pel_t* a,   intptr_t dstride, const pel_t* b0, const int16_t* b1, intptr_t sstride0, intptr_t sstride1);\
-    FUNCDEF_PU(void,        pixel_sub_ps, cpu, int16_t* a, intptr_t dstride, const pel_t* b0, const pel_t*   b1, intptr_t sstride0, intptr_t sstride1);\
     FUNCDEF_PU(void,        blockcopy_pp, cpu, pel_t *a, intptr_t stridea, const pel_t *b, intptr_t strideb);\
     FUNCDEF_PU(void,        blockcopy_ss, cpu, int16_t* a, intptr_t stridea, const int16_t* b, intptr_t strideb);\
-    FUNCDEF_CHROMA_PU(int,  pixel_satd,   cpu, const pel_t*, intptr_t, const pel_t*, intptr_t);\
-    FUNCDEF_CHROMA_PU(int,  pixel_sad,    cpu, const pel_t*, intptr_t, const pel_t*, intptr_t);\
-    FUNCDEF_CHROMA_PU(int,  pixel_ssd_ss, cpu, const int16_t*, intptr_t, const int16_t*, intptr_t);\
-    FUNCDEF_CHROMA_PU(void, addAvg,       cpu, const int16_t*, const int16_t*, pel_t*, intptr_t, intptr_t, intptr_t);\
-    FUNCDEF_CHROMA_PU(int,  pixel_ssd_s,  cpu, const int16_t*, intptr_t);\
-    FUNCDEF_TU_S(int,       pixel_ssd_s,  cpu, const int16_t*, intptr_t);\
-    FUNCDEF_TU(uint64_t,    pixel_var,    cpu, const pel_t*, intptr_t);\
-    FUNCDEF_TU(int,         psyCost_pp,   cpu, const pel_t*   source, intptr_t sstride, const pel_t*   recon, intptr_t rstride);\
-    FUNCDEF_TU(int,         psyCost_ss,   cpu, const int16_t* source, intptr_t sstride, const int16_t* recon, intptr_t rstride)
+    FUNCDEF_CHROMA_PU(void, addAvg,       cpu, const int16_t*, const int16_t*, pel_t*, intptr_t, intptr_t, intptr_t)
 
 DECL_PIXELS(mmx);
 DECL_PIXELS(mmx2);
