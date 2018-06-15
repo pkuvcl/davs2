@@ -9,7 +9,7 @@
 # ============================================================================
 
 # setting API version
-api=13
+api=14
 
 # get version of remote and local repository
 VER_R=`git rev-list --count origin/master`
