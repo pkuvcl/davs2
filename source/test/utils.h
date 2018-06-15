@@ -146,18 +146,33 @@ static __inline void show_progress(int frame, int frames)
 
 /* ---------------------------------------------------------------------------
  */
-static void write_frame(davs2_picture_t *pic, FILE *g_outfile)
+static
+void write_frame_plane(FILE *fp_out, const uint8_t *p_src, int img_w, int img_h, int bytes_per_sample, int i_stride)
+{
+    const int size_line = img_w * bytes_per_sample;
+    int i;
+
+    for (i = 0; i < img_h; i++) {
+        fwrite(p_src, size_line, 1, fp_out);
+        p_src += i_stride;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ */
+static
+void write_frame(davs2_picture_t *pic, FILE *g_outfile)
 {
     const int bytes_per_sample = pic->bytes_per_sample;
     /* write y */
-    fwrite(pic->planes[0], pic->width[0] * pic->lines[0] * bytes_per_sample, 1, g_outfile);
+    write_frame_plane(g_outfile, pic->planes[0], pic->widths[0], pic->lines[0], bytes_per_sample, pic->strides[0]);
 
     if (pic->i_pic_planes == 3) {
         /* write u */
-        fwrite(pic->planes[1], pic->width[1] * pic->lines[1] * bytes_per_sample, 1, g_outfile);
+        write_frame_plane(g_outfile, pic->planes[1], pic->widths[1], pic->lines[1], bytes_per_sample, pic->strides[1]);
 
         /* write v */
-        fwrite(pic->planes[2], pic->width[2] * pic->lines[2] * bytes_per_sample, 1, g_outfile);
+        write_frame_plane(g_outfile, pic->planes[2], pic->widths[2], pic->lines[2], bytes_per_sample, pic->strides[2]);
     }
 }
 

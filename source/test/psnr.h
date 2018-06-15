@@ -223,10 +223,10 @@ double get_psnr_with_ssd(double f_max, uint64_t diff)
 * ---------------------------------------------------------------------------
 */
 int 
-cal_psnr(int number, uint8_t *dst[3], FILE *f_rec, int width, int height, int num_planes, 
+cal_psnr(int number, uint8_t *dst[3], int strides[3], FILE *f_rec, int width, int height, int num_planes, 
          double *psnr_y, double *psnr_u, double *psnr_v, int bytes_per_sample, int bit_depth)
 {
-    int stride = width;          /* stride of frame/field (luma) */
+    int stride_ref = width;          /* stride of frame/field (luma) */
     int size_l = width * height; /* size   of frame/field (luma) */
     uint8_t *p1;                 /* pointer to buffer of reconstructed picture */
     uint8_t *p2;                 /* pointer to buffer of decoded picture */
@@ -266,31 +266,31 @@ cal_psnr(int number, uint8_t *dst[3], FILE *f_rec, int width, int height, int nu
     p1 = g_recbuf;
     p2 = dst[0];
 
-    diff = cal_ssd(width, height, p1, stride, p2, stride, bytes_per_sample);
+    diff = cal_ssd(width, height, p1, stride_ref, p2, strides[0], bytes_per_sample);
     *psnr_y = get_psnr_with_ssd(f_max_signal * size_l, diff);
     g_sum_psnr_y += *psnr_y;
     if (diff != 0 && b_output_error_position) {
         int x, y;
-        find_first_mismatch_point(width, height, p1, stride, p2, stride, bytes_per_sample, &x, &y);
+        find_first_mismatch_point(width, height, p1, stride_ref, p2, strides[0], bytes_per_sample, &x, &y);
         printf("mismatch POC: %3d, Y(%d, %d)\n", number, x, y);
         b_output_error_position = 0;
     }
 
     if (num_planes == 3) {
         width >>= 1;               // width  of frame/field  (chroma)
-        height >>= 1;               // height of frame/field  (chroma, with padding)
-        stride >>= 1;               // stride of frame/field  (chroma)
+        height >>= 1;              // height of frame/field  (chroma, with padding)
+        stride_ref >>= 1;          // stride of frame/field  (chroma)
 
         /* PSNR U */
         p1 += size_l * bytes_per_sample;
         p2 = dst[1];
 
-        diff = cal_ssd(width, height, p1, stride, p2, stride, bytes_per_sample);
+        diff = cal_ssd(width, height, p1, stride_ref, p2, strides[1], bytes_per_sample);
         *psnr_u = get_psnr_with_ssd(f_max_signal * size_l, diff << 2);
         g_sum_psnr_u += *psnr_u;
         if (diff != 0 && b_output_error_position) {
             int x, y;
-            find_first_mismatch_point(width, height, p1, stride, p2, stride, bytes_per_sample, &x, &y);
+            find_first_mismatch_point(width, height, p1, stride_ref, p2, strides[1], bytes_per_sample, &x, &y);
             printf("mismatch POC: %3d, U (%d, %d) => Y(%d, %d)\n", number, x, y, 2 * x, 2 * y);
             b_output_error_position = 0;
         }
@@ -299,12 +299,12 @@ cal_psnr(int number, uint8_t *dst[3], FILE *f_rec, int width, int height, int nu
         p1 += (size_l * bytes_per_sample) >> 2;
         p2 = dst[2];
 
-        diff = cal_ssd(width, height, p1, stride, p2, stride, bytes_per_sample);
+        diff = cal_ssd(width, height, p1, stride_ref, p2, strides[2], bytes_per_sample);
         *psnr_v = get_psnr_with_ssd(f_max_signal * size_l, diff << 2);
         g_sum_psnr_v += *psnr_v;
         if (diff != 0 && b_output_error_position) {
             int x, y;
-            find_first_mismatch_point(width, height, p1, stride, p2, stride, bytes_per_sample, &x, &y);
+            find_first_mismatch_point(width, height, p1, stride_ref, p2, strides[2], bytes_per_sample, &x, &y);
             printf("mismatch POC: %3d, V (%d, %d) => Y(%d, %d)\n", number, x, y, 2 * x, 2 * y);
             b_output_error_position = 0;
         }

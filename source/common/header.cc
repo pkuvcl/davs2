@@ -835,9 +835,9 @@ davs2_outpic_t *alloc_picture(int w, int h)
     pic->pic->planes[0] = buf;
     pic->pic->planes[1] = pic->pic->planes[0] + w * h * sizeof(pel_t);
     pic->pic->planes[2] = pic->pic->planes[1] + w * h / 4 * sizeof(pel_t);
-    pic->pic->width [0] = w;
-    pic->pic->width [1] = w / 2;
-    pic->pic->width [2] = w / 2;
+    pic->pic->widths[0] = w;
+    pic->pic->widths[1] = w / 2;
+    pic->pic->widths[2] = w / 2;
     pic->pic->lines [0] = h;
     pic->pic->lines [1] = h / 2;
     pic->pic->lines [2] = h / 2;

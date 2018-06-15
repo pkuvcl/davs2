@@ -204,7 +204,7 @@ static davs2_outpic_t *get_one_free_picture(davs2_mgr_t *mgr, int w, int h)
         /* get one from recycle bin */
         pic = (davs2_outpic_t *)xl_remove_head(&mgr->pic_recycle, 0);
         if ((pic == NULL) ||
-            (pic->pic->width[0] == w && pic->pic->lines[0] == h)) {
+            (pic->pic->widths[0] == w && pic->pic->lines[0] == h)) {
             break;
         }
 
@@ -934,25 +934,28 @@ fail:
  */
 void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
 {
-    int img_width    = pic->width[0];
+    int img_width    = pic->widths[0];
     int img_height   = pic->lines[0];
     int img_width_c  = (img_width / 2);
     int img_height_c = (img_height / (frame->i_chroma_format == CHROMA_420 ? 2 : 1));
-    int nSampleSize  = (frame->i_output_bit_depth == 8 ? 1 : 2);
+    int num_bytes_per_sample = (frame->i_output_bit_depth == 8 ? 1 : 2);
     int shift1       = frame->i_sample_bit_depth - frame->i_output_bit_depth; // assuming "sample_bit_depth" is greater or equal to "output_bit_depth"
     pel_t *p_src;
     uint8_t *p_dst;
     int k, j, i_src, i_dst;
 
     pic->i_pic_planes      = 1;
-    pic->bytes_per_sample = nSampleSize;
+    pic->bytes_per_sample = num_bytes_per_sample;
     pic->pic_bit_depth    = frame->i_output_bit_depth;
     pic->pic_decode_error = frame->frm_decode_error;
     pic->dec_frame        = NULL;
+    pic->strides[0] = pic->widths[0] * num_bytes_per_sample;
+    pic->strides[1] = pic->widths[1] * num_bytes_per_sample;
+    pic->strides[2] = pic->widths[2] * num_bytes_per_sample;
 
     if (!shift1 && frame->i_output_bit_depth == 8) { // 8bit encode -> 8bit output
         p_dst = pic->planes[0];
-        i_dst = pic->width[0] * nSampleSize;
+        i_dst = pic->strides[0];
         p_src = frame->planes[0];
         i_src = frame->i_stride[0];
 
@@ -972,7 +975,7 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
         if (frame->i_chroma_format != CHROMA_400) {
             pic->i_pic_planes = 3;
             p_dst = pic->planes[1];
-            i_dst = pic->width[1] * nSampleSize;
+            i_dst = pic->strides[1];
             p_src = frame->planes[1];
             i_src = frame->i_stride[1];
 
@@ -990,7 +993,7 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
             }
 
             p_dst = pic->planes[2];
-            i_dst = pic->width[2] * nSampleSize;
+            i_dst = pic->strides[2];
             p_src = frame->planes[2];
             i_src = frame->i_stride[2];
 
@@ -1009,12 +1012,12 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
         }
     } else if (!shift1 && frame->i_output_bit_depth > 8 && frame->i_output_bit_depth < 16) { // 10bit encode -> 10bit output
         p_dst = pic->planes[0];
-        i_dst = pic->width[0] * nSampleSize;
+        i_dst = pic->strides[0];
         p_src = frame->planes[0];
         i_src = frame->i_stride[0];
 
         for (j = 0; j < img_height; j++) {
-            memcpy(p_dst, p_src, nSampleSize * img_width);
+            memcpy(p_dst, p_src, num_bytes_per_sample * img_width);
 
             p_src += i_src;
             p_dst += i_dst;
@@ -1023,24 +1026,24 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
         if (frame->i_chroma_format != CHROMA_400) {
             pic->i_pic_planes = 3;
             p_dst = pic->planes[1];
-            i_dst = pic->width[1] * nSampleSize;
+            i_dst = pic->strides[1];
             p_src = frame->planes[1];
             i_src = frame->i_stride[1];
 
             for (j = 0; j < img_height_c; j++) {
-                memcpy(p_dst, p_src, nSampleSize * img_width_c);
+                memcpy(p_dst, p_src, num_bytes_per_sample * img_width_c);
 
                 p_src += i_src;
                 p_dst += i_dst;
             }
 
             p_dst = pic->planes[2];
-            i_dst = pic->width[2] * nSampleSize;
+            i_dst = pic->strides[2];
             p_src = frame->planes[2];
             i_src = frame->i_stride[2];
 
             for (j = 0; j < img_height_c; j++) {
-                memcpy(p_dst, p_src, nSampleSize * img_width_c);
+                memcpy(p_dst, p_src, num_bytes_per_sample * img_width_c);
 
                 p_src += i_src;
                 p_dst += i_dst;
@@ -1048,7 +1051,7 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
         }
     } else if (shift1 && frame->i_output_bit_depth == 8) { // 10bit encode -> 8bit output
         p_dst = pic->planes[0];
-        i_dst = pic->width[0] * nSampleSize;
+        i_dst = pic->strides[0];
         p_src = frame->planes[0];
         i_src = frame->i_stride[0];
 
@@ -1064,7 +1067,7 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
         if (frame->i_chroma_format != CHROMA_400) {
             pic->i_pic_planes = 3;
             p_dst = pic->planes[1];
-            i_dst = pic->width[1] * nSampleSize;
+            i_dst = pic->strides[1];
             p_src = frame->planes[1];
             i_src = frame->i_stride[1];
 
@@ -1078,7 +1081,7 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
             }
 
             p_dst = pic->planes[2];
-            i_dst = pic->width[2] * nSampleSize;
+            i_dst = pic->strides[2];
             p_src = frame->planes[2];
             i_src = frame->i_stride[2];
 
