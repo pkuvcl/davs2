@@ -346,8 +346,10 @@ int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_pict
     /* copy out */
     davs2_write_a_frame(pic->pic, pic->frame);
 
-    /* release reference by 1 */
-    release_one_frame(pic->frame);
+    /* release reference when it would no more be needed */
+    if (pic->pic->dec_frame == NULL) {
+        release_one_frame(pic->frame);
+    }
 
     /* deliver this frame */
     memcpy(out_frame, pic->pic, sizeof(davs2_picture_t));
@@ -374,7 +376,15 @@ davs2_decoder_frame_unref(void *decoder, davs2_picture_t *out_frame)
 
     /* release the output */
     if (out_frame->magic != NULL) {
-        output_list_recycle_picture(mgr, (davs2_outpic_t *)out_frame->magic);
+        davs2_outpic_t *pic = (davs2_outpic_t *)out_frame->magic;
+
+        /* release reference when it would no more be needed */
+        if (pic->pic->dec_frame != NULL) {
+            release_one_frame(pic->frame);   // pic->pic->dec_frame == pic->frame
+            pic->pic->dec_frame = NULL;
+        }
+
+        output_list_recycle_picture(mgr, pic);
     }
 }
 
