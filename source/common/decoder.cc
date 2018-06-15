@@ -948,6 +948,7 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
     pic->bytes_per_sample = nSampleSize;
     pic->pic_bit_depth    = frame->i_output_bit_depth;
     pic->pic_decode_error = frame->frm_decode_error;
+    pic->dec_frame        = NULL;
 
     if (!shift1 && frame->i_output_bit_depth == 8) { // 8bit encode -> 8bit output
         p_dst = pic->planes[0];

@@ -841,6 +841,7 @@ davs2_outpic_t *alloc_picture(int w, int h)
     pic->pic->lines [0] = h;
     pic->pic->lines [1] = h / 2;
     pic->pic->lines [2] = h / 2;
+    pic->pic->dec_frame = NULL;
 
     return pic;
 }

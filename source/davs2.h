@@ -150,7 +150,7 @@ typedef struct davs2_packet_t {
  * decoded picture
  */
 typedef struct davs2_picture_t {
-    void           *magic;            /* must be the 1st member variable. do not change it */
+    void           *magic;            /* must be the 1st member variable (do not change it) */
     /* picture information */
     uint8_t        *planes[3];        /* picture planes */
     int             width[3];         /* picture width in pixels */
@@ -165,6 +165,7 @@ typedef struct davs2_picture_t {
     int             bytes_per_sample; /* number of bytes for each sample */
     int             pic_bit_depth;    /* number of bytes for each sample */
     int             pic_decode_error; /* is there any decoding error of this frame? */
+    void           *dec_frame;        /* pointer to decoding frame in DPB (do not change it) */
 } davs2_picture_t;
 
 /* ---------------------------------------------------------------------------
