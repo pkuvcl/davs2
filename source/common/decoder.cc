@@ -955,9 +955,10 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
 
     if (!shift1 && sizeof(pel_t) == num_bytes_per_sample) {
         pic->dec_frame = frame;
-        pic->planes[0] = frame->planes[0];
-        pic->planes[1] = frame->planes[1];
-        pic->planes[2] = frame->planes[2];
+        // TODO: 如下赋值前的指针需要在适当的时候（进入后续分支时）恢复
+        pic->planes[0]  = frame->planes[0];
+        pic->planes[1]  = frame->planes[1];
+        pic->planes[2]  = frame->planes[2];
         pic->strides[0] = frame->i_stride[0] * num_bytes_per_sample;
         pic->strides[1] = frame->i_stride[1] * num_bytes_per_sample;
         pic->strides[2] = frame->i_stride[2] * num_bytes_per_sample;
@@ -967,64 +968,10 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
         p_src = frame->planes[0];
         i_src = frame->i_stride[0];
 
-        if (sizeof(pel_t) == sizeof(uint8_t)) {
-            gf_davs2.plane_copy((pel_t *)p_dst, i_dst, p_src, i_src, img_width, img_height);
-        } else {
-            for (j = 0; j < img_height; j++) {
-                for (k = 0; k < img_width; k++) {
-                    p_dst[k] = (uint8_t)p_src[k];
-                }
-
-                p_src += i_src;
-                p_dst += i_dst;
-            }
-        }
-
-        if (pic->i_pic_planes == 3) {
-            p_dst = pic->planes[1];
-            i_dst = pic->strides[1];
-            p_src = frame->planes[1];
-            i_src = frame->i_stride[1];
-
-            if (sizeof(pel_t) == sizeof(uint8_t)) {
-                gf_davs2.plane_copy((pel_t *)p_dst, i_dst, p_src, i_src, img_width_c, img_height_c);
-            } else {
-                for (j = 0; j < img_height_c; j++) {
-                    for (k = 0; k < img_width_c; k++) {
-                        p_dst[k] = (uint8_t)p_src[k];
-                    }
-
-                    p_src += i_src;
-                    p_dst += i_dst;
-                }
-            }
-
-            p_dst = pic->planes[2];
-            i_dst = pic->strides[2];
-            p_src = frame->planes[2];
-            i_src = frame->i_stride[2];
-
-            if (sizeof(pel_t) == sizeof(uint8_t)) {
-                gf_davs2.plane_copy((pel_t *)p_dst, i_dst, p_src, i_src, img_width_c, img_height_c);
-            } else {
-                for (j = 0; j < img_height_c; j++) {
-                    for (k = 0; k < img_width_c; k++) {
-                        p_dst[k] = (uint8_t)p_src[k];
-                    }
-
-                    p_src += i_src;
-                    p_dst += i_dst;
-                }
-            }
-        }
-    } else if (!shift1 && frame->i_output_bit_depth > 8 && frame->i_output_bit_depth < 16) { // 10bit encode -> 10bit output
-        p_dst = pic->planes[0];
-        i_dst = pic->strides[0];
-        p_src = frame->planes[0];
-        i_src = frame->i_stride[0];
-
         for (j = 0; j < img_height; j++) {
-            memcpy(p_dst, p_src, num_bytes_per_sample * img_width);
+            for (k = 0; k < img_width; k++) {
+                p_dst[k] = (uint8_t)p_src[k];
+            }
 
             p_src += i_src;
             p_dst += i_dst;
@@ -1037,7 +984,9 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
             i_src = frame->i_stride[1];
 
             for (j = 0; j < img_height_c; j++) {
-                memcpy(p_dst, p_src, num_bytes_per_sample * img_width_c);
+                for (k = 0; k < img_width_c; k++) {
+                    p_dst[k] = (uint8_t)p_src[k];
+                }
 
                 p_src += i_src;
                 p_dst += i_dst;
@@ -1049,7 +998,9 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
             i_src = frame->i_stride[2];
 
             for (j = 0; j < img_height_c; j++) {
-                memcpy(p_dst, p_src, num_bytes_per_sample * img_width_c);
+                for (k = 0; k < img_width_c; k++) {
+                    p_dst[k] = (uint8_t)p_src[k];
+                }
 
                 p_src += i_src;
                 p_dst += i_dst;
