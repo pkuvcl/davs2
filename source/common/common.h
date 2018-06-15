@@ -918,7 +918,7 @@ struct davs2_mgr_t {
 
     /* --- decoder output --------- */
     int                 new_sps;      /* is SPS(sequence property set) changed? */
-    int                 b_wait_output;
+    int                 num_frames_to_output;
 
     /* --- decoding picture buffer (DBP) --------- */
     davs2_frame_t     **dpb;          /* decoded picture buffer array */

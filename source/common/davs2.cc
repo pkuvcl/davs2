@@ -654,7 +654,7 @@ davs2_decoder_send_packet(void *decoder, davs2_packet_t *packet)
     }
 
     /* decode one frame */
-    mgr->b_wait_output = decoder_decode_es_unit(mgr, es_unit);
+    mgr->num_frames_to_output += decoder_decode_es_unit(mgr, es_unit);
 
 #if DAVS2_TRACE_API
     if (fp_trace_in) {
@@ -680,9 +680,11 @@ davs2_decoder_recv_frame(void *decoder, davs2_seq_info_t *headerset, davs2_pictu
     out_frame->magic = NULL;
 
     /* get one frame or sequence header */
-    if (mgr->b_wait_output || mgr->new_sps) {
+    if (mgr->num_frames_to_output || mgr->new_sps) {
         ret_type = decoder_get_output(mgr, headerset, out_frame, 0);
-        mgr->b_wait_output = 0;
+        if (ret_type == DAVS2_GOT_FRAME) {
+            mgr->num_frames_to_output--;
+        }
     }
 
     return ret_type;
