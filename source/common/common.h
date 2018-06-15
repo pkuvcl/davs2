@@ -916,9 +916,12 @@ struct davs2_mgr_t {
     int                 i_tr_wrap_cnt;/* COI wrap count */
     int                 i_prev_coi;   /* previous COI */
 
+    /* --- decoder output --------- */
     int                 new_sps;      /* is SPS(sequence property set) changed? */
+    int                 b_wait_output;
 
-    davs2_frame_t    **dpb;          /* decoded picture buffer array */
+    /* --- decoding picture buffer (DBP) --------- */
+    davs2_frame_t     **dpb;          /* decoded picture buffer array */
     int                 dpbsize;      /* size of the dpb array */
 
     /* --- frames to be removed before next frame decoding --------- */
@@ -929,7 +932,7 @@ struct davs2_mgr_t {
     xlist_t             packets_idle; /* bit-stream: free buffers for input packets */
 
     xlist_t             pic_recycle;  /* output_picture: free pictures recycle bin */
-    davs2_output_t     outpics;      /* output pictures */
+    davs2_output_t      outpics;      /* output pictures */
 
     /* --- task ---------------------------------------------------- */
     int                 num_decoders;        /* number of decoders in total */

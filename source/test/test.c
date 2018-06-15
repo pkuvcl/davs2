@@ -204,12 +204,13 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
         packet.dts  = -user_dts;
         user_dts++;
 
-        got_frame = davs2_decoder_decode(decoder, &packet, &headerset, &out_frame);
+        got_frame = davs2_decoder_send_packet(decoder, &packet);
         if (got_frame == DAVS2_ERROR) {
             printf("Error: An decoder error counted\n");
             break;
         }
 
+        got_frame = davs2_decoder_recv_frame(decoder, &headerset, &out_frame);
         if (got_frame != DAVS2_DEFAULT) {
             output_decoded_frame(&out_frame, &headerset, got_frame, num_frames);
             davs2_decoder_frame_unref(decoder, &out_frame);

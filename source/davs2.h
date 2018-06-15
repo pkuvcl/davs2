@@ -106,9 +106,8 @@ enum davs2_ret_e {
     DAVS2_ERROR       = -1,   /* Decoding error occurs */
     DAVS2_DEFAULT     = 0,    /* Decoding but no output */
     DAVS2_GOT_FRAME   = 1,    /* Decoding get frame */
-    DAVS2_GOT_HEADER  = 2,    /* Decoding get sequence header */
-    DAVS2_GOT_BOTH    = 3,    /* Decoding get sequence header and frame together */
-    DAVS2_END         = 4,    /* Decoding ended: no more bit-stream to decode and no more frames to output */
+    DAVS2_GOT_HEADER  = 2,    /* Decoding get sequence header, always obtained before DAVS2_GOT_FRAME */
+    DAVS2_END         = 3,    /* Decoding ended: no more bit-stream to decode and no more frames to output */
 };
 
 /**
@@ -201,18 +200,31 @@ davs2_decoder_open(davs2_param_t *param);
  * Parameters :
  *       [in] : decoder   - pointer to the AVS2 decoder handler
  *       [in] : packet    - pointer to struct davs2_packet_t
+ * Return     : see definition of davs2_ret_e
+ * ---------------------------------------------------------------------------
+ */
+DAVS2_API int
+davs2_decoder_send_packet(void *decoder, davs2_packet_t *packet);
+
+/**
+ * ---------------------------------------------------------------------------
+ * Function   : decode one frame
+ * Parameters :
+ *       [in] : decoder   - pointer to the AVS2 decoder handler
+ *      [out] : headerset - pointer to output common frame information (would always appear before frame output)
  *      [out] : out_frame - pointer to output frame information
  * Return     : see definition of davs2_ret_e
  * ---------------------------------------------------------------------------
  */
 DAVS2_API int
-davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *headerset, davs2_picture_t *out_frame);
+davs2_decoder_recv_frame(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t *out_frame);
 
 /**
  * ---------------------------------------------------------------------------
  * Function   : flush the decoder
  * Parameters :
  *       [in] : decoder   - decoder handle
+ *      [out] : headerset - pointer to output common frame information (would always appear before frame output)
  *      [out] : out_frame - pointer to output frame information
  * Return     : see definition of davs2_ret_e
  * ---------------------------------------------------------------------------

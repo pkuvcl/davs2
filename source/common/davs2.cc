@@ -352,7 +352,7 @@ int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_pict
     /* deliver this frame */
     memcpy(out_frame, pic->pic, sizeof(davs2_picture_t));
     out_frame->magic       = pic;
-    return mgr->new_sps ? DAVS2_GOT_BOTH : DAVS2_GOT_FRAME;
+    return DAVS2_GOT_FRAME;
 }
 
 /**
@@ -605,15 +605,11 @@ int decoder_decode_es_unit(davs2_mgr_t *mgr, es_unit_t *es_unit)
 /* ---------------------------------------------------------------------------
  */
 DAVS2_API int
-davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *headerset, davs2_picture_t *out_frame)
+davs2_decoder_send_packet(void *decoder, davs2_packet_t *packet)
 {
     davs2_mgr_t *mgr = (davs2_mgr_t *)decoder;
     es_unit_t *es_unit = NULL;
-    int b_wait_output = 0;
     int ret_type = DAVS2_DEFAULT;
-
-    /* clear output frame data */
-    out_frame->magic    = NULL;
 
 #if DAVS2_TRACE_API
     if (fp_trace_bs != NULL && packet->len > 0) {
@@ -658,12 +654,7 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
     }
 
     /* decode one frame */
-    b_wait_output = decoder_decode_es_unit(mgr, es_unit);
-
-    /* get one frame or sequence header */
-    if (b_wait_output || mgr->new_sps) {
-        ret_type = decoder_get_output(mgr, headerset, out_frame, 0);
-    }
+    mgr->b_wait_output = decoder_decode_es_unit(mgr, es_unit);
 
 #if DAVS2_TRACE_API
     if (fp_trace_in) {
@@ -673,6 +664,27 @@ davs2_decoder_decode(void *decoder, davs2_packet_t *packet, davs2_seq_info_t *he
         fflush(fp_trace_in);
     }
 #endif
+    return ret_type;
+}
+
+
+/* ---------------------------------------------------------------------------
+ */
+DAVS2_API int
+davs2_decoder_recv_frame(void *decoder, davs2_seq_info_t *headerset, davs2_picture_t *out_frame)
+{
+    davs2_mgr_t *mgr = (davs2_mgr_t *)decoder;
+    int ret_type = DAVS2_DEFAULT;
+
+    /* clear output frame data */
+    out_frame->magic = NULL;
+
+    /* get one frame or sequence header */
+    if (mgr->b_wait_output || mgr->new_sps) {
+        ret_type = decoder_get_output(mgr, headerset, out_frame, 0);
+        mgr->b_wait_output = 0;
+    }
+
     return ret_type;
 }
 
