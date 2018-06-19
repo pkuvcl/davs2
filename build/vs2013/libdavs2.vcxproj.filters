@@ -81,7 +81,7 @@
     <ClCompile Include="..\..\source\common\memory.cc">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\common\win32thread.c">
+    <ClCompile Include="..\..\source\common\win32thread.cc">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

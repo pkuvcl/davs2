@@ -91,7 +91,7 @@ static davs2_win32thread_control_t thread_control;
 /* _beginthreadex requires that the start routine is __stdcall */
 static unsigned __stdcall davs2_win32thread_worker(void *arg)
 {
-    davs2_thread_t *h = arg;
+    davs2_thread_t *h = (davs2_thread_t *)arg;
 
     h->ret = h->func(h->arg);
 
@@ -176,7 +176,7 @@ int davs2_thread_cond_init(davs2_thread_cond_t *cond, const davs2_thread_condatt
     }
 
     /* non native condition variables */
-    win32_cond = davs2_malloc(sizeof(davs2_win32_cond_t));
+    win32_cond = (davs2_win32_cond_t *)davs2_malloc(sizeof(davs2_win32_cond_t));
     memset(win32_cond, 0, sizeof(davs2_win32_cond_t));
     if (!win32_cond) {
         return -1;
@@ -212,7 +212,7 @@ int davs2_thread_cond_destroy(davs2_thread_cond_t *cond)
     }
 
     /* non native condition variables */
-    win32_cond = cond->ptr;
+    win32_cond = (davs2_win32_cond_t *)cond->ptr;
     CloseHandle(win32_cond->semaphore);
     CloseHandle(win32_cond->waiters_done);
     davs2_thread_mutex_destroy(&win32_cond->mtx_broadcast);
@@ -233,7 +233,7 @@ int davs2_thread_cond_broadcast(davs2_thread_cond_t *cond)
     }
 
     /* non native condition variables */
-    win32_cond = cond->ptr;
+    win32_cond = (davs2_win32_cond_t *)cond->ptr;
     davs2_thread_mutex_lock(&win32_cond->mtx_broadcast);
     davs2_thread_mutex_lock(&win32_cond->mtx_waiter_count);
 
@@ -265,7 +265,7 @@ int davs2_thread_cond_signal(davs2_thread_cond_t *cond)
     }
 
     /* non-native condition variables */
-    win32_cond = cond->ptr;
+    win32_cond = (davs2_win32_cond_t *)cond->ptr;
     davs2_thread_mutex_lock(&win32_cond->mtx_waiter_count);
     have_waiter = win32_cond->waiter_count;
     davs2_thread_mutex_unlock(&win32_cond->mtx_waiter_count);
@@ -287,7 +287,7 @@ int davs2_thread_cond_wait(davs2_thread_cond_t *cond, davs2_thread_mutex_t *mute
     }
 
     /* non native condition variables */
-    win32_cond = cond->ptr;
+    win32_cond = (davs2_win32_cond_t *)cond->ptr;
 
     davs2_thread_mutex_lock(&win32_cond->mtx_broadcast);
     davs2_thread_mutex_unlock(&win32_cond->mtx_broadcast);
@@ -346,7 +346,7 @@ int davs2_thread_num_processors_np()
     /* find function pointers to API functions specific to x86_64 platforms, if they exist.
      * BOOL GetThreadGroupAffinity(_In_  HANDLE hThread, _Out_ PGROUP_AFFINITY GroupAffinity); */
     typedef BOOL(*get_thread_affinity_t)(HANDLE thread, davs2_group_affinity_t *group_affinity);
-    HANDLE kernel_dll = GetModuleHandle(TEXT("kernel32.dll"));
+    HMODULE kernel_dll = GetModuleHandle(TEXT("kernel32.dll"));
     get_thread_affinity_t get_thread_affinity = (get_thread_affinity_t)GetProcAddress(kernel_dll, "GetThreadGroupAffinity");
 
     if (get_thread_affinity) {
