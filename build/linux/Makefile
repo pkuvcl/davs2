@@ -45,6 +45,9 @@ CONFIG: $(shell cat config.h)
 ifneq ($(findstring HAVE_THREAD 1, $(CONFIG)),)
 SRCS    += common/threadpool.cc
 endif
+ifneq ($(findstring HAVE_WIN32THREAD 1, $(CONFIG)),)
+SRCS    += common/win32thread.cc
+endif
 
 # MMX/SSE optims
 ifneq ($(AS),)
