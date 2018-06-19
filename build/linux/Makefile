@@ -28,7 +28,7 @@ SRCS  = common/aec.cc    common/alf.cc \
 		common/quant.cc \
 		common/sao.cc common/transform.cc \
 		common/primitives.cc \
-		common/threadpool.cc
+		common/threadpool.cc common/win32thread.cc
 
 SRCCLI = test/test.c
 
@@ -40,14 +40,14 @@ OBJCLI =
 
 #OBJCHK = tools/checkasm.o
 
-CONFIG: $(shell cat config.h)
-
-ifneq ($(findstring HAVE_THREAD 1, $(CONFIG)),)
-SRCS    += common/threadpool.cc
-endif
-ifneq ($(findstring HAVE_WIN32THREAD 1, $(CONFIG)),)
-SRCS    += common/win32thread.cc
-endif
+## CONFIG: $(shell cat config.h)
+## 
+## ifneq ($(findstring HAVE_THREAD 1, $(CONFIG)),)
+## SRCS    += common/threadpool.cc
+## endif
+## ifneq ($(findstring HAVE_WIN32THREAD 1, $(CONFIG)),)
+## SRCS    += common/win32thread.cc
+## endif
 
 # MMX/SSE optims
 ifneq ($(AS),)
