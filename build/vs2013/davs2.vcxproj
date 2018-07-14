@@ -26,6 +26,7 @@
     <ClInclude Include="..\..\source\davs2.h" />
     <ClInclude Include="..\..\source\test\inputstream.h" />
     <ClInclude Include="..\..\source\test\getopt\getopt.h" />
+    <ClInclude Include="..\..\source\test\md5.h" />
     <ClInclude Include="..\..\source\test\parse_args.h" />
     <ClInclude Include="..\..\source\test\psnr.h" />
     <ClInclude Include="..\..\source\test\utils.h" />

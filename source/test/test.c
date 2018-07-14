@@ -344,7 +344,7 @@ fail:
         }
     }
 
-    printf("\n Decoder Exit, Time: %.3lf s\n", (clock() - tm_start) / (double)(CLOCKS_PER_SEC));
+    printf(" Decoder Exit, Time: %.3lf s\n", (clock() - tm_start) / (double)(CLOCKS_PER_SEC));
     return 0;
 }
 

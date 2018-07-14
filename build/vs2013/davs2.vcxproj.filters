@@ -29,6 +29,9 @@
     <ClInclude Include="..\..\source\test\inputstream.h">
       <Filter>inc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\test\md5.h">
+      <Filter>inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\test\test.c">
