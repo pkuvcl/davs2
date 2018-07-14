@@ -55,6 +55,10 @@
 #ifndef DAVS2_MD5_H
 #define DAVS2_MD5_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #define F(x, y, z) (((x) & (y)) | ((~x) & (z)))
 #define G(x, y, z) (((x) & (z)) | ((y) & (~z)))
 #define H(x, y, z) ((x) ^ (y) ^ (z))
@@ -69,15 +73,6 @@
 #define HH(a, b, c, d, x, s, ac) a = b + (RL((a + H(b,c,d) + x + ac),s))
 #define II(a, b, c, d, x, s, ac) a = b + (RL((a + I(b,c,d) + x + ac),s))
 
-long long FileMD5(const char *filename, unsigned int md5value[4]);
-
-#if defined WIN32
-#include <IO.H>
-#include <fcntl.h>
-#endif
-#include<stdio.h>
-#include<stdlib.h>
-#include <string.h>
 void md5(unsigned int *pA, unsigned int *pB, unsigned int *pC, unsigned int *pD, unsigned int x[16])
 {
     unsigned int a, b, c, d;
@@ -166,11 +161,7 @@ void md5(unsigned int *pA, unsigned int *pB, unsigned int *pC, unsigned int *pD,
 
 long long FileMD5(const char *filename, unsigned int md5value[4])
 {
-#ifdef WIN32
-    int    p_infile = -1;
-#else
     FILE *p_infile = NULL;
-#endif
 
     int i;
     unsigned int flen[2];
@@ -183,54 +174,32 @@ long long FileMD5(const char *filename, unsigned int md5value[4])
         return 0;
     }
 
-#ifdef WIN32
-    if (strlen(filename) > 0 && (p_infile = open(filename, O_RDONLY | O_BINARY)) == -1)
-#else
-    if (strlen(filename) > 0 && (p_infile = fopen(filename, "rb")) == NULL)
-#endif
-    {
+    if (strlen(filename) > 0 && (p_infile = fopen(filename, "rb")) == NULL) {
         printf("Input file %s does not exist", filename);
         return 0;
     }
 
-
-#ifdef WIN32
-    _lseeki64(p_infile, 0, SEEK_END);
-    len = _telli64(p_infile);
-    _lseeki64(p_infile, 0, SEEK_SET);
-#else
     fseek(p_infile, 0, SEEK_END);
     len = ftell(p_infile);
     fseek(p_infile, 0, SEEK_SET);
-#endif
 
     if (len == -1) {
         printf("Input file %s is too large to calculate md5!\n", filename);
-#ifdef WIN32
-        _close(p_infile);
-#else
         fclose(p_infile);
-#endif
         return 0;
     }
 
     A = 0x67452301, B = 0xefcdab89, C = 0x98badcfe, D = 0x10325476;
     flen[1] = (unsigned int)(len / 0x20000000);
     flen[0] = (unsigned int)((len % 0x20000000) * 8);
+
     memset(x, 0, 64);
-#ifdef WIN32
-    _read(p_infile, &x, 64);
-#else
     fread(&x, 4, 16, p_infile);
-#endif
+
     for (i = 0; i < len / 64; i++) {
         md5(&A, &B, &C, &D, x);
         memset(x, 0, 64);
-#ifdef WIN32
-        _read(p_infile, &x, 64);
-#else
         fread(&x, 4, 16, p_infile);
-#endif
     }
     ((char *)x)[len % 64] = 128;
     if (len % 64 > 55) {
@@ -240,11 +209,7 @@ long long FileMD5(const char *filename, unsigned int md5value[4])
     memcpy(x + 14, flen, 8);
     md5(&A, &B, &C, &D, x);
 
-#ifdef WIN32
-    _close(p_infile);
-#else
     fclose(p_infile);
-#endif
 
     md5value[0] = PP(A);
     md5value[1] = PP(B);
