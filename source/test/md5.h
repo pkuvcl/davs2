@@ -2,7 +2,8 @@
  * md5.h
  *
  * Description of this file:
- *    MD5 calculate function.
+ *    MD5 calculate function of davs2.
+ * 
  */
 
 /* The copyright in this software is being made available under the BSD
@@ -39,8 +40,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _MD5_H_
-#define _MD5_H_
+/*
+ * --------------------------------------------------------------------------
+ *
+ *    davs2 - video decoder of AVS2/IEEE1857.4 video coding standard
+ *    Copyright (C) 2018~ VCL, NELVT, Peking University
+ *
+ *    Authors: Falei LUO <falei.luo@gmail.com>
+ *             Huiwen REN <hwrenx@126.com>
+ *             etc.
+ *
+ */
+
+#ifndef DAVS2_MD5_H
+#define DAVS2_MD5_H
 
 #define F(x, y, z) (((x) & (y)) | ((~x) & (z)))
 #define G(x, y, z) (((x) & (z)) | ((y) & (~z)))
@@ -240,4 +253,4 @@ long long FileMD5(const char *filename, unsigned int md5value[4])
     return len;
 }
 
-#endif
+#endif   // DAVS2_MD5_H
