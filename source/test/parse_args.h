@@ -64,7 +64,7 @@ static const struct option longOpts[] = {
     {"input",   required_argument, NULL, 'i'},
     {"output",  required_argument, NULL, 'o'},
     {"psnr",    required_argument, NULL, 'r'},
-    {"ref_md5", required_argument, NULL, 'm'},
+    {"md5",     required_argument, NULL, 'm'},
     {"threads", required_argument, NULL, 't'},
     {"verbose", no_argument, NULL, 'v'},
     {"help",    no_argument, NULL, 'h'},
