@@ -49,6 +49,7 @@ $ make
 | --output=dec.yuv | -o dec.yuv  |  Setting the output YUV file |
 | --psnr=rec.yuv   | -r rec.yuv  |  Setting the reference reconstruction YUV file |
 | --threads=N      | -t N        |  Setting the threads for decoding (default: 1) |
+| --md5=M          | -m M        |  Reference MD5, used to check whether the output YUV is right |
 | --verbose        | -v          |  Enable decoding status every frame (Default: Enabled) |
 | --help           | -h          |  Showing this instruction |
 

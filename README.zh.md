@@ -55,6 +55,7 @@ $ make
 | --output=dec.yuv | -o dec.yuv  |  设置输出解码YUV文件路径 |
 | --psnr=rec.yuv   | -r rec.yuv  |  设置参考用YUV文件路径, 用于计算PSNR以确定是否匹配 |
 | --threads=N      | -t N        |  设置解码线程数 (默认值: 1) |
+| --md5=M          | -m M        |  设置参考MD5值, 用于验证输出的重构YUV是否匹配 |
 | --verbose        | -v          |  设置每帧是否输出 (默认: 开启) |
 | --help           | -h          |  显示此输出命令 |
 
