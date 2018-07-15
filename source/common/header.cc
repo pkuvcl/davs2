@@ -135,10 +135,10 @@ int parse_sequence_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
     seq->head.progressive      = u_v(bs, 1, "progressive_sequence");
     seq->b_field_coding        = u_flag(bs, "field_coded_sequence");
 
-    seq->head.horizontal_size  = u_v(bs, 14, "horizontal_size");
-    seq->head.vertical_size    = u_v(bs, 14, "vertical_size");
+    seq->head.width     = u_v(bs, 14, "horizontal_size");
+    seq->head.height    = u_v(bs, 14, "vertical_size");
 
-    if (seq->head.horizontal_size < 16 || seq->head.vertical_size < 16) {
+    if (seq->head.width < 16 || seq->head.height < 16) {
         return -1;
     }
 
@@ -268,8 +268,8 @@ int parse_sequence_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
     seq->head.bitrate    = ((seq->bit_rate_upper << 18) + seq->bit_rate_lower) * 400;
     seq->head.frame_rate = FRAME_RATE[seq->head.frame_rate_code - 1];
 
-    seq->i_enc_width     = ((seq->head.horizontal_size + MIN_CU_SIZE - 1) >> MIN_CU_SIZE_IN_BIT) << MIN_CU_SIZE_IN_BIT;
-    seq->i_enc_height    = ((seq->head.vertical_size   + MIN_CU_SIZE - 1) >> MIN_CU_SIZE_IN_BIT) << MIN_CU_SIZE_IN_BIT;
+    seq->i_enc_width     = ((seq->head.width + MIN_CU_SIZE - 1) >> MIN_CU_SIZE_IN_BIT) << MIN_CU_SIZE_IN_BIT;
+    seq->i_enc_height    = ((seq->head.height   + MIN_CU_SIZE - 1) >> MIN_CU_SIZE_IN_BIT) << MIN_CU_SIZE_IN_BIT;
     seq->valid_flag = 1;
 
     return 0;
@@ -988,7 +988,7 @@ int task_decoder_update(davs2_t *h)
 
     if (h->b_sao != seq->enable_sao || h->b_alf != seq->enable_alf ||
         h->i_chroma_format != (int)seq->head.chroma_format || h->i_lcu_level != seq->log2_lcu_size ||
-        h->i_image_width != (int)seq->head.horizontal_size || h->i_image_height != (int)seq->head.vertical_size ||
+        h->i_image_width != (int)seq->head.width || h->i_image_height != (int)seq->head.height ||
         h->p_integral == NULL) {
         /* resolution changed */
         decoder_free_extra_buffer(h);
@@ -998,8 +998,8 @@ int task_decoder_update(davs2_t *h)
         h->i_lcu_size       = 1 << h->i_lcu_level;
         h->i_lcu_size_sub1  = (1 << h->i_lcu_level) - 1;
         h->i_chroma_format  = seq->head.chroma_format;
-        h->i_image_width    = seq->head.horizontal_size;
-        h->i_image_height   = seq->head.vertical_size;
+        h->i_image_width    = seq->head.width;
+        h->i_image_height   = seq->head.height;
         h->i_width          = seq->i_enc_width;
         h->i_height         = seq->i_enc_height;
 
@@ -1073,16 +1073,16 @@ int task_set_sequence_head(davs2_mgr_t *mgr, davs2_seq_t *seq)
     davs2_reconfigure_decoder(mgr);
 
     if (seq->valid_flag) {
-        int newres = (mgr->seq_info.head.vertical_size != seq->head.vertical_size || mgr->seq_info.head.horizontal_size != seq->head.horizontal_size);
+        int newres = (mgr->seq_info.head.height != seq->head.height || mgr->seq_info.head.width != seq->head.width);
 
         memcpy(&mgr->seq_info, seq, sizeof(davs2_seq_t));
 
         if (newres) {
             /* resolution changed : new sequence */
-            davs2_log(mgr, DAVS2_LOG_INFO, "Sequence Resolution: %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
-            if ((seq->head.horizontal_size & 0) != 0 || (seq->head.vertical_size & 1) != 0) {
+            davs2_log(mgr, DAVS2_LOG_INFO, "Sequence Resolution: %dx%d.", seq->head.width, seq->head.height);
+            if ((seq->head.width & 0) != 0 || (seq->head.height & 1) != 0) {
                 davs2_log(mgr, DAVS2_LOG_ERROR, "Sequence Resolution %dx%d is not even\n",
-                    seq->head.horizontal_size, seq->head.vertical_size);
+                    seq->head.width, seq->head.height);
             }
 
             /* COI for the new sequence should be reset */
@@ -1095,14 +1095,14 @@ int task_set_sequence_head(davs2_mgr_t *mgr, davs2_seq_t *seq)
                 /* error */
                 ret = -1;
                 memset(&mgr->seq_info, 0, sizeof(davs2_seq_t));
-                davs2_log(mgr, DAVS2_LOG_ERROR, "failed to create dpb buffers. %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
+                davs2_log(mgr, DAVS2_LOG_ERROR, "failed to create dpb buffers. %dx%d.", seq->head.width, seq->head.height);
             }
             mgr->new_sps = TRUE;
         }
     } else {
         /* invalid header */
         memset(&mgr->seq_info, 0, sizeof(davs2_seq_t));
-        davs2_log(mgr, DAVS2_LOG_ERROR, "decoded an invalid sequence header: %dx%d.", seq->head.horizontal_size, seq->head.vertical_size);
+        davs2_log(mgr, DAVS2_LOG_ERROR, "decoded an invalid sequence header: %dx%d.", seq->head.width, seq->head.height);
     }
 
     davs2_thread_mutex_unlock(&mgr->mutex_mgr);

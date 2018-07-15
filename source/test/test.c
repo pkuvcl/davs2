@@ -111,7 +111,7 @@ void output_decoded_frame(davs2_picture_t *pic, davs2_seq_info_t *headerset, int
     if (pic == NULL || ret_type == DAVS2_GOT_HEADER) {
         show_message(CONSOLE_GREEN,
             "  Sequence size: %dx%d; BitDepth: %d/%d, FrameRate: %.3lf Hz\n\n", 
-            headerset->horizontal_size, headerset->vertical_size, 
+            headerset->width, headerset->height, 
             headerset->internal_bitdepth, headerset->output_bitdepth,
             headerset->frame_rate);
         return;

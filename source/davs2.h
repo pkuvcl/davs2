@@ -123,8 +123,8 @@ typedef struct davs2_seq_info_t {
     uint32_t        profile_id;       /* profile ID, davs2_profile_id_e */
     uint32_t        level_id;         /* level   ID */
     uint32_t        progressive;      /* progressive sequence (0: interlace, 1: progressive) */
-    uint32_t        horizontal_size;  /* image width */
-    uint32_t        vertical_size;    /* image height */
+    uint32_t        width;            /* image width */
+    uint32_t        height;           /* image height */
     uint32_t        chroma_format;    /* chroma format(1: 4:2:0, 2: 4:2:2) */
     uint32_t        aspect_ratio;     /* 2: 4:3,  3: 16:9 */
     uint32_t        low_delay;        /* low delay */
