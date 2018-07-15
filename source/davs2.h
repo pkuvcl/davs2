@@ -133,7 +133,7 @@ typedef struct davs2_seq_info_t {
     uint32_t        output_bit_depth;   /* output sample bit depth */
     uint32_t        bytes_per_sample;   /* bytes per sample */
     float           frame_rate;         /* frame rate */
-    uint32_t        frame_rate_code;    /* frame rate code, mpeg12 [1...8] */
+    uint32_t        frame_rate_id;      /* frame rate code, mpeg12 [1...8] */
 } davs2_seq_info_t;  
 
 /* ---------------------------------------------------------------------------

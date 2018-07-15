@@ -170,7 +170,7 @@ int parse_sequence_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
 
     /*  */
     seq->head.aspect_ratio         = u_v(bs, 4, "aspect_ratio_information");
-    seq->head.frame_rate_code      = u_v(bs, 4, "frame_rate_code");
+    seq->head.frame_rate_id        = u_v(bs, 4, "frame_rate_id");
     seq->bit_rate_lower            = u_v(bs, 18, "bit_rate_lower");
     u_v(bs, 1,  "marker bit");
     seq->bit_rate_upper            = u_v(bs, 12, "bit_rate_upper");
@@ -266,7 +266,7 @@ int parse_sequence_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
     bs_alain(bs); /* align position */
 
     seq->head.bitrate    = ((seq->bit_rate_upper << 18) + seq->bit_rate_lower) * 400;
-    seq->head.frame_rate = FRAME_RATE[seq->head.frame_rate_code - 1];
+    seq->head.frame_rate = FRAME_RATE[seq->head.frame_rate_id - 1];
 
     seq->i_enc_width     = ((seq->head.width + MIN_CU_SIZE - 1) >> MIN_CU_SIZE_IN_BIT) << MIN_CU_SIZE_IN_BIT;
     seq->i_enc_height    = ((seq->head.height   + MIN_CU_SIZE - 1) >> MIN_CU_SIZE_IN_BIT) << MIN_CU_SIZE_IN_BIT;
