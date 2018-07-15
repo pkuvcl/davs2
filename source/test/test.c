@@ -181,7 +181,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
     /* init the decoder */
     param.threads      = inputparam.g_threads;
     param.opaque       = (void *)(intptr_t)num_frames;
-    param.i_info_level = DAVS2_LOG_DEBUG;
+    param.info_level   = DAVS2_LOG_DEBUG;
 
     decoder = davs2_decoder_open(&param);
 

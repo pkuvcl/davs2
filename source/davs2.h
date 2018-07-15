@@ -173,7 +173,7 @@ typedef struct davs2_picture_t {
  */
 typedef struct davs2_param_t {
     int               threads;        /* decoding threads: 0 for auto */
-    int               i_info_level;   /* only output information which is no less then this level (davs2_log_level_e).
+    int               info_level;     /* only output information which is no less then this level (davs2_log_level_e).
                                          0: All; 1: no debug info; 2: only warning and errors; 3: only errors */
     void             *opaque;         /* user data */
 } davs2_param_t;

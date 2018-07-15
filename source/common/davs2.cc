@@ -482,7 +482,7 @@ davs2_decoder_open(davs2_param_t *param)
     memcpy(&mgr->param, param, sizeof(davs2_param_t));
 
     /* init log module */
-    mgr->module_log.i_log_level = param->i_info_level;
+    mgr->module_log.i_log_level = param->info_level;
     sprintf(mgr->module_log.module_name, "Manager %06llx", (intptr_t)(mgr));
 
     if (mgr->param.threads <= 0) {
