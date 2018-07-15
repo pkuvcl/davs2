@@ -164,7 +164,7 @@ typedef struct davs2_picture_t {
     int             num_planes;       /* number of planes */
     int             bytes_per_sample; /* number of bytes for each sample */
     int             bit_depth;        /* number of bytes for each sample */
-    int             pic_decode_error; /* is there any decoding error of this frame? */
+    int             b_decode_error;   /* is there any decoding error of this frame? */
     void           *dec_frame;        /* pointer to decoding frame in DPB (do not change it) */
 } davs2_picture_t;
 
