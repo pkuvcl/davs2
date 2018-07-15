@@ -120,20 +120,20 @@ enum davs2_ret_e {
  * information of sequence header
  */
 typedef struct davs2_seq_info_t {
-    uint32_t        profile_id;       /* profile ID, davs2_profile_id_e */
-    uint32_t        level_id;         /* level   ID */
-    uint32_t        progressive;      /* progressive sequence (0: interlace, 1: progressive) */
-    uint32_t        width;            /* image width */
-    uint32_t        height;           /* image height */
-    uint32_t        chroma_format;    /* chroma format(1: 4:2:0, 2: 4:2:2) */
-    uint32_t        aspect_ratio;     /* 2: 4:3,  3: 16:9 */
-    uint32_t        low_delay;        /* low delay */
-    uint32_t        bitrate;          /* bitrate (bps) */
-    uint32_t        internal_bitdepth;/* internal sample bit depth */
-    uint32_t        output_bitdepth;  /* output sample bit depth */
-    uint32_t        bytes_per_sample; /* bytes per sample */
-    float           frame_rate;       /* frame rate */
-    uint32_t        frame_rate_code;  /* frame rate code, mpeg12 [1...8] */
+    uint32_t        profile_id;         /* profile ID, davs2_profile_id_e */
+    uint32_t        level_id;           /* level   ID */
+    uint32_t        progressive;        /* progressive sequence (0: interlace, 1: progressive) */
+    uint32_t        width;              /* image width */
+    uint32_t        height;             /* image height */
+    uint32_t        chroma_format;      /* chroma format(1: 4:2:0, 2: 4:2:2) */
+    uint32_t        aspect_ratio;       /* 2: 4:3,  3: 16:9 */
+    uint32_t        low_delay;          /* low delay */
+    uint32_t        bitrate;            /* bitrate (bps) */
+    uint32_t        internal_bit_depth; /* internal sample bit depth */
+    uint32_t        output_bit_depth;   /* output sample bit depth */
+    uint32_t        bytes_per_sample;   /* bytes per sample */
+    float           frame_rate;         /* frame rate */
+    uint32_t        frame_rate_code;    /* frame rate code, mpeg12 [1...8] */
 } davs2_seq_info_t;  
 
 /* ---------------------------------------------------------------------------

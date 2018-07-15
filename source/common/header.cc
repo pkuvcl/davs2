@@ -164,9 +164,9 @@ int parse_sequence_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
         return -1;
     }
 
-    seq->head.internal_bitdepth    = 6 + (seq->encoding_precision << 1);
-    seq->head.output_bitdepth      = 6 + (seq->encoding_precision << 1);
-    seq->head.bytes_per_sample     = seq->head.output_bitdepth > 8 ? 2 : 1;
+    seq->head.internal_bit_depth   = 6 + (seq->encoding_precision << 1);
+    seq->head.output_bit_depth     = 6 + (seq->encoding_precision << 1);
+    seq->head.bytes_per_sample     = seq->head.output_bit_depth > 8 ? 2 : 1;
 
     /*  */
     seq->head.aspect_ratio         = u_v(bs, 4, "aspect_ratio_information");
