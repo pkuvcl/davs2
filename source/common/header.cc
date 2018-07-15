@@ -831,7 +831,7 @@ davs2_outpic_t *alloc_picture(int w, int h)
     pic->pic = (davs2_picture_t *)buf;
     buf     += sizeof(davs2_picture_t);
 
-    pic->pic->i_pic_planes = 3;
+    pic->pic->num_planes = 3;
     pic->pic->planes[0] = buf;
     pic->pic->planes[1] = pic->pic->planes[0] + w * h * sizeof(pel_t);
     pic->pic->planes[2] = pic->pic->planes[1] + w * h / 4 * sizeof(pel_t);

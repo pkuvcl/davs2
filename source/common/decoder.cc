@@ -944,7 +944,7 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
     uint8_t *p_dst;
     int k, j, i_src, i_dst;
 
-    pic->i_pic_planes     = (frame->i_chroma_format != CHROMA_400) ? 3 : 1;
+    pic->num_planes       = (frame->i_chroma_format != CHROMA_400) ? 3 : 1;
     pic->bytes_per_sample = num_bytes_per_sample;
     pic->pic_bit_depth    = frame->i_output_bit_depth;
     pic->pic_decode_error = frame->frm_decode_error;
@@ -977,7 +977,7 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
             p_dst += i_dst;
         }
 
-        if (pic->i_pic_planes == 3) {
+        if (pic->num_planes == 3) {
             p_dst = pic->planes[1];
             i_dst = pic->strides[1];
             p_src = frame->planes[1];
@@ -1021,7 +1021,7 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
             p_dst += i_dst;
         }
 
-        if (pic->i_pic_planes == 3) {
+        if (pic->num_planes == 3) {
             p_dst = pic->planes[1];
             i_dst = pic->strides[1];
             p_src = frame->planes[1];

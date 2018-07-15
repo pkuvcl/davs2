@@ -167,7 +167,7 @@ void write_frame(davs2_picture_t *pic, FILE *g_outfile)
     /* write y */
     write_frame_plane(g_outfile, pic->planes[0], pic->widths[0], pic->lines[0], bytes_per_sample, pic->strides[0]);
 
-    if (pic->i_pic_planes == 3) {
+    if (pic->num_planes == 3) {
         /* write u */
         write_frame_plane(g_outfile, pic->planes[1], pic->widths[1], pic->lines[1], bytes_per_sample, pic->strides[1]);
 
