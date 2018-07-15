@@ -1053,7 +1053,7 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
     }
 
     pic->type            = frame->i_type;
-    pic->QP              = frame->i_qp;
+    pic->qp              = frame->i_qp;
     pic->pts             = frame->i_pts;
     pic->dts             = frame->i_dts;
     pic->pic_order_count = frame->i_poc;

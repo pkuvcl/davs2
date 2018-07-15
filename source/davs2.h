@@ -153,12 +153,12 @@ typedef struct davs2_picture_t {
     void           *magic;            /* must be the 1st member variable (do not change it) */
     /* picture information */
     uint8_t        *planes[3];        /* picture planes */
-    int             widths[3];         /* picture width in pixels */
+    int             widths[3];        /* picture width in pixels */
     int             lines[3];         /* picture height in pixels */
     int             strides[3];       /* number of bytes in one line are stored continuously in memory */
     int             pic_order_count;  /* picture number */
     int             type;             /* picture type of the corresponding frame */
-    int             QP;               /* QP of the corresponding picture */
+    int             qp;               /* QP of the corresponding picture */
     int64_t         pts;              /* presentation time stamp */
     int64_t         dts;              /* decoding time stamp */
     int             i_pic_planes;     /* number of planes */

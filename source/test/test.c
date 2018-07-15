@@ -132,13 +132,13 @@ void output_decoded_frame(davs2_picture_t *pic, davs2_seq_info_t *headerset, int
                 show_message(psnr ? CONSOLE_RED : CONSOLE_WHITE,
                     "%5d(%d)\t(%c) %3d\t%8.4lf %8.4lf %8.4lf \t%6lld %6lld\n", 
                     g_frmcount, pic->pic_order_count,
-                    IMGTYPE[pic->type], pic->QP, psnr_y, psnr_u, psnr_v,
+                    IMGTYPE[pic->type], pic->qp, psnr_y, psnr_u, psnr_v,
                     pic->pts, pic->dts);
             }
         }
     } else if (inputparam.g_verbose) {
         show_message(CONSOLE_WHITE,
-            "%5d(%d)\t(%c)\t%3d\n", g_frmcount, pic->pic_order_count, IMGTYPE[pic->type], pic->QP);
+            "%5d(%d)\t(%c)\t%3d\n", g_frmcount, pic->pic_order_count, IMGTYPE[pic->type], pic->qp);
     }
 
     g_frmcount++;
