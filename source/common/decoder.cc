@@ -946,7 +946,7 @@ void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame)
 
     pic->num_planes       = (frame->i_chroma_format != CHROMA_400) ? 3 : 1;
     pic->bytes_per_sample = num_bytes_per_sample;
-    pic->pic_bit_depth    = frame->i_output_bit_depth;
+    pic->bit_depth        = frame->i_output_bit_depth;
     pic->pic_decode_error = frame->frm_decode_error;
     pic->dec_frame        = NULL;
     pic->strides[0] = pic->widths[0] * num_bytes_per_sample;

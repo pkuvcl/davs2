@@ -121,7 +121,7 @@ void output_decoded_frame(davs2_picture_t *pic, davs2_seq_info_t *headerset, int
         int ret = cal_psnr(pic->pic_order_count, pic->planes, pic->strides, inputparam.g_recfile,
                            pic->widths[0], pic->lines[0], pic->num_planes,
                            &psnr_y, &psnr_u, &psnr_v, 
-                           pic->bytes_per_sample, pic->pic_bit_depth);
+                           pic->bytes_per_sample, pic->bit_depth);
         int psnr = (psnr_y != 0 || psnr_u != 0 || psnr_v != 0);
 
         if (ret < 0) {
