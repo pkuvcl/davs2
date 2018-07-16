@@ -49,7 +49,7 @@ echo "#define XVERSION        VER_MAJOR, VER_MINOR, VER_BUILD"                  
 echo "#define XVERSION_STR    TOSTR(VER_MAJOR) \".\" TOSTR(VER_MINOR) \".\" TOSTR(VER_BUILD) \" \" VER_SHA_STR" >> version.h
 echo "#define XBUILD_TIME     \"$BUILD_TIME\""                                        >> version.h
 echo ""                                                                               >> version.h
-echo "#endif // __VERSION_H__"                                                        >> version.h
+echo "#endif // DAVS2_VERSION_H"                                                      >> version.h
 
 mv version.h source/version.h
 
