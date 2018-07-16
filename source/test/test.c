@@ -199,7 +199,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
             len = data_len;
         }
 
-        packet.data = (uint8_t *) data;
+        packet.data = data;
         packet.len  = len;
 
         // set PTS/DTS, which was only used to check whether they could be passed out rightly

@@ -98,7 +98,7 @@ es_unit_free(es_unit_t *es_unit)
  * push byte stream data of one frame to input list
  */
 static
-es_unit_t *davs2_pack_es_unit(davs2_mgr_t *mgr, uint8_t *data, int len, int64_t pts, int64_t dts)
+es_unit_t *davs2_pack_es_unit(davs2_mgr_t *mgr, const uint8_t *data, int len, int64_t pts, int64_t dts)
 {
 #define DAVS2_ISUNIT(x) ((x) == 0xB0 || (x) == 0xB1 || (x) == 0xB7 || (x) == 0xB3 || (x) == 0xB6)
     es_unit_t *es_unit     = NULL;

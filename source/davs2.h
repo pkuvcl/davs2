@@ -140,7 +140,7 @@ typedef struct davs2_seq_info_t {
  * packet of bitstream
  */
 typedef struct davs2_packet_t {
-    uint8_t        *data;             /* bitstream */
+    const uint8_t  *data;             /* bitstream */
     int             len;              /* bytes of the bitstream */
     int64_t         pts;              /* presentation time stamp */
     int64_t         dts;              /* decoding time stamp */
