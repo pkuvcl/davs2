@@ -1492,7 +1492,7 @@ platform:      $ARCH
 byte order:    $CPU_ENDIAN
 system:        $SYS
 cli:           $cli
-libdavs2:   $cli_libdavs2
+libdavs2:      $cli_libdavs2
 shared:        $shared
 static:        $static
 asm:           $asm
