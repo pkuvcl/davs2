@@ -256,7 +256,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
     /* statistics */
     show_message(CONSOLE_WHITE, "\n--------------------------------------------------\n");
 
-    show_message(CONSOLE_GREEN, "total fames: %d/%d\n", g_frmcount, num_frames);
+    show_message(CONSOLE_GREEN, "total frames: %d/%d\n", g_frmcount, num_frames);
     if (inputparam.g_psnr) {
         if (g_psnrfail == 0 && g_frmcount != 0) {
             show_message(CONSOLE_GREEN,
