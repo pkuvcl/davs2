@@ -47,7 +47,6 @@ Cross-compilation:
   --sysroot=SYSROOT        root of cross-build tree
 
 External library support:
-  --disable-ffms           disable ffmpegsource support
   --disable-gpac           disable gpac support
   --disable-lsmash         disable lsmash support
 
@@ -339,7 +338,6 @@ cli="yes"
 cli_libdavs2="internal"
 shared="no"
 static="yes"
-ffms="auto"
 gpac="auto"
 lsmash="auto"
 mp4="no"
@@ -375,7 +373,7 @@ NL="
 
 # list of all preprocessor HAVE values we can define
 CONFIG_HAVE="MALLOC_H ALTIVEC ALTIVEC_H MMX ARMV6 ARMV6T2 NEON BEOSTHREAD POSIXTHREAD WIN32THREAD THREAD LOG2F \
-             FFMS GPAC GPL VECTOREXT INTERLACED CPU_COUNT OPENCL THP LSMASH X86_INLINE_ASM AS_FUNC INTEL_DISPATCHER \
+             GPAC GPL VECTOREXT INTERLACED CPU_COUNT OPENCL THP LSMASH X86_INLINE_ASM AS_FUNC INTEL_DISPATCHER \
              MSA MMAP WINRT VSX"
 
 # parse options
@@ -415,9 +413,6 @@ for opt do
             ;;
         --disable-interlaced)
             interlaced="no"
-            ;;
-        --disable-ffms)
-            ffms="no"
             ;;
         --disable-gpac)
             gpac="no"
@@ -1026,7 +1021,6 @@ if [ "$SYS" = "LINUX" -a \( "$ARCH" = "X86" -o "$ARCH" = "X86_64" \) ] && cc_che
 fi
 
 if [ "$cli" = "no" ] ; then
-    ffms="no"
     gpac="no"
     lsmash="no"
     mp4="no"
@@ -1381,7 +1375,6 @@ shared:        $shared
 static:        $static
 asm:           $asm
 interlaced:    $interlaced
-ffms:          $ffms
 mp4:           $mp4
 gpl:           $gpl
 thread:        $thread
