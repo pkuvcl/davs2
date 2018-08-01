@@ -47,7 +47,6 @@ Cross-compilation:
   --sysroot=SYSROOT        root of cross-build tree
 
 External library support:
-  --disable-swscale        disable swscale support
   --disable-lavf           disable libavformat support
   --disable-ffms           disable ffmpegsource support
   --disable-gpac           disable gpac support
@@ -348,7 +347,6 @@ lsmash="auto"
 mp4="no"
 gpl="yes"
 thread="auto"
-swscale="auto"
 asm="auto"
 interlaced="yes"
 lto="no"
@@ -378,7 +376,7 @@ NL="
 "
 
 # list of all preprocessor HAVE values we can define
-CONFIG_HAVE="MALLOC_H ALTIVEC ALTIVEC_H MMX ARMV6 ARMV6T2 NEON BEOSTHREAD POSIXTHREAD WIN32THREAD THREAD LOG2F SWSCALE \
+CONFIG_HAVE="MALLOC_H ALTIVEC ALTIVEC_H MMX ARMV6 ARMV6T2 NEON BEOSTHREAD POSIXTHREAD WIN32THREAD THREAD LOG2F \
              LAVF FFMS GPAC GPL VECTOREXT INTERLACED CPU_COUNT OPENCL THP LSMASH X86_INLINE_ASM AS_FUNC INTEL_DISPATCHER \
              MSA MMAP WINRT VSX"
 
@@ -452,9 +450,6 @@ for opt do
             ;;
         --disable-win32thread)
             [ "$thread" != "no" ] && thread="posix"
-            ;;
-        --disable-swscale)
-            swscale="no"
             ;;
         --enable-lto)
             lto="auto"
@@ -1041,90 +1036,6 @@ if [ "$cli" = "no" ] ; then
     gpac="no"
     lsmash="no"
     mp4="no"
-    swscale="no"
-fi
-
-if [ "$swscale" = "auto" ] ; then
-    swscale="no"
-    if $PKGCONFIG --exists libswscale 2>/dev/null; then
-        SWSCALE_LIBS="$SWSCALE_LIBS $($PKGCONFIG --libs libswscale libavutil)"
-        SWSCALE_CFLAGS="$SWSCALE_CFLAGS $($PKGCONFIG --cflags libswscale libavutil)"
-    fi
-    [ -z "$SWSCALE_LIBS" ] && SWSCALE_LIBS="-lswscale -lavutil"
-
-    if cc_check "libswscale/swscale.h" "$SWSCALE_CFLAGS $SWSCALE_LIBS" "sws_init_context(0,0,0);" ; then
-        if cpp_check "libavutil/pixdesc.h" "$SWSCALE_CFLAGS $SWSCALE_LIBS" "defined(AV_PIX_FMT_FLAG_RGB)" ; then
-            swscale="yes"
-        else
-            echo "Warning: AV_PIX_FMT_FLAG_RGB is missing from libavutil, update for swscale support"
-        fi
-    fi
-fi
-
-if [ "$lavf" = "auto" ] ; then
-    lavf="no"
-    if $PKGCONFIG --exists libavformat libavcodec libswscale 2>/dev/null; then
-        LAVF_LIBS="$LAVF_LIBS $($PKGCONFIG --libs libavformat libavcodec libavutil libswscale)"
-        LAVF_CFLAGS="$LAVF_CFLAGS $($PKGCONFIG --cflags libavformat libavcodec libavutil libswscale)"
-    fi
-    if [ -z "$LAVF_LIBS" -a -z "$LAVF_CFLAGS" ]; then
-        LAVF_LIBS="-lavformat"
-        for lib in -lpostproc -lavcodec -lswscale -lavutil -lm -lz -lbz2 $libpthread -lavifil32 -lws2_32; do
-            cc_check "" $lib && LAVF_LIBS="$LAVF_LIBS $lib"
-        done
-    fi
-    LAVF_LIBS="-L. $LAVF_LIBS"
-    if cc_check libavformat/avformat.h "$LAVF_CFLAGS $LAVF_LIBS" "av_frame_free(0);" ; then
-        if [ "$swscale" = "yes" ]; then
-            lavf="yes"
-        else
-            echo "Warning: libavformat is not supported without swscale support"
-        fi
-    fi
-fi
-
-if [ "$ffms" = "auto" ] ; then
-    ffms_major="2"; ffms_minor="21"; ffms_micro="0"; ffms_bump="0"
-    ffms="no"
-
-    if $PKGCONFIG --exists ffms2 2>/dev/null; then
-        FFMS2_LIBS="$FFMS2_LIBS $($PKGCONFIG --libs ffms2)"
-        FFMS2_CFLAGS="$FFMS2_CFLAGS $($PKGCONFIG --cflags ffms2)"
-    fi
-    [ -z "$FFMS2_LIBS" ] && FFMS2_LIBS="-lffms2"
-
-    if cc_check ffms.h "$FFMS2_CFLAGS $FFMS2_LIBS" "FFMS_DestroyVideoSource(0);" ; then
-        ffms="yes"
-    elif cc_check ffms.h "$FFMS2_CFLAGS $FFMS2_LIBS -lstdc++ $LAVF_LIBS" "FFMS_DestroyVideoSource(0);" ; then
-        ffms="yes"
-        FFMS2_LIBS="$FFMS2_LIBS -lstdc++ $LAVF_LIBS"
-    fi
-
-    error="ffms must be at least version $ffms_major.$ffms_minor.$ffms_micro.$ffms_bump"
-    if [ $ffms = "yes" ] && ! cpp_check "ffms.h" "$FFMS2_CFLAGS" "FFMS_VERSION >= (($ffms_major << 24) | ($ffms_minor << 16) | ($ffms_micro << 8) | $ffms_bump)" "$error"; then
-       ffms="no"
-       echo "Warning: $error"
-    fi
-    if [ "$ffms" = "yes" -a "$swscale" = "no" ]; then
-        echo "Warning: ffms is not supported without swscale support"
-        ffms="no"
-    fi
-fi
-
-if [ "$swscale" = "yes" ]; then
-    LDFLAGSCLI="$SWSCALE_LIBS $LDFLAGSCLI"
-    CFLAGS="$CFLAGS $SWSCALE_CFLAGS"
-    define HAVE_SWSCALE
-    if [ "$lavf" = "yes" ]; then
-        LDFLAGSCLI="$LAVF_LIBS $LDFLAGSCLI"
-        CFLAGS="$CFLAGS $LAVF_CFLAGS"
-        define HAVE_LAVF
-    fi
-    if [ "$ffms" = "yes" ]; then
-        LDFLAGSCLI="$FFMS2_LIBS $LDFLAGSCLI"
-        CFLAGS="$CFLAGS $FFMS2_CFLAGS"
-        define HAVE_FFMS
-    fi
 fi
 
 if [ "$lsmash" = "auto" ] ; then
@@ -1464,7 +1375,6 @@ EOF
 
 filters="crop select_every"
 gpl_filters=""
-[ $swscale = yes ] && filters="resize $filters"
 [ $gpl = yes ] && filters="$filters $gpl_filters"
 
 cat > conftest.log <<EOF
