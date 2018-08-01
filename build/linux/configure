@@ -334,7 +334,6 @@ cli="yes"
 cli_libdavs2="internal"
 shared="no"
 static="yes"
-mp4="no"
 gpl="yes"
 thread="auto"
 asm="auto"
@@ -1008,10 +1007,6 @@ if [ "$SYS" = "LINUX" -a \( "$ARCH" = "X86" -o "$ARCH" = "X86_64" \) ] && cc_che
     define HAVE_THP
 fi
 
-if [ "$cli" = "no" ] ; then
-    mp4="no"
-fi
-
 cc_check "stdint.h" "" "uint32_t test_vec __attribute__ ((vector_size (16))) = {0,1,2,3};" && define HAVE_VECTOREXT
 
 if [ "$pic" = "yes" ] ; then
@@ -1316,7 +1311,6 @@ shared:        $shared
 static:        $static
 asm:           $asm
 interlaced:    $interlaced
-mp4:           $mp4
 gpl:           $gpl
 thread:        $thread
 opencl:        $opencl
