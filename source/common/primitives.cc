@@ -44,14 +44,20 @@
 
 /* ---------------------------------------------------------------------------
  */
-ao_funcs_t gf_davs2;
+ao_funcs_t gf_davs2 = {0};
 
 /* ---------------------------------------------------------------------------
  */
 void init_all_primitives(uint32_t cpuid)
 {
-    memset(&gf_davs2, 0, sizeof(gf_davs2));
-    gf_davs2.cpuid = cpuid;
+    if (gf_davs2.initial_count != 0) {
+        // already initialed
+        gf_davs2.initial_count++;
+        return;
+    }
+
+    gf_davs2.initial_count = 1;
+    gf_davs2.cpuid         = cpuid;
 
     /* init function handles */
     davs2_memory_init    (cpuid, &gf_davs2);

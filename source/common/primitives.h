@@ -93,7 +93,8 @@ typedef void(*sao_flt_eo_t)(pel_t *p_dst, int i_dst, const pel_t *p_src, int i_s
  * assembly optimization functions
  */
 typedef struct ao_funcs_t {
-    ALIGN32(uint32_t    cpuid);
+    ALIGN32(uint32_t    initial_count);
+    uint32_t            cpuid;
     /* memory copy */
     memcpy_t            fast_memcpy;
     memcpy_t            memcpy_aligned;
