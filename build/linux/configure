@@ -22,9 +22,9 @@ Standard options:
 
 Configuration options:
   --disable-cli            disable cli
-  --system-libdavs2     use system libdavs2 instead of internal
+  --system-libdavs2        use system libdavs2 instead of internal
   --enable-shared          build shared library
-  --enable-static          build static library
+  --disable-static         disable building static library
   --disable-opencl         disable OpenCL features
   --disable-gpl            disable GPL-only features
   --disable-thread         disable multithreaded encoding
@@ -398,8 +398,8 @@ for opt do
         --enable-shared)
             shared="yes"
             ;;
-        --enable-static)
-            static="yes"
+        --disable-static)
+            static="no"
             ;;
         --disable-asm)
             asm="no"
