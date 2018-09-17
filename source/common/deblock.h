@@ -36,7 +36,9 @@
 extern "C" {
 #endif
 
+#define davs2_deblock_init FPFX(deblock_init)
 void davs2_deblock_init(uint32_t cpuid, ao_funcs_t* fh);
+#define davs2_lcu_deblock FPFX(lcu_deblock)
 void davs2_lcu_deblock(davs2_t *h, davs2_frame_t *frm, int i_lcu_x, int i_lcu_y);
 
 #ifdef __cplusplus
