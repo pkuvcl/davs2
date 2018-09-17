@@ -36,11 +36,15 @@
 extern "C" {
 #endif
 
+#define sao_read_lcu_param FPFX(sao_read_lcu_param)
 void sao_read_lcu_param(davs2_t *h, int lcu_xy, bool_t *slice_sao_on, sao_t *sao_param);
 
+#define sao_lcu FPFX(sao_lcu)
 void sao_lcu(davs2_t *h, davs2_frame_t *p_tmp_frm, davs2_frame_t *p_dec_frm, int i_lcu_x, int i_lcu_y);
+#define sao_lcurow FPFX(sao_lcurow)
 void sao_lcurow(davs2_t *h, davs2_frame_t *p_tmp_frm, davs2_frame_t *p_dec_frm, int i_lcu_y);
 
+#define davs2_sao_init FPFX(sao_init)
 void davs2_sao_init(uint32_t cpuid, ao_funcs_t *fh);
 
 #ifdef __cplusplus
