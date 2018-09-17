@@ -36,7 +36,9 @@
 extern "C" {
 #endif
 
+#define mc_luma FPFX(mc_luma)
 void mc_luma  (davs2_t *h, pel_t *dst, int i_dst, int posx, int posy, int width, int height, pel_t *p_fref, int i_fref);
+#define mc_chroma FPFX(mc_chroma)
 void mc_chroma(davs2_t *h, pel_t *dst, int i_dst, int posx, int posy, int width, int height, pel_t *p_fref, int i_fref);
 
 #ifdef __cplusplus
