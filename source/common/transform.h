@@ -36,8 +36,10 @@
 extern "C" {
 #endif
 
+#define davs2_dct_init FPFX(dct_init)
 void davs2_dct_init(uint32_t cpuid, ao_funcs_t *fh);
 
+#define davs2_get_recons FPFX(get_recons)
 void davs2_get_recons(davs2_row_rec_t *row_rec, cu_t *p_cu, int blockidx, cb_t *p_tu, int ctu_x, int ctu_y);
 
 #ifdef __cplusplus
