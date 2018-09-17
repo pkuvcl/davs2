@@ -52,8 +52,11 @@ void intra_pred(pel_t *src, pel_t *dst, int i_dst, int dir_mode, int bsy, int bs
     }
 }
 
+#define davs2_intra_pred_init FPFX(intra_pred_init)
 void davs2_intra_pred_init(uint32_t cpuid, ao_funcs_t *pf);
+#define davs2_get_intra_pred FPFX(get_intra_pred)
 void davs2_get_intra_pred(davs2_row_rec_t *row_rec, cu_t *p_cu, int predmode, int ctu_x, int ctu_y, int bsx, int bsy);
+#define davs2_get_intra_pred_chroma FPFX(get_intra_pred_chroma)
 void davs2_get_intra_pred_chroma(davs2_row_rec_t *h, cu_t *p_cu, int ctu_c_x, int ctu_c_y);
 
 #ifdef __cplusplus
