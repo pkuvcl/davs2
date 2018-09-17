@@ -41,18 +41,27 @@ extern "C" {
  * function declares
  * ===========================================================================
  */
-size_t          davs2_frame_get_size(int width, int height, int chroma_format, int b_extra);
+#define davs2_frame_get_size FPFX(frame_get_size)
+size_t davs2_frame_get_size(int width, int height, int chroma_format, int b_extra);
+#define davs2_frame_new FPFX(frame_new)
 davs2_frame_t *davs2_frame_new(int width, int height, int chroma_format, uint8_t **mem_base, int b_extra);
 
+#define davs2_frame_destroy FPFX(frame_destroy)
 void davs2_frame_destroy(davs2_frame_t *frame);
 
+#define davs2_frame_copy_planes FPFX(frame_copy_planes)
 void davs2_frame_copy_planes(davs2_frame_t *p_dst, davs2_frame_t *p_src);
+#define davs2_frame_copy_properties FPFX(frame_copy_properties)
 void davs2_frame_copy_properties(davs2_frame_t *p_dst, davs2_frame_t *p_src);
+#define davs2_frame_copy_lcu FPFX(frame_copy_lcu)
 void davs2_frame_copy_lcu(davs2_t *h, davs2_frame_t *p_dst, davs2_frame_t *p_src, int i_lcu_x, int i_lcu_y, int pix_offset, int padding_size);
+#define davs2_frame_copy_lcurow FPFX(frame_copy_lcurow)
 void davs2_frame_copy_lcurow(davs2_t *h, davs2_frame_t *p_dst, davs2_frame_t *p_src, int i_lcu_y, int pix_offset, int padding_size);
 
+#define davs2_frame_expand_border FPFX(frame_expand_border)
 void davs2_frame_expand_border(davs2_frame_t *frame);
 
+#define pad_line_lcu FPFX(pad_line_lcu)
 void pad_line_lcu(davs2_t *h, int lcu_y);
 
 #ifdef __cplusplus
