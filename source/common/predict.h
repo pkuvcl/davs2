@@ -301,9 +301,11 @@ int get_pu_type_for_mvp(int bsx, int bsy, int cu_pix_x, int cu_pix_y)
     return 0;  // default
 }
 
+#define get_mvp_default FPFX(get_mvp_default)
 void get_mvp_default(davs2_t *h, cu_t *p_cu, int pix_x, int pix_y, mv_t *pmv, int bwd_2nd, 
                      int ref_frame, int bsx, int pu_type_for_mvp);
 
+#define fill_mv_and_ref_for_skip FPFX(fill_mv_and_ref_for_skip)
 void fill_mv_and_ref_for_skip(davs2_t *h, cu_t *p_cu, int pix_x, int pix_y, int size_in_scu);
 
 #ifdef __cplusplus
