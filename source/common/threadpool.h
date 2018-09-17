@@ -39,11 +39,16 @@ extern "C" {
 typedef struct davs2_threadpool_t davs2_threadpool_t;
 typedef void *(*davs2_threadpool_func_t)(void *arg1, int arg2);
 
+#define davs2_threadpool_init FPFX(threadpool_init)
 int   davs2_threadpool_init  (davs2_threadpool_t **p_pool, int threads,
                               davs2_threadpool_func_t init_func, void *init_arg1, int init_arg2);
+#define davs2_threadpool_run FPFX(threadpool_run)
 void  davs2_threadpool_run   (davs2_threadpool_t *pool, davs2_threadpool_func_t func, void *arg1, int arg2, int wait_sign);
+#define davs2_threadpool_is_free FPFX(threadpool_is_free)
 int   davs2_threadpool_is_free(davs2_threadpool_t *pool);
+#define davs2_threadpool_wait FPFX(threadpool_wait)
 void *davs2_threadpool_wait  (davs2_threadpool_t *pool, void *arg1, int arg2);
+#define davs2_threadpool_delete FPFX(threadpool_delete)
 void  davs2_threadpool_delete(davs2_threadpool_t *pool);
 
 #ifdef __cplusplus
