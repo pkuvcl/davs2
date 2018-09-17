@@ -1425,10 +1425,15 @@ typedef union {
 /* ---------------------------------------------------------------------------
  * list
  */
+#define xl_init         FPFX(xl_init)
 int   xl_init          (xlist_t *const xlist);
+#define xl_destroy      FPFX(xl_destroy)
 void  xl_destroy       (xlist_t *const xlist);
+#define xl_append       FPFX(xl_append)
 void  xl_append        (xlist_t *const xlist, void *node);
+#define xl_remove_head  FPFX(xl_remove_head)
 void *xl_remove_head   (xlist_t *const xlist, const int wait);
+#define xl_remove_head_ex FPFX(xl_remove_head_ex)
 void *xl_remove_head_ex(xlist_t *const xlist);
 
 #ifdef __cplusplus
