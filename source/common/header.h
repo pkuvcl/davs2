@@ -36,15 +36,22 @@
 extern "C" {
 #endif
 
+#define parse_slice_header FPFX(parse_slice_header)
 void parse_slice_header(davs2_t *h, davs2_bs_t *bs);
+#define parse_header FPFX(parse_header)
 int  parse_header(davs2_t *h, davs2_bs_t *p_bs);
 
+#define release_one_frame FPFX(release_one_frame)
 void release_one_frame(davs2_frame_t *frame);
+#define task_release_frames FPFX(task_release_frames)
 void task_release_frames(davs2_t *h);
 
+#define alloc_picture FPFX(alloc_picture)
 davs2_outpic_t *alloc_picture(int w, int h);
+#define free_picture FPFX(free_picture)
 void free_picture(davs2_outpic_t *pic);
 
+#define destroy_dpb FPFX(destroy_dpb)
 void destroy_dpb(davs2_mgr_t *mgr);
 
 #ifdef __cplusplus
