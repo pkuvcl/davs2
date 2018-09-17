@@ -170,14 +170,18 @@ extern ao_funcs_t gf_davs2;
  * interface function declares
  * ===========================================================================
  */
+#define init_all_primitives FPFX(init_all_primitives)
 void init_all_primitives(uint32_t cpuid);
 
 
 /* ---------------------------------------------------------------------------
  * extern functions
  */
+#define davs2_mc_init FPFX(mc_init)
 void davs2_mc_init    (uint32_t cpuid, ao_funcs_t *pf);
+#define davs2_pixel_init FPFX(pixel_init)
 void davs2_pixel_init (uint32_t cpuid, ao_funcs_t* pixf);
+#define davs2_memory_init FPFX(memory_init)
 void davs2_memory_init(uint32_t cpuid, ao_funcs_t* pixf);
 
 #ifdef __cplusplus
