@@ -43,8 +43,10 @@ extern "C" {
  *  i_lcu_x : LCU position index
  *  i_lcu_y : LCU position index
  */
+#define decode_lcu_init FPFX(decode_lcu_init)
 void decode_lcu_init (davs2_t *h, int i_lcu_x, int i_lcu_y);
 
+#define rowrec_lcu_init FPFX(rowrec_lcu_init)
 void rowrec_lcu_init (davs2_t *h, davs2_row_rec_t *row_rec, int i_lcu_x, int i_lcu_y);
 
 /* ---------------------------------------------------------------------------
@@ -55,6 +57,7 @@ void rowrec_lcu_init (davs2_t *h, davs2_row_rec_t *row_rec, int i_lcu_x, int i_l
  *   pix_x  : pixel position of the decoding CU in the frame in Luma component
  *   pix_y  : pixel position of the decoding CU in the frame in Luma component
  */
+#define decode_lcu_parse FPFX(decode_lcu_parse)
 int  decode_lcu_parse(davs2_t *h, int i_level, int pix_x, int pix_y);
 
 /* ---------------------------------------------------------------------------
@@ -65,9 +68,12 @@ int  decode_lcu_parse(davs2_t *h, int i_level, int pix_x, int pix_y);
  *   pix_x  : pixel position of the decoding CU in the frame in Luma component
  *   pix_y  : pixel position of the decoding CU in the frame in Luma component
  */
+#define decode_lcu_recon FPFX(decode_lcu_recon)
 int  decode_lcu_recon(davs2_t *h, davs2_row_rec_t *row_rec, int i_level, int pix_x, int pix_y);
 
+#define decoder_wait_lcu_row FPFX(decoder_wait_lcu_row)
 void decoder_wait_lcu_row(davs2_t *h, davs2_frame_t *frame, int max_y_in_pic);
+#define decoder_wait_row FPFX(decoder_wait_row)
 void decoder_wait_row(davs2_t *h, davs2_frame_t *frame, int max_y_in_pic);
 
 #ifdef __cplusplus
