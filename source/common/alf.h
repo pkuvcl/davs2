@@ -36,13 +36,18 @@
 extern "C" {
 #endif
 
+#define alf_get_buffer_size FPFX(alf_get_buffer_size)
 size_t alf_get_buffer_size(davs2_t *h);
+#define alf_init_buffer FPFX(alf_init_buffer)
 void alf_init_buffer    (davs2_t *h);
 
+#define alf_lcurow FPFX(alf_lcurow)
 void alf_lcurow(davs2_t *h, alf_param_t *p_alf_param, davs2_frame_t *p_tmp_frm, davs2_frame_t *p_dec_frm, int i_lcu_y);
 
+#define alf_read_param FPFX(alf_read_param)
 void alf_read_param(davs2_t *h, davs2_bs_t *bs);
 
+#define davs2_alf_init FPFX(alf_init)
 void davs2_alf_init(uint32_t cpuid, ao_funcs_t *fh);
 
 #ifdef __cplusplus
