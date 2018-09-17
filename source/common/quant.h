@@ -36,9 +36,13 @@
 extern "C" {
 #endif
 
+#define QP_SCALE_CR FPFX(QP_SCALE_CR)
 extern const uint8_t  QP_SCALE_CR[];
+#define IQ_SHIFT FPFX(IQ_SHIFT)
 extern const int16_t  IQ_SHIFT[];
+#define IQ_TAB FPFX(IQ_TAB)
 extern const uint16_t IQ_TAB[];
+#define wq_param_default FPFX(wq_param_default)
 extern const int16_t wq_param_default[2][6];
 
 
@@ -62,14 +66,19 @@ extern const int16_t wq_param_default[2][6];
 #define WQ_MODE_U  1
 #define WQ_MODE_D  2
 
+#define wq_get_default_matrix FPFX(wq_get_default_matrix)
 const int *wq_get_default_matrix(int sizeId);
 
+#define wq_init_frame_quant_param FPFX(wq_init_frame_quant_param)
 void wq_init_frame_quant_param(davs2_t *h);
+#define wq_update_frame_matrix FPFX(wq_update_frame_matrix)
 void wq_update_frame_matrix(davs2_t *h);
 
 
 /* dequant */
+#define dequant_coeffs FPFX(dequant_coeffs)
 void dequant_coeffs(davs2_t *h, coeff_t *p_coeff, int bsx, int bsy, int scale, int shift, int WQMSizeId);
+#define davs2_quant_init FPFX(quant_init)
 void davs2_quant_init(uint32_t cpuid, ao_funcs_t *fh);
 
 
