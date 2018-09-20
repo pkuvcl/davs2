@@ -1663,17 +1663,20 @@ int cu_read_cbp(davs2_t *h, aec_t *p_aec, cu_t *p_cu, int scu_x, int scu_y)
     if (h->b_DQP) {
         int i_delta_qp = 0;
         if (p_cu->i_cbp) {
-            const int range_max_qp = 32 + 4 * (h->sample_bit_depth - 8);
+            const int max_delta_qp = 32 + 4 * (h->sample_bit_depth - 8);
+            const int min_delta_qp = -max_delta_qp;
 #if AVS2_TRACE
             snprintf(p_aec->tracestring, TRACESTRING_SIZE, "delta quant");
 #endif
-            h->i_last_dquant = i_delta_qp = (int8_t)aec_read_cu_delta_qp(p_aec, h->i_last_dquant);
-            if (i_delta_qp < -range_max_qp ||
-                i_delta_qp > range_max_qp) {
+            i_delta_qp = i_delta_qp = (int8_t)aec_read_cu_delta_qp(p_aec, h->i_last_dquant);
+            if (i_delta_qp < min_delta_qp ||
+                i_delta_qp > max_delta_qp) {
+                i_delta_qp = DAVS2_CLIP3(min_delta_qp, max_delta_qp, i_delta_qp);
                 davs2_log(h, DAVS2_LOG_ERROR, "Invalid cu_qp_delta: %d.", i_delta_qp);
             }
         }
 
+        h->i_last_dquant = i_delta_qp;
         p_cu->i_qp = (int8_t)i_delta_qp + h->lcu.i_left_cu_qp;
     } else {
         p_cu->i_qp = (int8_t)h->i_qp;

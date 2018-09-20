@@ -787,11 +787,12 @@ void parse_slice_header(davs2_t *h, davs2_bs_t *bs)
         h->b_fixed_slice_qp = u_flag(bs, "fixed_slice_qp");
         h->i_slice_qp       = u_v(bs, 7, "slice_qp");
 
-        h->i_qp  = h->i_slice_qp;
-        h->b_DQP = !h->b_fixed_slice_qp;
+        h->b_DQP            = !h->b_fixed_slice_qp;
     } else {
-        h->b_DQP = 0;
+        h->i_slice_qp       = h->i_picture_qp;
+        h->b_DQP            = 0;
     }
+    h->i_qp = h->i_slice_qp;
 
     if (!is_valid_qp(h, h->i_qp)) {
         davs2_log(h, DAVS2_LOG_ERROR, "Invalid Slice QP: %d\n", h->i_qp);

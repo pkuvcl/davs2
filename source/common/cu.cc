@@ -860,6 +860,7 @@ static int cu_read_info(davs2_t *h, cu_t *p_cu, int i_level, int scu_xy, int pix
 
     /* 3, read CBP and coefficients */
     if (real_cu_type < 0) {  /* skip mode, no residual */
+        p_cu->i_qp = h->lcu.i_left_cu_qp;
         p_cu->i_trans_size = TU_SPLIT_NON;      // cbp has been initialed as zero
     } else {    // non-skip mode
         // read CBP
