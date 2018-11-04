@@ -39,10 +39,6 @@
 #include "utils.h"
 
 typedef struct davs2_input_param_t {
-    FILE *g_infile;
-    FILE *g_recfile;
-    FILE *g_outfile;
-
     const char *s_infile;
     const char *s_outfile;
     const char *s_recfile;
@@ -51,6 +47,10 @@ typedef struct davs2_input_param_t {
     int g_verbose;
     int g_psnr;
     int g_threads;
+
+    FILE *g_infile;
+    FILE *g_recfile;
+    FILE *g_outfile;
 } davs2_input_param_t;
 
 #if defined(__ICL) || defined(_MSC_VER)
@@ -77,9 +77,9 @@ static const struct option longOpts[] = {
 static void display_usage(void)
 {
     /* 运行参数说明 */
-    const char * usage = "usage: tpp_davs2ec.exe --input avsfile --output=outputfile [--psnr=recfile] [--threads=threads] [--verbose]";
+    const char * usage = "usage: davs2.exe --input avsfile --output=outputfile [--psnr=recfile] [--threads=threads] [--verbose]";
 
-    show_message(CONSOLE_RED, "tapp_davs2ec.exe 运行参数说明：\n %s\n", usage);
+    show_message(CONSOLE_RED, "davs2.exe 运行参数说明：\n %s\n", usage);
     show_message(CONSOLE_RED, " --input=test.avs 或 -i test.avs          设置输入文件路径\n");
     show_message(CONSOLE_RED, " --output=test_dec.yuv 或 -o test_dec.yuv 设置输出路径\n");
     show_message(CONSOLE_RED, " --psnr=test_rec.yuv 或 -r test_rec,yuv   设置编码参考文件，用于计算是否匹配\n");
