@@ -8,6 +8,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/pkuvcl/davs2.svg)](https://github.com/pkuvcl/davs2/issues)
 [![GitHub forks](https://img.shields.io/github/forks/pkuvcl/davs2.svg)](https://github.com/pkuvcl/davs2/network)
 [![GitHub stars](https://img.shields.io/github/stars/pkuvcl/davs2.svg)](https://github.com/pkuvcl/davs2/stargazers)
+[![Stargazers over time](https://starcharts.herokuapp.com/pkuvcl/davs2.svg)](https://starcharts.herokuapp.com/pkuvcl/davs2)
 
 ## 编译方法
 ### Windows
@@ -43,9 +44,14 @@ $ make
 
 ## 运行和测试
 
-运行命令:
+使用`1`个线程解码AVS2码流文件`test.avs`并将结果输出成YUV文件`dec.yuv`:
 ```
-./davs2 -i test.avs -o dec.yuv [-r rec.yuv] [-t N]
+./davs2 -i test.avs -t 1 -o dec.yuv
+```
+
+解码AVS2码流文件`test.avs`并用ffplay播放显示:
+```
+./davs2 -i test.avs -t 1 -o stdout | ffplay -i -
 ```
 
 ### 参数说明

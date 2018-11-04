@@ -1,5 +1,4 @@
 # davs2
-
 **davs2** is an open-source decoder of `AVS2-P2/IEEE1857.4` video coding standard.
 
 An encoder, **xavs2**, can be found at [Github][2] or  [Gitee (mirror in China)][3].
@@ -8,6 +7,9 @@ An encoder, **xavs2**, can be found at [Github][2] or  [Gitee (mirror in China)]
 [![GitHub issues](https://img.shields.io/github/issues/pkuvcl/davs2.svg)](https://github.com/pkuvcl/davs2/issues)
 [![GitHub forks](https://img.shields.io/github/forks/pkuvcl/davs2.svg)](https://github.com/pkuvcl/davs2/network)
 [![GitHub stars](https://img.shields.io/github/stars/pkuvcl/davs2.svg)](https://github.com/pkuvcl/davs2/stargazers)
+
+Stargazers over time
+[![Stargazers over time](https://starcharts.herokuapp.com/pkuvcl/davs2.svg)](https://starcharts.herokuapp.com/pkuvcl/davs2)
 
 ## Compile it
 ### Windows
@@ -38,8 +40,14 @@ $ make
 
 ## Try it
 
+Decode AVS2 stream `test.avs` with `1` thread and output to a *YUV file* named `dec.yuv`.
 ```
-./davs2 -i test.avs -o test_dec.yuv [-r test_rec.yuv] [-t N]
+./davs2 -i test.avs -t 1 -o dec.yuv
+```
+
+Decode AVS2 stream `test.avs` and display the decoding result via *ffplay*.
+```
+./davs2 -i test.avs -t 1 -o stdout | ffplay -i -
 ```
 
 ### Parameter Instructions
