@@ -69,6 +69,12 @@ cal_ssd_16bit(int width, int height, uint16_t *rec, int rec_stride, uint16_t *ds
     uint64_t d = 0;
     int i, j;
 
+    if (rec_stride == dst_stride) {
+        if (memcmp(dst, rec, rec_stride * height * 2) == 0) {
+            return 0;
+        }
+    }
+
     for (j = 0; j < height; j++) {
         for (i = 0; i < width; i++) {
             int t = dst[i] - rec[i];
@@ -89,6 +95,12 @@ cal_ssd_8bit(int width, int height, uint8_t *rec, int rec_stride, uint8_t *dst, 
 {
     uint64_t d = 0;
     int i, j;
+
+    if (rec_stride == dst_stride) {
+        if (memcmp(dst, rec, rec_stride * height) == 0) {
+            return 0;
+        }
+    }
 
     for (j = 0; j < height; j++) {
         for (i = 0; i < width; i++) {
@@ -120,7 +132,7 @@ static __inline uint64_t
 cal_ssd(int width, int height, uint8_t *rec, int rec_stride, uint8_t *dst, int dst_stride, int bytes_per_sample)
 {
     if (bytes_per_sample == 2) {
-        return cal_ssd_16bit(width, height, (uint16_t *)rec, rec_stride, (uint16_t *)dst, dst_stride);
+        return cal_ssd_16bit(width, height, (uint16_t *)rec, rec_stride, (uint16_t *)dst, dst_stride >> 1);
     } else {
         return cal_ssd_8bit(width, height, rec, rec_stride, dst, dst_stride);
     }
@@ -193,7 +205,7 @@ static void
 find_first_mismatch_point(int width, int height, uint8_t *rec, int rec_stride, uint8_t *dst, int dst_stride, int bytes_per_sample, int *x, int *y)
 {
     if (bytes_per_sample == 2) {
-        find_first_mismatch_point_16bit(width, height, (uint16_t *)rec, rec_stride, (uint16_t *)dst, dst_stride, x, y);
+        find_first_mismatch_point_16bit(width, height, (uint16_t *)rec, rec_stride, (uint16_t *)dst, dst_stride >> 1, x, y);
     } else {
         find_first_mismatch_point_8bit(width, height, rec, rec_stride, dst, dst_stride, x, y);
     }
@@ -223,7 +235,7 @@ double get_psnr_with_ssd(double f_max, uint64_t diff)
 * ---------------------------------------------------------------------------
 */
 int 
-cal_psnr(int number, uint8_t *dst[3], int strides[3], FILE *f_rec, int width, int height, int num_planes, 
+cal_psnr(int number, uint8_t *dst[3], int strides[3], FILE *f_rec, int width, int height, int num_planes,
          double *psnr_y, double *psnr_u, double *psnr_v, int bytes_per_sample, int bit_depth)
 {
     int stride_ref = width;          /* stride of frame/field (luma) */
