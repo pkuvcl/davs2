@@ -86,7 +86,7 @@ unsigned int   MD5val[4];
 char           MD5str[33];
 
 davs2_input_param_t inputparam = {
-    NULL, NULL, NULL, NULL, 0, 0, 0
+    NULL, NULL, NULL, NULL, 0, 0, 0, 0
 };
 
 
@@ -115,6 +115,24 @@ void output_decoded_frame(davs2_picture_t *pic, davs2_seq_info_t *headerset, int
             headerset->internal_bit_depth, headerset->output_bit_depth,
             headerset->frame_rate,
             headerset->profile_id, headerset->level_id);
+
+        if (inputparam.b_y4m) {
+            static const int FRAME_RATE[9][2] = {
+                { 0, 1},  // invalid
+                { 24000, 1001 },
+                { 24, 1 },
+                { 25, 1 },
+                { 30000, 1001 },
+                { 30, 1 }, 
+                { 50, 1 },
+                { 60000, 1001 },
+                { 60, 1 }
+            };
+            int fps_num = FRAME_RATE[headerset->frame_rate_id][0];
+            int fps_den = FRAME_RATE[headerset->frame_rate_id][1];
+            write_y4m_header(inputparam.g_outfile, headerset->width, headerset->height,
+                             fps_num, fps_den);
+        }
         return;
     }
 
@@ -149,7 +167,7 @@ void output_decoded_frame(davs2_picture_t *pic, davs2_seq_info_t *headerset, int
     }
 
     if (inputparam.g_outfile) {
-        write_frame(pic, inputparam.g_outfile);
+        write_frame(pic, inputparam.g_outfile, inputparam.b_y4m);
     }
 }
 
@@ -177,7 +195,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
 
     const uint8_t *data = data_buf;
     const uint8_t *data_next_start_code;
-    int user_dts = 0;  // only used to check the returning value of DTS and PTS
+    int user_dts = 0; // only used to check the returning value of DTS and PTS
 
     /* init the decoder */
     param.threads      = inputparam.g_threads;

@@ -47,6 +47,7 @@ typedef struct davs2_input_param_t {
     int g_verbose;
     int g_psnr;
     int g_threads;
+    int b_y4m;     // Y4M or YUV
 
     FILE *g_infile;
     FILE *g_recfile;
@@ -120,6 +121,7 @@ static int parse_args(davs2_input_param_t *p_param, int argc, char **argv)
     p_param->g_verbose = 0;
     p_param->g_psnr    = 0;
     p_param->g_threads = 1;
+    p_param->b_y4m     = 0;
 
     opt = getopt_long(argc, argv, optString, longOpts, &longIndex);
     while (opt != -1) {
@@ -169,7 +171,11 @@ static int parse_args(davs2_input_param_t *p_param, int argc, char **argv)
     }
 
     if (p_param->s_outfile != NULL) {
-        p_param->g_outfile = fopen(p_param->s_outfile, "wb");
+        if (!strcmp(p_param->s_outfile, "stdout")) {
+            p_param->g_outfile = stdout;
+        } else {
+            p_param->g_outfile = fopen(p_param->s_outfile, "wb");
+        }
     } else if (p_param->g_outfile == NULL) {
         display_usage();
         show_message(CONSOLE_RED, "WARN: missing output file.\n");
@@ -190,6 +196,16 @@ static int parse_args(davs2_input_param_t *p_param, int argc, char **argv)
     /* open output file */
     if (p_param->s_outfile != NULL && p_param->g_outfile == NULL) {
         show_message(CONSOLE_RED, "ERROR: failed to open output file: %s\n", p_param->s_outfile);
+    } else {
+        int l = strlen(p_param->s_outfile);
+        if (l > 4) {
+            if (!strcmp(p_param->s_outfile + l - 4, ".y4m")) {
+                p_param->b_y4m = 1;
+            }
+        }
+        if (p_param->g_outfile == stdout) {
+            p_param->b_y4m = 1;
+        }
     }
 
     /* get md5 */

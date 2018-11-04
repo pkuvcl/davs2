@@ -158,21 +158,46 @@ void write_frame_plane(FILE *fp_out, const uint8_t *p_src, int img_w, int img_h,
     }
 }
 
+
+/* ---------------------------------------------------------------------------
+ */
+static 
+void write_y4m_header(FILE *fp, int w, int h, int fps_num, int fps_den)
+{
+    static int b_y4m_header_write = 0;
+
+    if (fp != NULL && !b_y4m_header_write) {
+        char buf[64];
+        sprintf(buf, "YUV4MPEG2 W%d H%d F%d:%d Ip C%s\n",
+                w, h, fps_num, fps_den, "420");
+        fwrite(buf, 1, strlen(buf), fp);
+
+        b_y4m_header_write = 1;
+    }
+}
+
+
 /* ---------------------------------------------------------------------------
  */
 static
-void write_frame(davs2_picture_t *pic, FILE *g_outfile)
+void write_frame(davs2_picture_t *pic, FILE *fp, int b_y4m)
 {
     const int bytes_per_sample = pic->bytes_per_sample;
+
+    if (b_y4m) {
+        const char *s_frm = "FRAME\n";
+        fwrite(s_frm, 1, strlen(s_frm), fp);
+    }
+
     /* write y */
-    write_frame_plane(g_outfile, pic->planes[0], pic->widths[0], pic->lines[0], bytes_per_sample, pic->strides[0]);
+    write_frame_plane(fp, pic->planes[0], pic->widths[0], pic->lines[0], bytes_per_sample, pic->strides[0]);
 
     if (pic->num_planes == 3) {
         /* write u */
-        write_frame_plane(g_outfile, pic->planes[1], pic->widths[1], pic->lines[1], bytes_per_sample, pic->strides[1]);
+        write_frame_plane(fp, pic->planes[1], pic->widths[1], pic->lines[1], bytes_per_sample, pic->strides[1]);
 
         /* write v */
-        write_frame_plane(g_outfile, pic->planes[2], pic->widths[2], pic->lines[2], bytes_per_sample, pic->strides[2]);
+        write_frame_plane(fp, pic->planes[2], pic->widths[2], pic->lines[2], bytes_per_sample, pic->strides[2]);
     }
 }
 
