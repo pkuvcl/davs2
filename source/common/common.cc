@@ -404,10 +404,10 @@ davs2_log_default(int i_log_level, const char *psz_fmt)
     }
 #if defined(_MSC_VER)
     davs2_set_font_color(i_log_level); /* set color */
-    fprintf(stdout, "%s%s\n", psz_prefix, psz_fmt);
+    fprintf(stderr, "%s%s\n", psz_prefix, psz_fmt);
     davs2_set_font_color(0);     /* restore to white color */
 #else
-    fprintf(stdout, "%s%s%s%s\n", cur_color, psz_prefix, psz_fmt, str_color_clear);
+    fprintf(stderr, "%s%s%s%s\n", cur_color, psz_prefix, psz_fmt, str_color_clear);
 #endif
 }
 
