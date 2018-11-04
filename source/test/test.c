@@ -86,7 +86,7 @@ unsigned int   MD5val[4];
 char           MD5str[33];
 
 davs2_input_param_t inputparam = {
-    NULL, NULL, NULL, 0, 0, 0
+    NULL, NULL, NULL, NULL, 0, 0, 0
 };
 
 
@@ -110,10 +110,11 @@ void output_decoded_frame(davs2_picture_t *pic, davs2_seq_info_t *headerset, int
 
     if (pic == NULL || ret_type == DAVS2_GOT_HEADER) {
         show_message(CONSOLE_GREEN,
-            "  Sequence size: %dx%d; BitDepth: %d/%d, FrameRate: %.3lf Hz\n\n", 
+            "  Sequence size: %dx%d, %d/%d-bit %.3lf Hz. ProfileLevel: 0x%x-0x%x\n\n", 
             headerset->width, headerset->height, 
             headerset->internal_bit_depth, headerset->output_bit_depth,
-            headerset->frame_rate);
+            headerset->frame_rate,
+            headerset->profile_id, headerset->level_id);
         return;
     }
 
