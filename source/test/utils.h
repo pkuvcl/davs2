@@ -104,13 +104,13 @@ static void show_message(int color, const char *format, ...)
 
 #if _WIN32
     set_font_color(color); /* set color */
-    printf("%s", message);
+    fprintf(stderr, "%s", message);
     set_font_color(0);     /* restore to white color */
 
 #elif __ANDROID__
     LOGE("%s", message);
 #else
-    printf("%s", message);
+    fprintf(stderr, "%s", message);
 #endif
 }
 

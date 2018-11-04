@@ -175,7 +175,7 @@ long long FileMD5(const char *filename, unsigned int md5value[4])
     }
 
     if (strlen(filename) > 0 && (p_infile = fopen(filename, "rb")) == NULL) {
-        printf("Input file %s does not exist", filename);
+        show_message(CONSOLE_RED, "Input file %s does not exist", filename);
         return 0;
     }
 
@@ -184,7 +184,7 @@ long long FileMD5(const char *filename, unsigned int md5value[4])
     fseek(p_infile, 0, SEEK_SET);
 
     if (len == -1) {
-        printf("Input file %s is too large to calculate md5!\n", filename);
+        show_message(CONSOLE_RED, "Input file %s is too large to calculate md5!\n", filename);
         fclose(p_infile);
         return 0;
     }

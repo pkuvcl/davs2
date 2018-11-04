@@ -42,8 +42,8 @@
 #include <assert.h>
 
 #include "davs2.h"
-#include "psnr.h"
 #include "utils.h"
+#include "psnr.h"
 #include "parse_args.h"
 #include "inputstream.h"
 #include "md5.h"
@@ -209,7 +209,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
 
         got_frame = davs2_decoder_send_packet(decoder, &packet);
         if (got_frame == DAVS2_ERROR) {
-            printf("Error: An decoder error counted\n");
+            show_message(CONSOLE_RED, "Error: An decoder error counted\n");
             break;
         }
 
@@ -307,7 +307,7 @@ int main(int argc, char *argv[])
     /* test decoding */
     test_decoder(data, size, frames, dst);
 
-    printf("\n Decoder Total Time: %.3lf s\n", (clock() - tm_start) / (double)(CLOCKS_PER_SEC));
+    show_message(CONSOLE_WHITE, "\n Decoder Total Time: %.3lf s\n", (clock() - tm_start) / (double)(CLOCKS_PER_SEC));
 
 fail:
     /* tidy up */
@@ -336,15 +336,15 @@ fail:
         filelength = FileMD5(inputparam.s_outfile, MD5val);
         sprintf (MD5str,"%08X%08X%08X%08X", MD5val[0], MD5val[1], MD5val[2], MD5val[3]);
         if (strcmp(MD5str,inputparam.s_md5)) {
-            printf("\n  MD5 match failed\n");
-            printf("  Input  MD5 : %s \n", inputparam.s_md5);
-            printf("  Output MD5 : %s \n", MD5str);
+            show_message(CONSOLE_RED, "\n  MD5 match failed\n");
+            show_message(CONSOLE_WHITE, "  Input  MD5 : %s \n", inputparam.s_md5);
+            show_message(CONSOLE_WHITE, "  Output MD5 : %s \n", MD5str);
         } else {
-            printf("\n  MD5 match success \n");
+            show_message(CONSOLE_WHITE, "\n  MD5 match success \n");
         }
     }
 
-    printf(" Decoder Exit, Time: %.3lf s\n", (clock() - tm_start) / (double)(CLOCKS_PER_SEC));
+    show_message(CONSOLE_WHITE, " Decoder Exit, Time: %.3lf s\n", (clock() - tm_start) / (double)(CLOCKS_PER_SEC));
     return 0;
 }
 

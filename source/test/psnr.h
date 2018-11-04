@@ -272,7 +272,7 @@ cal_psnr(int number, uint8_t *dst[3], int strides[3], FILE *f_rec, int width, in
     if (diff != 0 && b_output_error_position) {
         int x, y;
         find_first_mismatch_point(width, height, p1, stride_ref, p2, strides[0], bytes_per_sample, &x, &y);
-        printf("mismatch POC: %3d, Y(%d, %d)\n", number, x, y);
+        show_message(CONSOLE_RED, "mismatch POC: %3d, Y(%d, %d)\n", number, x, y);
         b_output_error_position = 0;
     }
 
@@ -291,7 +291,7 @@ cal_psnr(int number, uint8_t *dst[3], int strides[3], FILE *f_rec, int width, in
         if (diff != 0 && b_output_error_position) {
             int x, y;
             find_first_mismatch_point(width, height, p1, stride_ref, p2, strides[1], bytes_per_sample, &x, &y);
-            printf("mismatch POC: %3d, U (%d, %d) => Y(%d, %d)\n", number, x, y, 2 * x, 2 * y);
+            show_message(CONSOLE_RED, "mismatch POC: %3d, U (%d, %d) => Y(%d, %d)\n", number, x, y, 2 * x, 2 * y);
             b_output_error_position = 0;
         }
 
@@ -305,7 +305,7 @@ cal_psnr(int number, uint8_t *dst[3], int strides[3], FILE *f_rec, int width, in
         if (diff != 0 && b_output_error_position) {
             int x, y;
             find_first_mismatch_point(width, height, p1, stride_ref, p2, strides[2], bytes_per_sample, &x, &y);
-            printf("mismatch POC: %3d, V (%d, %d) => Y(%d, %d)\n", number, x, y, 2 * x, 2 * y);
+            show_message(CONSOLE_RED, "mismatch POC: %3d, V (%d, %d) => Y(%d, %d)\n", number, x, y, 2 * x, 2 * y);
             b_output_error_position = 0;
         }
     }
