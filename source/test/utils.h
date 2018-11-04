@@ -162,15 +162,22 @@ void write_frame_plane(FILE *fp_out, const uint8_t *p_src, int img_w, int img_h,
 /* ---------------------------------------------------------------------------
  */
 static 
-void write_y4m_header(FILE *fp, int w, int h, int fps_num, int fps_den)
+void write_y4m_header(FILE *fp, int w, int h, int fps_num, int fps_den, int bit_depth)
 {
     static int b_y4m_header_write = 0;
 
     if (fp != NULL && !b_y4m_header_write) {
         char buf[64];
-        sprintf(buf, "YUV4MPEG2 W%d H%d F%d:%d Ip C%s\n",
-                w, h, fps_num, fps_den, "420");
-        fwrite(buf, 1, strlen(buf), fp);
+
+        if (bit_depth != 8) {
+            sprintf(buf, "YUV4MPEG2 W%d H%d F%d:%d Ip C%sp%d\n",
+                    w, h, fps_num, fps_den, "420", bit_depth);
+            fwrite(buf, 1, strlen(buf), fp);
+        } else {
+            sprintf(buf, "YUV4MPEG2 W%d H%d F%d:%d Ip C%s\n",
+                    w, h, fps_num, fps_den, "420");
+            fwrite(buf, 1, strlen(buf), fp);
+        }
 
         b_y4m_header_write = 1;
     }

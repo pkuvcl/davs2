@@ -131,7 +131,7 @@ void output_decoded_frame(davs2_picture_t *pic, davs2_seq_info_t *headerset, int
             int fps_num = FRAME_RATE[headerset->frame_rate_id][0];
             int fps_den = FRAME_RATE[headerset->frame_rate_id][1];
             write_y4m_header(inputparam.g_outfile, headerset->width, headerset->height,
-                             fps_num, fps_den);
+                             fps_num, fps_den, headerset->output_bit_depth);
         }
         return;
     }
