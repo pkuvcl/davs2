@@ -36,6 +36,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <getopt.h>
+#if _WIN32
+#include <io.h>
+#include <fcntl.h>
+#endif
 #include "utils.h"
 
 typedef struct davs2_input_param_t {
@@ -204,6 +208,9 @@ static int parse_args(davs2_input_param_t *p_param, int argc, char **argv)
             }
         }
         if (p_param->g_outfile == stdout) {
+#if _WIN32
+            setmode(fileno(stdout), O_BINARY);
+#endif
             p_param->b_y4m = 1;
         }
     }
