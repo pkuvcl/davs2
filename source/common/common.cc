@@ -423,7 +423,7 @@ void davs2_log(void *handle, int level, const char *format, ...)
         i_enable_level = h->i_log_level;
     }
 
-    assert(level >= 0 && level < DAVS2_LOG_MAX);
+    DAVS2_ASSERT(level >= 0 && level < DAVS2_LOG_MAX, "Invalid log level %d", level);
 
     if (level >= i_enable_level) {
         char message[2048] = { 0 };
