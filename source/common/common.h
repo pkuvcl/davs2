@@ -1417,6 +1417,10 @@ typedef union {
 #define CP32(dst,src)           M32(dst)  = M32(src)
 #define CP64(dst,src)           M64(dst)  = M64(src)
 
+/* ---------------------------------------------------------------------------
+ * assert
+ */
+#define DAVS2_ASSERT(expression, ...)   if (!(expression)) { davs2_log(NULL, DAVS2_LOG_ERROR, __VA_ARGS__); }
 
 /* ---------------------------------------------------------------------------
  * list
