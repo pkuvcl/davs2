@@ -290,9 +290,12 @@ void task_send_picture_to_output_list(davs2_t *h, davs2_outpic_t *pic)
         curr = curr->next;
     }
 
-    /* insert before 'curr' */
-    assert(curr == NULL || curr->frame->i_poc > pic->frame->i_poc);
+    /* duplicate frame? */
+    if (curr != NULL && curr->frame->i_poc == pic->frame->i_poc) {
+        davs2_log(h, DAVS2_LOG_WARNING, "detected duplicate POC %d", curr->frame->i_poc);
+    }
 
+    /* insert this frame before 'curr' */
     pic->next = curr;
 
     if (prev) {
@@ -302,7 +305,9 @@ void task_send_picture_to_output_list(davs2_t *h, davs2_outpic_t *pic)
     }
     mgr->outpics.num_output_pic++;
 
-    assert(h->task_info.task_status == TASK_BUSY);
+    DAVS2_ASSERT(h->task_info.task_status == TASK_BUSY,
+        "Invalid task status %d",
+        h->task_info.task_status);
     davs2_thread_mutex_unlock(&mgr->mutex_mgr);
 }
 
