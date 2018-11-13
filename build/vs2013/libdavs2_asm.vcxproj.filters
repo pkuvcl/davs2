@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="asm-x86">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <YASM Include="..\..\source\common\x86\cpu-a.asm">
+      <Filter>asm-x86</Filter>
+    </YASM>
+    <YASM Include="..\..\source\common\x86\const-a.asm">
+      <Filter>asm-x86</Filter>
+    </YASM>
+    <YASM Include="..\..\source\common\x86\dct8.asm">
+      <Filter>asm-x86</Filter>
+    </YASM>
+    <YASM Include="..\..\source\common\x86\quant8.asm">
+      <Filter>asm-x86</Filter>
+    </YASM>
+    <YASM Include="..\..\source\common\x86\pixeladd8.asm">
+      <Filter>asm-x86</Filter>
+    </YASM>
+    <YASM Include="..\..\source\common\x86\mc-a2.asm">
+      <Filter>asm-x86</Filter>
+    </YASM>
+    <YASM Include="..\..\source\common\x86\blockcopy8.asm">
+      <Filter>asm-x86</Filter>
+    </YASM>
+    <YASM Include="..\..\source\common\x86\ipfilter8.asm">
+      <Filter>asm-x86</Filter>
+    </YASM>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\common\x86\dct8.h">
+      <Filter>asm-x86</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\x86\ipfilter8.h">
+      <Filter>asm-x86</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

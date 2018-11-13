@@ -19,85 +19,51 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\common\aec.cc" />
-    <ClCompile Include="..\..\source\common\alf.cc" />
-    <ClCompile Include="..\..\source\common\bitstream.cc" />
-    <ClCompile Include="..\..\source\common\block_info.cc" />
-    <ClCompile Include="..\..\source\common\common.cc" />
-    <ClCompile Include="..\..\source\common\davs2.cc" />
-    <ClCompile Include="..\..\source\common\cpu.cc" />
-    <ClCompile Include="..\..\source\common\cu.cc" />
-    <ClCompile Include="..\..\source\common\deblock.cc" />
-    <ClCompile Include="..\..\source\common\decoder.cc" />
-    <ClCompile Include="..\..\source\common\frame.cc" />
-    <ClCompile Include="..\..\source\common\header.cc" />
-    <ClCompile Include="..\..\source\common\intra.cc" />
-    <ClCompile Include="..\..\source\common\mc.cc" />
-    <ClCompile Include="..\..\source\common\memory.cc" />
-    <ClCompile Include="..\..\source\common\pixel.cc" />
-    <ClCompile Include="..\..\source\common\predict.cc" />
-    <ClCompile Include="..\..\source\common\primitives.cc" />
-    <ClCompile Include="..\..\source\common\quant.cc" />
-    <ClCompile Include="..\..\source\common\sao.cc" />
-    <ClCompile Include="..\..\source\common\threadpool.cc" />
-    <ClCompile Include="..\..\source\common\transform.cc" />
-    <ClCompile Include="..\..\source\common\win32thread.cc" />
+    <YASM Include="..\..\source\common\x86\blockcopy8.asm" />
+    <YASM Include="..\..\source\common\x86\const-a.asm" />
+    <YASM Include="..\..\source\common\x86\cpu-a.asm" />
+    <YASM Include="..\..\source\common\x86\dct8.asm" />
+    <YASM Include="..\..\source\common\x86\ipfilter8.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </YASM>
+    <YASM Include="..\..\source\common\x86\mc-a2.asm" />
+    <YASM Include="..\..\source\common\x86\pixeladd8.asm" />
+    <YASM Include="..\..\source\common\x86\quant8.asm" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\common\win32thread.h" />
-    <ClInclude Include="..\..\source\configw.h" />
-    <ClInclude Include="..\..\source\davs2.h" />
-    <ClInclude Include="..\..\source\common\aec.h" />
-    <ClInclude Include="..\..\source\common\alf.h" />
-    <ClInclude Include="..\..\source\common\bitstream.h" />
-    <ClInclude Include="..\..\source\common\block_info.h" />
-    <ClInclude Include="..\..\source\common\common.h" />
-    <ClInclude Include="..\..\source\common\cpu.h" />
-    <ClInclude Include="..\..\source\common\cu.h" />
-    <ClInclude Include="..\..\source\common\deblock.h" />
-    <ClInclude Include="..\..\source\common\decoder.h" />
-    <ClInclude Include="..\..\source\common\defines.h" />
-    <ClInclude Include="..\..\source\common\frame.h" />
-    <ClInclude Include="..\..\source\common\header.h" />
-    <ClInclude Include="..\..\source\common\intra.h" />
-    <ClInclude Include="..\..\source\common\mc.h" />
-    <ClInclude Include="..\..\source\common\osdep.h" />
-    <ClInclude Include="..\..\source\common\predict.h" />
-    <ClInclude Include="..\..\source\common\primitives.h" />
-    <ClInclude Include="..\..\source\common\quant.h" />
-    <ClInclude Include="..\..\source\common\sao.h" />
-    <ClInclude Include="..\..\source\common\scantab.h" />
-    <ClInclude Include="..\..\source\common\threadpool.h" />
-    <ClInclude Include="..\..\source\common\transform.h" />
-    <ClInclude Include="..\..\source\common\vlc.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\..\source\common\x86\dct8.h" />
+    <ClInclude Include="..\..\source\common\x86\ipfilter8.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{34C0840A-BDE6-446B-B0DF-A8281A42825B}</ProjectGuid>
+    <ProjectGuid>{A9B37E3C-A8C7-4E24-BC2D-AB4D0804DAC1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
+    <RootNamespace>asmopt</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -105,6 +71,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\vsyasm.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -120,24 +87,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)$(Platform)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Platform)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Platform)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Platform)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Platform)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -145,22 +108,20 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>DAVS2_EXPORTS;HIGH_BIT_DEPTH=0;BIT_DEPTH=8;WIN32;ARCH_X86_64=0;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HIGH_BIT_DEPTH=0;BIT_DEPTH=8;WIN32;ARCH_X86_64=0;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\;..\..\source;..\..\pthread</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile />
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeaderFile />
+      <DisableSpecificWarnings>4752;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libdavs2_asm.lib;libdavs2_intrin_sse.lib;libdavs2_intrin_avx.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <LargeAddressAware>true</LargeAddressAware>
     </Link>
-    <PreBuildEvent>
-      <Command>cd /d "$(SolutionDir)..\.." &amp;&amp; sh version.sh</Command>
-      <Message>UpdateSourceVersionInfo</Message>
-    </PreBuildEvent>
+    <YASM>
+      <Defines>HIGH_BIT_DEPTH=0;BIT_DEPTH=8;ARCH_X86_64=0;PREFIX</Defines>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -168,22 +129,19 @@
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>DAVS2_EXPORTS;HIGH_BIT_DEPTH=0;BIT_DEPTH=8;WIN32;ARCH_X86_64=1;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HIGH_BIT_DEPTH=0;BIT_DEPTH=8;WIN32;ARCH_X86_64=1;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\;..\..\source;..\..\pthread;$(CUDA_PATH)\include;$(AMD_APPSDK_PATH)\include;$(INTEL_OPENCL_SDK)\include;</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile>
-      </PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeaderFile />
+      <DisableSpecificWarnings>4752;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\;$(CUDA_PATH)\lib\$(Platform);$(INTEL_OPENCL_SDK)\lib\$(Platform);$(AMD_APPSDK_PATH)\lib\x64;%(AdditionalLibraryDirectories);</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libdavs2_asm.lib;libdavs2_intrin_sse.lib;libdavs2_intrin_avx.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PreBuildEvent>
-      <Command>cd /d "$(SolutionDir)..\.." &amp;&amp; sh version.sh</Command>
-      <Message>UpdateSourceVersionInfo</Message>
-    </PreBuildEvent>
+    <YASM>
+      <Defines>HIGH_BIT_DEPTH=0;BIT_DEPTH=8;ARCH_X86_64=1;</Defines>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -193,25 +151,22 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>DAVS2_EXPORTS;HIGH_BIT_DEPTH=0;BIT_DEPTH=8;WIN32;ARCH_X86_64=0;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HIGH_BIT_DEPTH=0;BIT_DEPTH=8;WIN32;ARCH_X86_64=0;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\;..\..\source;..\..\pthread</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile />
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeaderFile />
+      <DisableSpecificWarnings>4752;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libdavs2_asm.lib;libdavs2_intrin_sse.lib;libdavs2_intrin_avx.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <LargeAddressAware>true</LargeAddressAware>
     </Link>
-    <PreBuildEvent>
-      <Command>cd /d "$(SolutionDir)..\.." &amp;&amp; sh version.sh</Command>
-      <Message>UpdateSourceVersionInfo</Message>
-    </PreBuildEvent>
+    <YASM>
+      <Defines>HIGH_BIT_DEPTH=0;BIT_DEPTH=8;ARCH_X86_64=0;PREFIX</Defines>
+    </YASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -221,27 +176,25 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>DAVS2_EXPORTS;HIGH_BIT_DEPTH=0;BIT_DEPTH=8;WIN32;ARCH_X86_64=1;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HIGH_BIT_DEPTH=0;BIT_DEPTH=8;WIN32;ARCH_X86_64=1;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\;..\..\source;..\..\pthread;$(CUDA_PATH)\include;$(AMD_APPSDK_PATH)\include;$(INTEL_OPENCL_SDK)\include;</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile>
-      </PrecompiledHeaderFile>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeaderFile />
+      <DisableSpecificWarnings>4752;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\;$(CUDA_PATH)\lib\$(Platform);$(INTEL_OPENCL_SDK)\lib\$(Platform);$(AMD_APPSDK_PATH)\lib\x64;%(AdditionalLibraryDirectories);</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libdavs2_asm.lib;libdavs2_intrin_sse.lib;libdavs2_intrin_avx.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PreBuildEvent>
-      <Command>cd /d "$(SolutionDir)..\.." &amp;&amp; sh version.sh</Command>
-      <Message>UpdateSourceVersionInfo</Message>
-    </PreBuildEvent>
+    <YASM>
+      <Defines>HIGH_BIT_DEPTH=0;BIT_DEPTH=8;ARCH_X86_64=1;</Defines>
+    </YASM>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\vsyasm.targets" />
   </ImportGroup>
 </Project>

@@ -19,44 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <YASM Include="..\..\source\common\x86\blockcopy8.asm" />
-    <YASM Include="..\..\source\common\x86\const-a.asm" />
-    <YASM Include="..\..\source\common\x86\cpu-a.asm" />
-    <YASM Include="..\..\source\common\x86\dct8.asm" />
-    <YASM Include="..\..\source\common\x86\ipfilter8.asm">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </YASM>
-    <YASM Include="..\..\source\common\x86\mc-a2.asm" />
-    <YASM Include="..\..\source\common\x86\pixeladd8.asm" />
-    <YASM Include="..\..\source\common\x86\quant8.asm" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\..\source\common\vec\intrinsic.cc" />
     <ClCompile Include="..\..\source\common\vec\intrinsic_alf.cc" />
     <ClCompile Include="..\..\source\common\vec\intrinsic_deblock.cc" />
-    <ClCompile Include="..\..\source\common\vec\intrinsic_deblock_avx2.cc" />
     <ClCompile Include="..\..\source\common\vec\intrinsic_idct.cc" />
     <ClCompile Include="..\..\source\common\vec\intrinsic_idct_avx2.cc" />
     <ClCompile Include="..\..\source\common\vec\intrinsic_inter_pred.cc" />
-    <ClCompile Include="..\..\source\common\vec\intrinsic_inter_pred_avx2.cc" />
     <ClCompile Include="..\..\source\common\vec\intrinsic_intra-filledge.cc" />
     <ClCompile Include="..\..\source\common\vec\intrinsic_intra-pred.cc" />
-    <ClCompile Include="..\..\source\common\vec\intrinsic_intra-pred_avx2.cc" />
     <ClCompile Include="..\..\source\common\vec\intrinsic_pixel.cc" />
-    <ClCompile Include="..\..\source\common\vec\intrinsic_pixel_avx.cc" />
     <ClCompile Include="..\..\source\common\vec\intrinsic_sao.cc" />
-    <ClCompile Include="..\..\source\common\vec\intrinsic_sao_avx2.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\vec\intrinsic.h" />
-    <ClInclude Include="..\..\source\common\x86\dct8.h" />
-    <ClInclude Include="..\..\source\common\x86\ipfilter8.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A9B37E3C-A8C7-4E24-BC2D-AB4D0804DAC1}</ProjectGuid>
+    <ProjectGuid>{2E7A6EE4-927F-470A-A012-3B29EDB87906}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>asmopt</RootNamespace>
   </PropertyGroup>
