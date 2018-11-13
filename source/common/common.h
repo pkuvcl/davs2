@@ -42,8 +42,8 @@ extern "C" {
  * ===========================================================================
  */
 
-#include "osdep.h"
 #include "defines.h"
+#include "osdep.h"
 #include "davs2.h"
 
 #include <stdlib.h>
