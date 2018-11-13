@@ -40,8 +40,8 @@ extern "C" {
 
 #define bs_init FPFX(bs_init)
 void bs_init(davs2_bs_t *bs, uint8_t *p_data, int i_data);
-#define bs_alain FPFX(bs_alain)
-void bs_alain(davs2_bs_t *bs);
+#define bs_align FPFX(bs_align)
+void bs_align(davs2_bs_t *bs);
 #define bs_left_bytes FPFX(bs_left_bytes)
 int  bs_left_bytes(davs2_bs_t *bs);
 #define found_slice_header FPFX(found_slice_header)

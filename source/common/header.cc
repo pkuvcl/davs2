@@ -263,7 +263,7 @@ int parse_sequence_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
     seq->cross_loop_filter_flag    = u_flag(bs, "Cross Loop Filter Flag");
     u_v(bs, 2,  "reserved bits");
 
-    bs_alain(bs); /* align position */
+    bs_align(bs); /* align position */
 
     seq->head.bitrate    = ((seq->bit_rate_upper << 18) + seq->bit_rate_lower) * 400;
     seq->head.frame_rate = FRAME_RATE[seq->head.frame_rate_id - 1];
@@ -478,7 +478,7 @@ static int parse_picture_header_intra(davs2_t *h, davs2_bs_t *bs)
     }
 
     /* align position in bitstream buffer */
-    bs_alain(bs);
+    bs_align(bs);
 
     return 0;
 }
@@ -676,7 +676,7 @@ static int parse_picture_header_inter(davs2_t *h, davs2_bs_t *bs)
     }
 
     /* align position in bitstream buffer */
-    bs_alain(bs);
+    bs_align(bs);
 
     return 0;
 }

@@ -60,7 +60,7 @@ void bs_init(davs2_bs_t *bs, uint8_t *p_data, int i_data)
 
 /* ---------------------------------------------------------------------------
  * align position in bitstream */
-void bs_alain(davs2_bs_t *bs)
+void bs_align(davs2_bs_t *bs)
 {
     bs->i_bit_pos = ((bs->i_bit_pos + 7) >> 3) << 3;
 }
