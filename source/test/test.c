@@ -198,10 +198,11 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
     int user_dts = 0; // only used to check the returning value of DTS and PTS
 
     /* init the decoder */
+    memset(&param, 0, sizeof(param));
     param.threads      = inputparam.g_threads;
     param.opaque       = (void *)(intptr_t)num_frames;
     param.info_level   = DAVS2_LOG_DEBUG;
-    param.disable_avx  = 0; // disable CPU AVX, enable on machines that support AVX can provide higher efficiency.
+    param.disable_avx  = 0; // on some platforms, disable AVX (setting to 1) would be faster
 
     decoder = davs2_decoder_open(&param);
 
