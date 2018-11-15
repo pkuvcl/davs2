@@ -201,6 +201,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
     param.threads      = inputparam.g_threads;
     param.opaque       = (void *)(intptr_t)num_frames;
     param.info_level   = DAVS2_LOG_DEBUG;
+    param.disable_avx  = 0; // disable CPU AVX, enable on machines that support AVX can provide higher efficiency.
 
     decoder = davs2_decoder_open(&param);
 

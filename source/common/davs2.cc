@@ -467,6 +467,9 @@ davs2_decoder_open(davs2_param_t *param)
     /* init all function handlers */
 #if HAVE_MMX
     cpuid = davs2_cpu_detect();
+    if (param->disable_avx) {
+         cpuid &= ~(DAVS2_CPU_AVX | DAVS2_CPU_AVX2);
+    }
 #endif
     init_all_primitives(cpuid);
 

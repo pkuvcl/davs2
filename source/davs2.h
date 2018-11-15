@@ -41,7 +41,7 @@ extern "C" {    // only need to export C interface if used by C++ source code
 
 /* dAVS2 build version, means different API interface
  * (10 * VER_MAJOR + VER_MINOR) */
-#define DAVS2_BUILD                15
+#define DAVS2_BUILD                16
 
 /**
  * ===========================================================================
@@ -180,6 +180,7 @@ typedef struct davs2_param_t {
     int               info_level;     /* only output information which is no less then this level (davs2_log_level_e).
                                          0: All; 1: no debug info; 2: only warning and errors; 3: only errors */
     void             *opaque;         /* user data */
+    int disable_avx;                  /* 1: disable; 0: default (autodetect) */
 } davs2_param_t;
 
 /**
