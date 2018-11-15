@@ -9,7 +9,7 @@
 # ============================================================================
 
 # setting API version
-api=15
+api=`grep '#define DAVS2_BUILD' < ./source/davs2.h | sed 's/^.* \([1-9][0-9]*\).*$/\1/'`
 VER_R=0
 VER_SHA='not-in-git-tree'
 

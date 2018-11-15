@@ -39,6 +39,10 @@
 extern "C" {    // only need to export C interface if used by C++ source code
 #endif
 
+/* dAVS2 build version, means different API interface
+ * (10 * VER_MAJOR + VER_MINOR) */
+#define DAVS2_BUILD                15
+
 /**
  * ===========================================================================
  * define DAVS2_API
