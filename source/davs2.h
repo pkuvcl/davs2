@@ -181,7 +181,7 @@ typedef struct davs2_param_t {
                                          0: All; 1: no debug info; 2: only warning and errors; 3: only errors */
     void             *opaque;         /* user data */
     /* additional parameters for version >= 16 */
-    int disable_avx;                  /* 1: disable; 0: default (autodetect) */
+    int               disable_avx;    /* 1: disable; 0: default (autodetect) */
 } davs2_param_t;
 
 /**
