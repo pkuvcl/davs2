@@ -30,14 +30,14 @@
  *    For more information, contact us at sswang @ pku.edu.cn.
  */
 
-#include "../common.h"
-#include "intrinsic.h"
-
 #include <mmintrin.h>
 #include <emmintrin.h>
 #include <tmmintrin.h>
 #include <smmintrin.h>
 #include <immintrin.h>
+
+#include "../common.h"
+#include "intrinsic.h"
 
 #if !HIGH_BIT_DEPTH
 /* ---------------------------------------------------------------------------
