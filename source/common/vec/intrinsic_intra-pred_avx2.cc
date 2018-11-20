@@ -77,17 +77,7 @@ void intra_pred_ver_avx(pel_t *src, pel_t *dst, int i_dst, int dir_mode, int bsx
                 _mm_maskmoveu_si128(S1, mask, (char *)&dst[j]);
                 dst += i_dst;
             }
-        }
-        /*{//4/8
-        for (i = 0; i < bsy; i++) {
-        for (j = 0; j < bsx; j += 4) {
-        S1 = _mm_loadu_si128((const __m128i*)(rsrc + j));
-        _mm_storeu_si128((__m128i*)(dst + j), S1);
-        }
-        dst += i_dst;
-        }
-        }*/
-        else {
+        }  else {
             for (i = 0; i < bsy; i++) {//16
                 S1 = _mm_loadu_si128((const __m128i*)rsrc);
                 _mm_storeu_si128((__m128i*)dst, S1);
