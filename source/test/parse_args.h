@@ -154,7 +154,7 @@ static int parse_args(davs2_input_param_t *p_param, int argc, char **argv)
         case 'h':   /* fall-through is intentional */
         case '?':
             display_usage();
-            break;
+            return -1;
         case 0:     /* long option without a short arg */
             break;
         default:
