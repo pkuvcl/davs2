@@ -82,17 +82,20 @@ static const struct option longOpts[] = {
 static void display_usage(void)
 {
     /* 运行参数说明 */
-    const char * usage = "usage: davs2.exe --input avsfile --output=outputfile [--psnr=recfile] [--threads=threads] [--verbose]";
+    const char * usage = "usage: davs2 -i avs2file -o outputfile [-r recfile] [-t threads] [-v]";
 
-    show_message(CONSOLE_RED, "davs2.exe 运行参数说明：\n %s\n", usage);
-    show_message(CONSOLE_RED, " --input=test.avs 或 -i test.avs          设置输入文件路径\n");
-    show_message(CONSOLE_RED, " --output=test_dec.yuv 或 -o test_dec.yuv 设置输出路径\n");
-    show_message(CONSOLE_RED, " --psnr=test_rec.yuv 或 -r test_rec,yuv   设置编码参考文件，用于计算是否匹配\n");
-    show_message(CONSOLE_RED, " --md5=md5 或 -m md5                      设置编码参考MD5，用于计算是否匹配\n");
-    show_message(CONSOLE_RED, " --threads=N 或 -t N                      设置解码线程数，默认1\n");
-    show_message(CONSOLE_RED, " --verbose 或 -v                          设置显示每帧解码数据\n");
-    show_message(CONSOLE_RED, " --help 或 -h                             显示此提示信息\n");
-    show_message(CONSOLE_RED, "------------------------------------------------------------\n");
+    show_message(CONSOLE_RED, "davs2 parameters\n    %s\n", usage);
+    show_message(CONSOLE_RED, "+------------------+-------------+-------------------------------------------+\n");
+    show_message(CONSOLE_RED, "|     Parameter    |    Alias    |                  Settings                 |\n");
+    show_message(CONSOLE_RED, "+------------------+-------------+-------------------------------------------+\n");
+    show_message(CONSOLE_RED, "| --input=test.avs | -i test.avs | input bitstream file path                 |\n");
+    show_message(CONSOLE_RED, "| --output=dec.yuv | -o dec.yuv  | output YUV/Y4M file path                  |\n");
+    show_message(CONSOLE_RED, "| --psnr=rec.yuv   | -r rec.yuv  | reference reconstruction YUV file         |\n");
+    show_message(CONSOLE_RED, "| --threads=N      | -t N        | threads for decoding (default: 1)         |\n");
+    show_message(CONSOLE_RED, "| --md5=M          | -m M        | Reference MD5 of decoded YUV              |\n");
+    show_message(CONSOLE_RED, "| --verbose        | -v          | Enable decoding status every frame        |\n");
+    show_message(CONSOLE_RED, "| --help           | -h          | Showing this instruction                  |\n");
+    show_message(CONSOLE_RED, "+------------------+-------------+-------------------------------------------+\n");
 }
 
 
