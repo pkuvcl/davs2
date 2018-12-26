@@ -45,13 +45,13 @@ INIT_XMM sse4
 cglobal dequant, 2,2,7
 ;{
     mov         r3, r3mp              ; r3  <-- shift
-    movd        m4, r2mp              ; m4[0] = scale
-    movd        m6, r3                ; m6[0] = shift
+    movq        m4, r2mp              ; m4[0] = scale
+    movq        m6, r3                ; m6[0] = shift
     dec         r3                    ; r3d <-- shift - 1
     xor         r2, r2                ; r2 <-- 0
     shr         r1, 4                 ; r1    = i_coef/16
     bts         r2, r3                ; r2 <-- add = 1 < (shift - 1)
-    movd        m5, r2                ; m5[0] = add
+    movq        m5, r2                ; m5[0] = add
     pshufd      m4, m4, 0             ; m4[3210] = scale
     pshufd      m5, m5, 0             ; m5[3210] = add
                                       ;
