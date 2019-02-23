@@ -340,6 +340,9 @@ int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_pict
 
     mgr->num_frames_out++;
 
+    /* set pts */
+    pic->frame->i_pts = mgr->pts_queue.pts[pic->frame->i_poi % DAVS2_PTS_CYCLE];
+
     /* copy out */
     davs2_write_a_frame(pic->pic, pic->frame);
 
@@ -501,6 +504,10 @@ davs2_decoder_open(davs2_param_t *param)
     mgr->i_prev_coi       = -1;
     mgr->i_prev_poi       = -1;
 
+    /* init pts queue */
+    mgr->pts_queue.head = 0;
+    memset(mgr->pts_queue.pts, 0, sizeof(mgr->pts_queue.pts));
+
     /* output pictures */
     mgr->outpics.output   = -1;
     mgr->outpics.pics     = NULL;
@@ -601,6 +608,9 @@ int decoder_decode_es_unit(davs2_mgr_t *mgr, es_unit_t *es_unit)
         /* prepare the reference list and the reconstruction buffer */
         if (task_get_references(h, es_unit->pts, es_unit->dts) == 0) {
             b_wait_output = has_new_output_frame(mgr, h);
+            mgr->pts_queue.pts[mgr->pts_queue.head] = es_unit->pts;
+            mgr->pts_queue.head++;
+            mgr->pts_queue.head %= AVS2_PTS_CYCLE;
             mgr->num_frames_in++;
 
             /* ½âËø */
