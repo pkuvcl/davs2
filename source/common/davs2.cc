@@ -502,6 +502,7 @@ davs2_decoder_open(davs2_param_t *param)
 
     /* init members that could not be zero */
     mgr->i_prev_coi       = -1;
+    mgr->i_prev_poi       = -1;
 
     /* output pictures */
     mgr->outpics.output   = -1;

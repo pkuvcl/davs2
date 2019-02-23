@@ -705,6 +705,7 @@ typedef struct davs2_frame_t {
     int         dist_scale_refs[AVS2_MAX_REFS];  /* = (MULTI / dist_refs) */
     int         i_poc;                /* POC (picture order count), used for MV scaling */
     int         i_coi;                /* COI (coding order index) */
+    int         i_poi;                /* POI (presentation order index) */
     int         b_refered_by_others;  /* referenced by others */
 
     /* planes */
@@ -915,6 +916,7 @@ struct davs2_mgr_t {
 
     int                 i_tr_wrap_cnt;/* COI wrap count */
     int                 i_prev_coi;   /* previous COI */
+    int                 i_prev_poi;   /* previous POI */
 
     /* --- decoder output --------- */
     int                 new_sps;      /* is SPS(sequence property set) changed? */
@@ -1070,6 +1072,7 @@ struct davs2_t {
 
     int         i_poc;                /* POC (picture order count) of current frame, 8 bit */
     int         i_coi;                /* COI (coding order index) */
+    int         i_poi;                /* POI (presentation order index) */
 
     int         i_cur_layer;
 

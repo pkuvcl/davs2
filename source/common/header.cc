@@ -718,19 +718,22 @@ int parse_picture_header(davs2_t *h, davs2_bs_t *bs, uint32_t start_code)
         davs2_log(h, DAVS2_LOG_DEBUG, "discontinuous COI (prev: %d --> curr: %d).", mgr->i_prev_coi, h->i_coi);
     }
 
-    /* update COI */
+    /* update COI and POI */
     if (h->i_coi < mgr->i_prev_coi) { /// !!! '='
         mgr->i_tr_wrap_cnt++;
     }
 
     mgr->i_prev_coi = h->i_coi;
+    mgr->i_prev_poi++;
 
     h->i_coi += mgr->i_tr_wrap_cnt * AVS2_COI_CYCLE;
 
     if (h->seq_info.head.low_delay == 0) {
         h->i_poc = h->i_coi + h->i_display_delay - h->seq_info.picture_reorder_delay;
+        h->i_poi = mgr->i_prev_poi + h->i_display_delay - h->seq_info.picture_reorder_delay;
     } else {
         h->i_poc = h->i_coi;
+        h->i_poi = h->i_poi;
     }
 
     assert(h->i_coi >= 0 && h->i_poc >= 0); /// 'int' (2147483647) should be large enough for 'i_coi' & 'i_poc'.
@@ -1086,9 +1089,10 @@ int task_set_sequence_head(davs2_mgr_t *mgr, davs2_seq_t *seq)
                     seq->head.width, seq->head.height);
             }
 
-            /* COI for the new sequence should be reset */
+            /* COI/POI for the new sequence should be reset */
             mgr->i_tr_wrap_cnt = 0;
             mgr->i_prev_coi    = -1;
+            mgr->i_prev_poi    = -1;
 
             destroy_dpb(mgr);
 
@@ -1116,6 +1120,7 @@ void clean_one_frame(davs2_frame_t *frame)
 {
     frame->i_poc                = INVALID_FRAME;
     frame->i_coi                = INVALID_FRAME;
+    frame->i_poi                = INVALID_FRAME;
     frame->i_disposable         = 0;
     frame->b_refered_by_others  = 0;
 }
