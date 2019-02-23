@@ -884,6 +884,14 @@ typedef struct es_unit_t {
 } es_unit_t;
 
 /* ---------------------------------------------------------------------------
+ * pts queue
+ */
+typedef struct pts_queue_t {
+    int           head;                  /* pts queue head */
+    int64_t       pts[AVS2_PTS_CYCLE];  /* presentation time stamp */
+} pts_queue_t;
+
+/* ---------------------------------------------------------------------------
  * decoder task
  */
 typedef struct davs2_task_t {
@@ -917,6 +925,8 @@ struct davs2_mgr_t {
     int                 i_tr_wrap_cnt;/* COI wrap count */
     int                 i_prev_coi;   /* previous COI */
     int                 i_prev_poi;   /* previous POI */
+
+    pts_queue_t         pts_queue;    /* pts queue */
 
     /* --- decoder output --------- */
     int                 new_sps;      /* is SPS(sequence property set) changed? */

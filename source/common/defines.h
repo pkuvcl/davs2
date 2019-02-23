@@ -221,6 +221,7 @@ enum intra_chroma_pred_mode_e {
 #define AVS2_MAX_REFS           4     /* max reference frame number */
 #define AVS2_GOP_NUM           32     /* max GOP number */
 #define AVS2_COI_CYCLE        256     /* COI ranges from [0, 255] */
+#define AVS2_PTS_CYCLE        256     /* PTS queue index ranges from [0, 255] */
 
 #define MAX_POC_DISTANCE      128     /* max POC distance */
 #define INVALID_FRAME          -1     /* invalid value for COI & POC */
