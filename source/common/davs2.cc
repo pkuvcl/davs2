@@ -307,6 +307,7 @@ davs2_outpic_t *output_list_get_one_output_picture(davs2_mgr_t *mgr)
 int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_picture_t *out_frame, int is_flush)
 {
     davs2_outpic_t *pic   = NULL;
+    int outpts;
     int b_wait_new_frame = mgr->num_frames_in + mgr->num_decoders - mgr->num_frames_out > 8 + mgr->num_aec_thread;
 
     while (mgr->num_frames_in > mgr->num_frames_out && /* no more output */
@@ -340,8 +341,15 @@ int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_pict
 
     mgr->num_frames_out++;
 
-    /* set pts */
-    pic->frame->i_pts = mgr->pts_queue.pts[pic->frame->i_poi % DAVS2_PTS_CYCLE];
+    /* set output pts */
+    outpts = mgr->pts_queue.pts[pic->frame->i_poi % AVS2_PTS_CYCLE];
+    if (outpts <= mgr->i_prev_pts) {
+        davs2_log(mgr, DAVS2_LOG_WARNING, "Non-incremental pts: %5d => %5d. Fixed as %5d",
+                  mgr->i_prev_pts, outpts, mgr->i_prev_pts + 1);
+        outpts = mgr->i_prev_pts + 1;
+    }
+    pic->frame->i_pts = outpts;
+    mgr->i_prev_pts = outpts;
 
     /* copy out */
     davs2_write_a_frame(pic->pic, pic->frame);
@@ -503,6 +511,7 @@ davs2_decoder_open(davs2_param_t *param)
     /* init members that could not be zero */
     mgr->i_prev_coi       = -1;
     mgr->i_prev_poi       = -1;
+    mgr->i_prev_pts       = -1;
 
     /* init pts queue */
     mgr->pts_queue.head = 0;

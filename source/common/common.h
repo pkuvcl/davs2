@@ -926,6 +926,7 @@ struct davs2_mgr_t {
     int                 i_prev_coi;   /* previous COI */
     int                 i_prev_poi;   /* previous POI */
 
+    int                 i_prev_pts;   /* previous PTS */
     pts_queue_t         pts_queue;    /* pts queue */
 
     /* --- decoder output --------- */
