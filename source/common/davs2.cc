@@ -252,7 +252,7 @@ davs2_outpic_t *output_list_get_one_output_picture(davs2_mgr_t *mgr)
         davs2_frame_t *frame = mgr->outpics.pics->frame;
         assert(frame);
 
-        if (frame->i_poc == mgr->outpics.output) {
+        if (frame->i_poi == mgr->outpics.output) {
             /* the next frame : output */
             pic = mgr->outpics.pics;
             mgr->outpics.pics = pic->next;
@@ -265,7 +265,7 @@ davs2_outpic_t *output_list_get_one_output_picture(davs2_mgr_t *mgr)
             /* TODO: 这里仍需要确认一下修改方式 
              * 如何保证输出顺序的有效性？需要在输出队列由多少帧时进行输出。
              */
-            if (frame->i_poc > mgr->outpics.output) {
+            if (frame->i_poi > mgr->outpics.output) {
                 /* the end of the stream occurs */
                 if (mgr->b_flushing &&
                     mgr->num_frames_in == mgr->num_frames_out + mgr->outpics.num_output_pic) {
@@ -290,10 +290,7 @@ davs2_outpic_t *output_list_get_one_output_picture(davs2_mgr_t *mgr)
                     continue;
                 }
             }
-
-            /* 目前输出队列的最小POC与已输出的POC之间间隔较大，将输出POC提前到当前最小POC */
-            davs2_log(mgr, DAVS2_LOG_WARNING, "Advance to discontinuous POC: %d\n", frame->i_poc);
-            mgr->outpics.output = frame->i_poc;
+            mgr->outpics.output = frame->i_poi;
         }
     }
 

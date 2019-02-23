@@ -743,7 +743,7 @@ int parse_picture_header(davs2_t *h, davs2_bs_t *bs, uint32_t start_code)
             davs2_log(h, DAVS2_LOG_INFO, "COI of the first frame is %d.", h->i_coi);
         }
 
-        mgr->outpics.output = h->i_poc;
+        mgr->outpics.output = h->i_poi;
     }
 
     return 0;
@@ -939,6 +939,7 @@ static void init_fdec(davs2_t *h, int64_t pts, int64_t dts)
     h->fdec->i_qp                = h->i_qp;
     h->fdec->i_poc               = h->i_poc;
     h->fdec->i_coi               = h->i_coi;
+    h->fdec->i_poi               = h->i_poi;
     h->fdec->b_refered_by_others = h->rps.refered_by_others;
     h->fdec->i_decoded_line      = -1;
     h->fdec->i_pts               = pts;
@@ -1436,11 +1437,11 @@ int task_get_references(davs2_t *h, int64_t pts, int64_t dts)
                     break;
                 } else {
                     /* next frame will not be available, skip it */
-                    assert(mgr->outpics.output < mgr->outpics.pics->frame->i_poc);
+                    assert(mgr->outpics.output < mgr->outpics.pics->frame->i_poi);
                     /* emit an error */
-                    davs2_log(h, DAVS2_LOG_ERROR, "the expected frame %d unavailable, proceed to frame %d.", mgr->outpics.output, mgr->outpics.pics->frame->i_poc);
+                    davs2_log(h, DAVS2_LOG_ERROR, "the expected frame %d unavailable, proceed to frame %d.", mgr->outpics.output, mgr->outpics.pics->frame->i_poi);
                     /* output the next available frame */
-                    mgr->outpics.output = mgr->outpics.pics->frame->i_poc;
+                    mgr->outpics.output = mgr->outpics.pics->frame->i_poi;
                 }
             }
 
