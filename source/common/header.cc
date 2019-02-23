@@ -930,7 +930,7 @@ int create_dpb(davs2_mgr_t *mgr)
 
 /* ---------------------------------------------------------------------------
  */
-static void init_fdec(davs2_t *h, int64_t pts, int64_t dts)
+static void init_fdec(davs2_t *h, int64_t dts)
 {
     int num_in_spu = h->i_width_in_spu * h->i_height_in_spu;
     int i;
@@ -942,7 +942,6 @@ static void init_fdec(davs2_t *h, int64_t pts, int64_t dts)
     h->fdec->i_poi               = h->i_poi;
     h->fdec->b_refered_by_others = h->rps.refered_by_others;
     h->fdec->i_decoded_line      = -1;
-    h->fdec->i_pts               = pts;
     h->fdec->i_dts               = dts;
 
     for (i = 0; i < AVS2_MAX_REFS; i++) {
@@ -1235,7 +1234,7 @@ int has_blocking(davs2_mgr_t *mgr)
 
 /* ---------------------------------------------------------------------------
  */
-int task_get_references(davs2_t *h, int64_t pts, int64_t dts)
+int task_get_references(davs2_t *h, int64_t dts)
 {
     davs2_mgr_t    *mgr   = h->task_info.taskmgr;
     davs2_frame_t **dpb   = mgr->dpb;
@@ -1454,7 +1453,7 @@ int task_get_references(davs2_t *h, int64_t pts, int64_t dts)
             davs2_thread_mutex_lock(&mgr->mutex_mgr);
         }
 
-        init_fdec(h, pts, dts);
+        init_fdec(h, dts);
 
         if (h->i_frame_type == AVS2_S_SLICE) {
             int num_in_spu = h->i_width_in_spu * h->i_height_in_spu;

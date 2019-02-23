@@ -56,7 +56,7 @@ void decoder_free_extra_buffer(davs2_t *h);
 void davs2_write_a_frame(davs2_picture_t *pic, davs2_frame_t *frame);
 
 #define task_get_references FPFX(task_get_references)
-int  task_get_references(davs2_t *h, int64_t pts, int64_t dts);
+int  task_get_references(davs2_t *h, int64_t dts);
 
 #define task_unload_packet FPFX(task_unload_packet)
 void task_unload_packet(davs2_t *h, es_unit_t *es_unit);

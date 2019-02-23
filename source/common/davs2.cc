@@ -606,7 +606,7 @@ int decoder_decode_es_unit(davs2_mgr_t *mgr, es_unit_t *es_unit)
         h->p_bs = &es_unit->bs;
         /* TODO: 分析该图像头信息，确定当前时刻是否需要输出图像 */
         /* prepare the reference list and the reconstruction buffer */
-        if (task_get_references(h, es_unit->pts, es_unit->dts) == 0) {
+        if (task_get_references(h, es_unit->dts) == 0) {
             b_wait_output = has_new_output_frame(mgr, h);
             mgr->pts_queue.pts[mgr->pts_queue.head] = es_unit->pts;
             mgr->pts_queue.head++;
