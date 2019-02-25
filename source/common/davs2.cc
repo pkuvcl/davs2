@@ -610,16 +610,18 @@ int decoder_decode_es_unit(davs2_mgr_t *mgr, es_unit_t *es_unit)
 
     h->task_info.curr_es_unit = es_unit;     /* record the ES_unit to be decoded */
 
-    /* (2) parse header */
+    /* (2) record input pts */
+    mgr->pts_queue.pts[mgr->pts_queue.head] = es_unit->pts;
+    mgr->pts_queue.head++;
+    mgr->pts_queue.head %= AVS2_PTS_CYCLE;
+
+    /* (3) parse header */
     if (parse_header(h, &es_unit->bs) == 0) {
         h->p_bs = &es_unit->bs;
         /* TODO: 分析该图像头信息，确定当前时刻是否需要输出图像 */
         /* prepare the reference list and the reconstruction buffer */
         if (task_get_references(h, es_unit->dts) == 0) {
             b_wait_output = has_new_output_frame(mgr, h);
-            mgr->pts_queue.pts[mgr->pts_queue.head] = es_unit->pts;
-            mgr->pts_queue.head++;
-            mgr->pts_queue.head %= AVS2_PTS_CYCLE;
             mgr->num_frames_in++;
 
             /* 解锁 */
