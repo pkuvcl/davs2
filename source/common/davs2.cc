@@ -342,7 +342,9 @@ int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_pict
     mgr->num_frames_out++;
 
     /* set output pts */
-    outpts = mgr->pts_queue.pts[pic->frame->i_poi % AVS2_PTS_CYCLE];
+    outpts = mgr->pts_queue.pts[mgr->pts_queue.tail];
+    mgr->pts_queue.tail++;
+    mgr->pts_queue.tail %= AVS2_PTS_CYCLE;
     if (outpts <= mgr->i_prev_pts) {
         davs2_log(mgr, DAVS2_LOG_WARNING, "Non-incremental pts: %5d => %5d. Fixed as %5d",
                   mgr->i_prev_pts, outpts, mgr->i_prev_pts + 1);
@@ -515,6 +517,7 @@ davs2_decoder_open(davs2_param_t *param)
 
     /* init pts queue */
     mgr->pts_queue.head = 0;
+    mgr->pts_queue.tail = 0;
     memset(mgr->pts_queue.pts, 0, sizeof(mgr->pts_queue.pts));
 
     /* output pictures */

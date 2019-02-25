@@ -888,6 +888,7 @@ typedef struct es_unit_t {
  */
 typedef struct pts_queue_t {
     int           head;                  /* pts queue head */
+    int           tail;                  /* pts queue tail */
     int64_t       pts[AVS2_PTS_CYCLE];  /* presentation time stamp */
 } pts_queue_t;
 
