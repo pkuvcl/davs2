@@ -613,12 +613,7 @@ int decoder_decode_es_unit(davs2_mgr_t *mgr, es_unit_t *es_unit)
 
     h->task_info.curr_es_unit = es_unit;     /* record the ES_unit to be decoded */
 
-    /* (2) record input pts */
-    mgr->pts_queue.pts[mgr->pts_queue.head] = es_unit->pts;
-    mgr->pts_queue.head++;
-    mgr->pts_queue.head %= AVS2_PTS_CYCLE;
-
-    /* (3) parse header */
+    /* (2) parse header */
     if (parse_header(h, &es_unit->bs) == 0) {
         h->p_bs = &es_unit->bs;
         /* TODO: 分析该图像头信息，确定当前时刻是否需要输出图像 */
@@ -679,6 +674,11 @@ davs2_decoder_send_packet(void *decoder, davs2_packet_t *packet)
                   packet->data[0], packet->data[1], packet->data[2]);
         return DAVS2_ERROR;
     }
+
+    /* record input pts */
+    mgr->pts_queue.pts[mgr->pts_queue.head] = packet->pts;
+    mgr->pts_queue.head++;
+    mgr->pts_queue.head %= AVS2_PTS_CYCLE;
 
     /* generate one es_unit for current byte-stream buffer */
     es_unit = davs2_pack_es_unit(mgr, packet->data, packet->len, packet->pts, packet->dts);
