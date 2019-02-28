@@ -320,7 +320,7 @@ void davs2_pixel_average_avx(pel_t *dst, int i_dst, const pel_t *src1, int i_src
             dst += i_dst;
         }
     } else {
-        int i, j;
+        int j;
 
         if (width & 15) {
             __m128i mask = _mm_load_si128((const __m128i *)intrinsic_mask[(width & 15) - 1]);
