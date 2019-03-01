@@ -204,7 +204,7 @@ static int parse_args(davs2_input_param_t *p_param, int argc, char **argv)
     if (p_param->s_outfile != NULL && p_param->g_outfile == NULL) {
         show_message(CONSOLE_RED, "ERROR: failed to open output file: %s\n", p_param->s_outfile);
     } else {
-        int l = strlen(p_param->s_outfile);
+        int l = (int)strlen(p_param->s_outfile);
         if (l > 4) {
             if (!strcmp(p_param->s_outfile + l - 4, ".y4m")) {
                 p_param->b_y4m = 1;
