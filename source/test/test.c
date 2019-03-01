@@ -215,7 +215,7 @@ void test_decoder(uint8_t *data_buf, int data_len, int num_frames, char *dst)
         data_next_start_code = find_start_code(data + 4, data_len - 4);
 
         if (data_next_start_code) {
-            len = data_next_start_code - data;
+            len = (int)(data_next_start_code - data);
         } else {
             len = data_len;
         }
