@@ -4740,91 +4740,91 @@ void idct_32x32_quad_sse128(const coeff_t *src, coeff_t *dst, int i_dst)
     c32_rnd = _mm_set1_epi32(1 << (shift2 - 1));    // add2
     nShift = shift2;
     for (part = 0; part < 4; part++) {
-        const __m128i T_00_00A = _mm_unpacklo_epi16(in01[part], in03[part]);    // [33 13 32 12 31 11 30 10]
-        const __m128i T_00_00B = _mm_unpackhi_epi16(in01[part], in03[part]);    // [37 17 36 16 35 15 34 14]
-        const __m128i T_00_01A = _mm_unpacklo_epi16(in05[part], in07[part]);    // [ ]
-        const __m128i T_00_01B = _mm_unpackhi_epi16(in05[part], in07[part]);    // [ ]
+        const __m128i T_00_00_A = _mm_unpacklo_epi16(in01[part], in03[part]);    // [33 13 32 12 31 11 30 10]
+        const __m128i T_00_00_B = _mm_unpackhi_epi16(in01[part], in03[part]);    // [37 17 36 16 35 15 34 14]
+        const __m128i T_00_01_A = _mm_unpacklo_epi16(in05[part], in07[part]);    // [ ]
+        const __m128i T_00_01_B = _mm_unpackhi_epi16(in05[part], in07[part]);    // [ ]
 
-        const __m128i T_00_08A = _mm_unpacklo_epi16(in02[part], in06[part]);    // [ ]
-        const __m128i T_00_08B = _mm_unpackhi_epi16(in02[part], in06[part]);    // [ ]
+        const __m128i T_00_08_A = _mm_unpacklo_epi16(in02[part], in06[part]);    // [ ]
+        const __m128i T_00_08_B = _mm_unpackhi_epi16(in02[part], in06[part]);    // [ ]
 
-        const __m128i T_00_12A = _mm_unpacklo_epi16(in04[part], Zero_16);    // [ ]
-        const __m128i T_00_12B = _mm_unpackhi_epi16(in04[part], Zero_16);    // [ ]
+        const __m128i T_00_12_A = _mm_unpacklo_epi16(in04[part], Zero_16);    // [ ]
+        const __m128i T_00_12_B = _mm_unpackhi_epi16(in04[part], Zero_16);    // [ ]
 
-        const __m128i T_00_15A = _mm_unpacklo_epi16(in00[part], Zero_16);    //
-        const __m128i T_00_15B = _mm_unpackhi_epi16(in00[part], Zero_16);    // [ ]
+        const __m128i T_00_15_A = _mm_unpacklo_epi16(in00[part], Zero_16);    //
+        const __m128i T_00_15_B = _mm_unpackhi_epi16(in00[part], Zero_16);    // [ ]
 
-        __m128i O00A, O01A, O02A, O03A, O04A, O05A, O06A, O07A, O08A, O09A, O10A, O11A, O12A, O13A, O14A, O15A;
-        __m128i O00B, O01B, O02B, O03B, O04B, O05B, O06B, O07B, O08B, O09B, O10B, O11B, O12B, O13B, O14B, O15B;
-        __m128i EO0A, EO1A, EO2A, EO3A, EO4A, EO5A, EO6A, EO7A;
-        __m128i EO0B, EO1B, EO2B, EO3B, EO4B, EO5B, EO6B, EO7B;
+        //__m128i O00A, O01A, O02A, O03A, O04A, O05A, O06A, O07A, O08A, O09A, O10A, O11A, O12A, O13A, O14A, O15A;
+        //__m128i O00B, O01B, O02B, O03B, O04B, O05B, O06B, O07B, O08B, O09B, O10B, O11B, O12B, O13B, O14B, O15B;
+        //__m128i EO0A, EO1A, EO2A, EO3A, EO4A, EO5A, EO6A, EO7A;
+        //__m128i EO0B, EO1B, EO2B, EO3B, EO4B, EO5B, EO6B, EO7B;
         
-        O00A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_p45_p45), _mm_madd_epi16(T_00_01A, c16_p43_p44));
-        O01A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_p41_p45), _mm_madd_epi16(T_00_01A, c16_p23_p34));
-        O02A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_p34_p44), _mm_madd_epi16(T_00_01A, c16_n07_p15));
-        O03A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_p23_p43), _mm_madd_epi16(T_00_01A, c16_n34_n07));
-        O04A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_p11_p41), _mm_madd_epi16(T_00_01A, c16_n45_n27));
-        O05A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_n02_p39), _mm_madd_epi16(T_00_01A, c16_n36_n41));
-        O06A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_n15_p36), _mm_madd_epi16(T_00_01A, c16_n11_n45));
-        O07A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_n27_p34), _mm_madd_epi16(T_00_01A, c16_p19_n39));
-        O08A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_n36_p30), _mm_madd_epi16(T_00_01A, c16_p41_n23));
-        O09A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_n43_p27), _mm_madd_epi16(T_00_01A, c16_p44_n02));
-        O10A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_n45_p23), _mm_madd_epi16(T_00_01A, c16_p27_p19));
-        O11A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_n44_p19), _mm_madd_epi16(T_00_01A, c16_n02_p36));
-        O12A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_n39_p15), _mm_madd_epi16(T_00_01A, c16_n30_p45));
-        O13A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_n30_p11), _mm_madd_epi16(T_00_01A, c16_n45_p43));
-        O14A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_n19_p07), _mm_madd_epi16(T_00_01A, c16_n39_p30));
-        O15A = _mm_add_epi32(_mm_madd_epi16(T_00_00A, c16_n07_p02), _mm_madd_epi16(T_00_01A, c16_n15_p11));
+        O00A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_p45_p45), _mm_madd_epi16(T_00_01_A, c16_p43_p44));
+        O01A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_p41_p45), _mm_madd_epi16(T_00_01_A, c16_p23_p34));
+        O02A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_p34_p44), _mm_madd_epi16(T_00_01_A, c16_n07_p15));
+        O03A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_p23_p43), _mm_madd_epi16(T_00_01_A, c16_n34_n07));
+        O04A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_p11_p41), _mm_madd_epi16(T_00_01_A, c16_n45_n27));
+        O05A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_n02_p39), _mm_madd_epi16(T_00_01_A, c16_n36_n41));
+        O06A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_n15_p36), _mm_madd_epi16(T_00_01_A, c16_n11_n45));
+        O07A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_n27_p34), _mm_madd_epi16(T_00_01_A, c16_p19_n39));
+        O08A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_n36_p30), _mm_madd_epi16(T_00_01_A, c16_p41_n23));
+        O09A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_n43_p27), _mm_madd_epi16(T_00_01_A, c16_p44_n02));
+        O10A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_n45_p23), _mm_madd_epi16(T_00_01_A, c16_p27_p19));
+        O11A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_n44_p19), _mm_madd_epi16(T_00_01_A, c16_n02_p36));
+        O12A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_n39_p15), _mm_madd_epi16(T_00_01_A, c16_n30_p45));
+        O13A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_n30_p11), _mm_madd_epi16(T_00_01_A, c16_n45_p43));
+        O14A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_n19_p07), _mm_madd_epi16(T_00_01_A, c16_n39_p30));
+        O15A = _mm_add_epi32(_mm_madd_epi16(T_00_00_A, c16_n07_p02), _mm_madd_epi16(T_00_01_A, c16_n15_p11));
 
-        O00B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_p45_p45), _mm_madd_epi16(T_00_01B, c16_p43_p44));
-        O01B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_p41_p45), _mm_madd_epi16(T_00_01B, c16_p23_p34));
-        O02B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_p34_p44), _mm_madd_epi16(T_00_01B, c16_n07_p15));
-        O03B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_p23_p43), _mm_madd_epi16(T_00_01B, c16_n34_n07));
-        O04B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_p11_p41), _mm_madd_epi16(T_00_01B, c16_n45_n27));
-        O05B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_n02_p39), _mm_madd_epi16(T_00_01B, c16_n36_n41));
-        O06B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_n15_p36), _mm_madd_epi16(T_00_01B, c16_n11_n45));
-        O07B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_n27_p34), _mm_madd_epi16(T_00_01B, c16_p19_n39));
-        O08B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_n36_p30), _mm_madd_epi16(T_00_01B, c16_p41_n23));
-        O09B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_n43_p27), _mm_madd_epi16(T_00_01B, c16_p44_n02));
-        O10B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_n45_p23), _mm_madd_epi16(T_00_01B, c16_p27_p19));
-        O11B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_n44_p19), _mm_madd_epi16(T_00_01B, c16_n02_p36));
-        O12B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_n39_p15), _mm_madd_epi16(T_00_01B, c16_n30_p45));
-        O13B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_n30_p11), _mm_madd_epi16(T_00_01B, c16_n45_p43));
-        O14B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_n19_p07), _mm_madd_epi16(T_00_01B, c16_n39_p30));
-        O15B = _mm_add_epi32(_mm_madd_epi16(T_00_00B, c16_n07_p02), _mm_madd_epi16(T_00_01B, c16_n15_p11));
+        O00B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_p45_p45), _mm_madd_epi16(T_00_01_B, c16_p43_p44));
+        O01B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_p41_p45), _mm_madd_epi16(T_00_01_B, c16_p23_p34));
+        O02B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_p34_p44), _mm_madd_epi16(T_00_01_B, c16_n07_p15));
+        O03B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_p23_p43), _mm_madd_epi16(T_00_01_B, c16_n34_n07));
+        O04B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_p11_p41), _mm_madd_epi16(T_00_01_B, c16_n45_n27));
+        O05B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_n02_p39), _mm_madd_epi16(T_00_01_B, c16_n36_n41));
+        O06B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_n15_p36), _mm_madd_epi16(T_00_01_B, c16_n11_n45));
+        O07B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_n27_p34), _mm_madd_epi16(T_00_01_B, c16_p19_n39));
+        O08B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_n36_p30), _mm_madd_epi16(T_00_01_B, c16_p41_n23));
+        O09B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_n43_p27), _mm_madd_epi16(T_00_01_B, c16_p44_n02));
+        O10B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_n45_p23), _mm_madd_epi16(T_00_01_B, c16_p27_p19));
+        O11B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_n44_p19), _mm_madd_epi16(T_00_01_B, c16_n02_p36));
+        O12B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_n39_p15), _mm_madd_epi16(T_00_01_B, c16_n30_p45));
+        O13B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_n30_p11), _mm_madd_epi16(T_00_01_B, c16_n45_p43));
+        O14B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_n19_p07), _mm_madd_epi16(T_00_01_B, c16_n39_p30));
+        O15B = _mm_add_epi32(_mm_madd_epi16(T_00_00_B, c16_n07_p02), _mm_madd_epi16(T_00_01_B, c16_n15_p11));
 
-        EO0A = _mm_madd_epi16(T_00_08A, c16_p43_p45);
-        EO1A = _mm_madd_epi16(T_00_08A, c16_p29_p43);
-        EO2A = _mm_madd_epi16(T_00_08A, c16_p04_p40);
-        EO3A = _mm_madd_epi16(T_00_08A, c16_n21_p35);
-        EO4A = _mm_madd_epi16(T_00_08A, c16_n40_p29);
-        EO5A = _mm_madd_epi16(T_00_08A, c16_n45_p21);
-        EO6A = _mm_madd_epi16(T_00_08A, c16_n35_p13);
-        EO7A = _mm_madd_epi16(T_00_08A, c16_n13_p04);
+        EO0A = _mm_madd_epi16(T_00_08_A, c16_p43_p45);
+        EO1A = _mm_madd_epi16(T_00_08_A, c16_p29_p43);
+        EO2A = _mm_madd_epi16(T_00_08_A, c16_p04_p40);
+        EO3A = _mm_madd_epi16(T_00_08_A, c16_n21_p35);
+        EO4A = _mm_madd_epi16(T_00_08_A, c16_n40_p29);
+        EO5A = _mm_madd_epi16(T_00_08_A, c16_n45_p21);
+        EO6A = _mm_madd_epi16(T_00_08_A, c16_n35_p13);
+        EO7A = _mm_madd_epi16(T_00_08_A, c16_n13_p04);
 
-        EO0B = _mm_madd_epi16(T_00_08B, c16_p43_p45);
-        EO1B = _mm_madd_epi16(T_00_08B, c16_p29_p43);
-        EO2B = _mm_madd_epi16(T_00_08B, c16_p04_p40);
-        EO3B = _mm_madd_epi16(T_00_08B, c16_n21_p35);
-        EO4B = _mm_madd_epi16(T_00_08B, c16_n40_p29);
-        EO5B = _mm_madd_epi16(T_00_08B, c16_n45_p21);
-        EO6B = _mm_madd_epi16(T_00_08B, c16_n35_p13);
-        EO7B = _mm_madd_epi16(T_00_08B, c16_n13_p04);
+        EO0B = _mm_madd_epi16(T_00_08_B, c16_p43_p45);
+        EO1B = _mm_madd_epi16(T_00_08_B, c16_p29_p43);
+        EO2B = _mm_madd_epi16(T_00_08_B, c16_p04_p40);
+        EO3B = _mm_madd_epi16(T_00_08_B, c16_n21_p35);
+        EO4B = _mm_madd_epi16(T_00_08_B, c16_n40_p29);
+        EO5B = _mm_madd_epi16(T_00_08_B, c16_n45_p21);
+        EO6B = _mm_madd_epi16(T_00_08_B, c16_n35_p13);
+        EO7B = _mm_madd_epi16(T_00_08_B, c16_n13_p04);
 
         {
-            const __m128i EEO0A = _mm_madd_epi16(T_00_12A, c16_p38_p44);
-            const __m128i EEO1A = _mm_madd_epi16(T_00_12A, c16_n09_p38);
-            const __m128i EEO2A = _mm_madd_epi16(T_00_12A, c16_n44_p25);
-            const __m128i EEO3A = _mm_madd_epi16(T_00_12A, c16_n25_p09);
-            const __m128i EEO0B = _mm_madd_epi16(T_00_12B, c16_p38_p44);
-            const __m128i EEO1B = _mm_madd_epi16(T_00_12B, c16_n09_p38);
-            const __m128i EEO2B = _mm_madd_epi16(T_00_12B, c16_n44_p25);
-            const __m128i EEO3B = _mm_madd_epi16(T_00_12B, c16_n25_p09);
+            const __m128i EEO0A = _mm_madd_epi16(T_00_12_A, c16_p38_p44);
+            const __m128i EEO1A = _mm_madd_epi16(T_00_12_A, c16_n09_p38);
+            const __m128i EEO2A = _mm_madd_epi16(T_00_12_A, c16_n44_p25);
+            const __m128i EEO3A = _mm_madd_epi16(T_00_12_A, c16_n25_p09);
+            const __m128i EEO0B = _mm_madd_epi16(T_00_12_B, c16_p38_p44);
+            const __m128i EEO1B = _mm_madd_epi16(T_00_12_B, c16_n09_p38);
+            const __m128i EEO2B = _mm_madd_epi16(T_00_12_B, c16_n44_p25);
+            const __m128i EEO3B = _mm_madd_epi16(T_00_12_B, c16_n25_p09);
 
-            const __m128i EEEE0A = _mm_madd_epi16(T_00_15A, c16_p32_p32);
-            const __m128i EEEE0B = _mm_madd_epi16(T_00_15B, c16_p32_p32);
-            const __m128i EEEE1A = _mm_madd_epi16(T_00_15A, c16_n32_p32);
-            const __m128i EEEE1B = _mm_madd_epi16(T_00_15B, c16_n32_p32);
+            const __m128i EEEE0A = _mm_madd_epi16(T_00_15_A, c16_p32_p32);
+            const __m128i EEEE0B = _mm_madd_epi16(T_00_15_B, c16_p32_p32);
+            const __m128i EEEE1A = _mm_madd_epi16(T_00_15_A, c16_n32_p32);
+            const __m128i EEEE1B = _mm_madd_epi16(T_00_15_B, c16_n32_p32);
 
             const __m128i EEE0A = EEEE0A;    // EEE0 = EEEE0 + EEEO0
             const __m128i EEE0B = EEEE0B;

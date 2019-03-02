@@ -166,8 +166,8 @@ void sao_block_eo_90_c(pel_t *p_dst, int i_dst,
         int pel_diff = p_src[sy * i_src + x] - p_src[(sy - 1) * i_src + x];
         int top_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
         for (y = sy; y < ey; y++) {
-            int pel_diff = p_src[y * i_src + x] - p_src[(y + 1) * i_src + x];
-            int down_sign = pel_diff > 0 ? 1 : (pel_diff < 0 ? -1 : 0);
+            int pelDiff = p_src[y * i_src + x] - p_src[(y + 1) * i_src + x];
+            int down_sign = pelDiff > 0 ? 1 : (pelDiff < 0 ? -1 : 0);
             edge_type = down_sign + top_sign + 2;
             top_sign = -down_sign;
             p_dst[y * i_dst + x] = (pel_t)DAVS2_CLIP3(0, max_pel_val, p_src[y * i_src + x] + sao_offset[edge_type]);

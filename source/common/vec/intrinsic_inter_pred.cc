@@ -2654,7 +2654,9 @@ void intpl_luma_ext_x3_sse128(pel_t *const dst[3], int i_dst, mct_t *tmp, int i_
             T50 = _mm_loadu_si128((__m128i*)(p + 5 * i_tmp));
             T60 = _mm_loadu_si128((__m128i*)(p + 6 * i_tmp));
             T70 = _mm_loadu_si128((__m128i*)(p + 7 * i_tmp));
-
+            T80 = _mm_loadu_si128((__m128i*)(p + 8 * i_tmp));
+            T90 = _mm_loadu_si128((__m128i*)(p + 9 * i_tmp));
+            Ta0 = _mm_loadu_si128((__m128i*)(p + 10 * i_tmp));
             //First
             if (bsymyFirst) {
                 T0 = _mm_unpacklo_epi16(T00, T70);
