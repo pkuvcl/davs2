@@ -842,7 +842,7 @@ int decoder_alloc_extra_buffer(davs2_t *h)
     h->p_ipredmode  = (int8_t *)mem_base;
     mem_base       += sizeof(int8_t) * (w_in_spu + 16) * (h_in_spu + 1);
     h->p_ipredmode += (w_in_spu + 16) + 16;
-    h->i_ipredmode  = (w_in_spu + 16);
+    h->i_ipredmode  = ((int)w_in_spu + 16);
     ALIGN_POINTER(mem_base);
 
     /* M3, prediction direction buffer */
@@ -920,7 +920,7 @@ int decoder_alloc_extra_buffer(davs2_t *h)
         ALIGN_POINTER(mem_base);
     }
 
-    if (mem_size < (mem_base - h->p_integral)) {
+    if ((int)mem_size < (mem_base - h->p_integral)) {
         davs2_log(h, DAVS2_LOG_ERROR, "No enough memory allocated. mem_size %llu <= %llu\n",
                    mem_size, mem_base - h->p_integral);
         goto fail;

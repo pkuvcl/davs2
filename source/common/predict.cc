@@ -549,7 +549,7 @@ static void fill_mv_bskip(davs2_t *h, cu_t *p_cu, int pix_x, int pix_y, int size
         }
     } else {   //    B_Skip_Sym »ò B_Direct_Sym
         int size_cu = size_in_scu << MIN_CU_SIZE_IN_BIT;
-        int size_pu = size_cu >> (p_cu->num_pu == 4);
+        int size_pu = size_cu >> (int)(p_cu->num_pu == 4);
         int size_pu_in_spu = size_pu >> MIN_PU_SIZE_IN_BIT;
         ref_idx_t ref_idx;
 

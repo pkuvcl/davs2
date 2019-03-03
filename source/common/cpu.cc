@@ -153,7 +153,7 @@ char *davs2_get_simd_capabilities(char *buf, uint32_t cpuid)
         if (!strcmp(davs2_cpu_names[i].name, "BMI1")
             && (cpuid & DAVS2_CPU_BMI2))
             continue;
-        if ((cpuid & davs2_cpu_names[i].flags) == davs2_cpu_names[i].flags
+        if ((cpuid & davs2_cpu_names[i].flags) == (uint32_t)davs2_cpu_names[i].flags
             && (!i || davs2_cpu_names[i].flags != davs2_cpu_names[i - 1].flags))
             p += sprintf(p, " %s", davs2_cpu_names[i].name);
     }

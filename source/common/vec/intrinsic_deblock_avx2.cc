@@ -74,7 +74,7 @@ void deblock_edge_ver_avx2(pel_t *SrcPtr, int stride, int Alpha, int Beta, uint8
 
     __m128i ALPHA = _mm_set1_epi16((pel_t)Alpha);
     __m128i BETA = _mm_set1_epi16((pel_t)Beta);
-    __m128i c_0 = _mm_set1_epi16(0);
+    __m128i c0 = _mm_set1_epi16(0);
     __m256i c_1_256 = _mm256_set1_epi16(1);
     __m256i c_2_256 = _mm256_set1_epi16(2);
     __m256i c_3_256 = _mm256_set1_epi16(3);
@@ -132,15 +132,15 @@ void deblock_edge_ver_avx2(pel_t *SrcPtr, int stride, int Alpha, int Beta, uint8
     T2 = _mm_unpacklo_epi32(T6, T7);
     T3 = _mm_unpackhi_epi32(T6, T7);
 
-    TL3 = _mm_unpacklo_epi8(T0, c_0);
-    TL2 = _mm_unpackhi_epi8(T0, c_0);
-    TL1 = _mm_unpacklo_epi8(T1, c_0);
-    TL0 = _mm_unpackhi_epi8(T1, c_0);
+    TL3 = _mm_unpacklo_epi8(T0, c0);
+    TL2 = _mm_unpackhi_epi8(T0, c0);
+    TL1 = _mm_unpacklo_epi8(T1, c0);
+    TL0 = _mm_unpackhi_epi8(T1, c0);
 
-    TR0 = _mm_unpacklo_epi8(T2, c_0);
-    TR1 = _mm_unpackhi_epi8(T2, c_0);
-    TR2 = _mm_unpacklo_epi8(T3, c_0);
-    TR3 = _mm_unpackhi_epi8(T3, c_0);
+    TR0 = _mm_unpacklo_epi8(T2, c0);
+    TR1 = _mm_unpackhi_epi8(T2, c0);
+    TR2 = _mm_unpacklo_epi8(T3, c0);
+    TR3 = _mm_unpackhi_epi8(T3, c0);
 
     TLR0 = _mm256_inserti128_si256(_mm256_castsi128_si256(TL0), TR0, 1);
     TLR1 = _mm256_inserti128_si256(_mm256_castsi128_si256(TL1), TR1, 1);
@@ -173,9 +173,9 @@ void deblock_edge_ver_avx2(pel_t *SrcPtr, int stride, int Alpha, int Beta, uint8
 
     FS56 = _mm_blendv_epi8(T1, T0, M1);
     FS4 = _mm_blendv_epi8(_mm256_castsi256_si128(c_1_256), _mm256_castsi256_si128(c_2_256), _mm_cmpeq_epi16(_mm256_castsi256_si128(FLT_LR), _mm256_castsi256_si128(c_2_256)));
-    FS3 = _mm_blendv_epi8(c_0, _mm256_castsi256_si128(c_1_256), _mm_cmpgt_epi16(BETA, T2));
+    FS3 = _mm_blendv_epi8(c0, _mm256_castsi256_si128(c_1_256), _mm_cmpgt_epi16(BETA, T2));
 
-    FS = _mm_blendv_epi8(c_0, FS56, _mm_cmpgt_epi16(FLT, _mm256_castsi256_si128(c_4_256)));
+    FS = _mm_blendv_epi8(c0, FS56, _mm_cmpgt_epi16(FLT, _mm256_castsi256_si128(c_4_256)));
     FS = _mm_blendv_epi8(FS, FS4, _mm_cmpeq_epi16(FLT, _mm256_castsi256_si128(c_4_256)));
     FS = _mm_blendv_epi8(FS, FS3, _mm_cmpeq_epi16(FLT, _mm256_castsi256_si128(c_3_256)));
 
@@ -303,7 +303,7 @@ void deblock_edge_ver_c_avx2(pel_t *SrcPtrU, pel_t *SrcPtrV, int stride, int Alp
     __m256i FS_256;
 
     __m128i ALPHA = _mm_set1_epi16((pel_t)Alpha);
-    __m128i c_0 = _mm_set1_epi16(0);
+    __m128i c0 = _mm_set1_epi16(0);
     __m256i c_1_256 = _mm256_set1_epi16(1);
     __m256i c_2_256 = _mm256_set1_epi16(2);
     __m256i c_3_256 = _mm256_set1_epi16(3);
@@ -338,15 +338,15 @@ void deblock_edge_ver_c_avx2(pel_t *SrcPtrU, pel_t *SrcPtrV, int stride, int Alp
     T2 = _mm_unpacklo_epi32(T6, T7);
     T3 = _mm_unpackhi_epi32(T6, T7);
 
-    TL3 = _mm_unpacklo_epi8(T0, c_0);
-    TL2 = _mm_unpackhi_epi8(T0, c_0);
-    TL1 = _mm_unpacklo_epi8(T1, c_0);
-    TL0 = _mm_unpackhi_epi8(T1, c_0);
+    TL3 = _mm_unpacklo_epi8(T0, c0);
+    TL2 = _mm_unpackhi_epi8(T0, c0);
+    TL1 = _mm_unpacklo_epi8(T1, c0);
+    TL0 = _mm_unpackhi_epi8(T1, c0);
 
-    TR0 = _mm_unpacklo_epi8(T2, c_0);
-    TR1 = _mm_unpackhi_epi8(T2, c_0);
-    TR2 = _mm_unpacklo_epi8(T3, c_0);
-    TR3 = _mm_unpackhi_epi8(T3, c_0);
+    TR0 = _mm_unpacklo_epi8(T2, c0);
+    TR1 = _mm_unpackhi_epi8(T2, c0);
+    TR2 = _mm_unpacklo_epi8(T3, c0);
+    TR3 = _mm_unpackhi_epi8(T3, c0);
 
     TLR0 = _mm256_inserti128_si256(_mm256_castsi128_si256(TL0), TR0, 1);
     TLR1 = _mm256_inserti128_si256(_mm256_castsi128_si256(TL1), TR1, 1);
@@ -377,9 +377,9 @@ void deblock_edge_ver_c_avx2(pel_t *SrcPtrU, pel_t *SrcPtrV, int stride, int Alp
     T1 = _mm_subs_epi16(FLT, _mm256_castsi256_si128(c_4_256));
 
     FS56 = _mm_blendv_epi8(T1, T0, M1);
-    FS4 = _mm_blendv_epi8(c_0, _mm256_castsi256_si128(c_1_256), _mm_cmpeq_epi16(_mm256_castsi256_si128(FLT_X), _mm256_castsi256_si128(c_2_256)));
+    FS4 = _mm_blendv_epi8(c0, _mm256_castsi256_si128(c_1_256), _mm_cmpeq_epi16(_mm256_castsi256_si128(FLT_X), _mm256_castsi256_si128(c_2_256)));
 
-    FS = _mm_blendv_epi8(c_0, FS56, _mm_cmpgt_epi16(FLT, _mm256_castsi256_si128(c_4_256)));
+    FS = _mm_blendv_epi8(c0, FS56, _mm_cmpgt_epi16(FLT, _mm256_castsi256_si128(c_4_256)));
     FS = _mm_blendv_epi8(FS, FS4, _mm_cmpeq_epi16(FLT, _mm256_castsi256_si128(c_4_256)));
 
     FS = _mm_and_si128(FS, M0);
@@ -474,7 +474,7 @@ void deblock_edge_hor_avx2(pel_t *SrcPtr, int stride, int Alpha, int Beta, uint8
 
     __m128i ALPHA = _mm_set1_epi16((short)Alpha);
     __m128i BETA = _mm_set1_epi16((short)Beta);
-    __m128i c_0 = _mm_set1_epi16(0);
+    __m128i c0 = _mm_set1_epi16(0);
     __m256i c_0_256 = _mm256_setzero_si256();
     __m256i c_1_256 = _mm256_set1_epi16(1);
     __m256i c_2_256 = _mm256_set1_epi16(2);
@@ -491,12 +491,12 @@ void deblock_edge_hor_avx2(pel_t *SrcPtr, int stride, int Alpha, int Beta, uint8
     TR1 = _mm_loadl_epi64((__m128i*)(SrcPtr + inc));
     TR2 = _mm_loadl_epi64((__m128i*)(SrcPtr + inc2));
 
-    TL2 = _mm_unpacklo_epi8(TL2, c_0);
-    TL1 = _mm_unpacklo_epi8(TL1, c_0);
-    TL0 = _mm_unpacklo_epi8(TL0, c_0);
-    TR0 = _mm_unpacklo_epi8(TR0, c_0);
-    TR1 = _mm_unpacklo_epi8(TR1, c_0);
-    TR2 = _mm_unpacklo_epi8(TR2, c_0);
+    TL2 = _mm_unpacklo_epi8(TL2, c0);
+    TL1 = _mm_unpacklo_epi8(TL1, c0);
+    TL0 = _mm_unpacklo_epi8(TL0, c0);
+    TR0 = _mm_unpacklo_epi8(TR0, c0);
+    TR1 = _mm_unpacklo_epi8(TR1, c0);
+    TR2 = _mm_unpacklo_epi8(TR2, c0);
 
     TLR0 = _mm256_inserti128_si256(_mm256_castsi128_si256(TL0), TR0, 1);
     TLR1 = _mm256_inserti128_si256(_mm256_castsi128_si256(TL1), TR1, 1);
@@ -530,9 +530,9 @@ void deblock_edge_hor_avx2(pel_t *SrcPtr, int stride, int Alpha, int Beta, uint8
 
     FS56 = _mm_blendv_epi8(T1, T0, M1);
     FS4 = _mm_blendv_epi8(_mm256_castsi256_si128(c_1_256), _mm256_castsi256_si128(c_2_256), _mm_cmpeq_epi16(_mm256_castsi256_si128(FLT_X), _mm256_castsi256_si128(c_2_256)));
-    FS3 = _mm_blendv_epi8(c_0, _mm256_castsi256_si128(c_1_256), _mm_cmpgt_epi16(BETA, T2));
+    FS3 = _mm_blendv_epi8(c0, _mm256_castsi256_si128(c_1_256), _mm_cmpgt_epi16(BETA, T2));
 
-    FS = _mm_blendv_epi8(c_0, FS56, _mm_cmpgt_epi16(FLT, _mm256_castsi256_si128(c_4_256)));
+    FS = _mm_blendv_epi8(c0, FS56, _mm_cmpgt_epi16(FLT, _mm256_castsi256_si128(c_4_256)));
     FS = _mm_blendv_epi8(FS, FS4, _mm_cmpeq_epi16(FLT, _mm256_castsi256_si128(c_4_256)));
     FS = _mm_blendv_epi8(FS, FS3, _mm_cmpeq_epi16(FLT, _mm256_castsi256_si128(c_3_256)));
 
@@ -645,7 +645,7 @@ void deblock_edge_hor_c_avx2(pel_t *SrcPtrU, pel_t *SrcPtrV, int stride, int Alp
     __m256i FS_256;
 
     __m128i ALPHA = _mm_set1_epi16((short)Alpha);
-    __m128i c_0 = _mm_set1_epi16(0);
+    __m128i c0 = _mm_set1_epi16(0);
     __m256i c_0_256 = _mm256_setzero_si256();
     __m256i c_1_256 = _mm256_set1_epi16(1);
     __m256i c_2_256 = _mm256_set1_epi16(2);
@@ -692,9 +692,9 @@ void deblock_edge_hor_c_avx2(pel_t *SrcPtrU, pel_t *SrcPtrV, int stride, int Alp
     T1 = _mm_subs_epi16(FLT, _mm256_castsi256_si128(c_4_256));
 
     FS56 = _mm_blendv_epi8(T1, T0, M1);
-    FS4 = _mm_blendv_epi8(c_0, _mm256_castsi256_si128(c_1_256), _mm_cmpeq_epi16(_mm256_castsi256_si128(FLT_X), _mm256_castsi256_si128(c_2_256)));
+    FS4 = _mm_blendv_epi8(c0, _mm256_castsi256_si128(c_1_256), _mm_cmpeq_epi16(_mm256_castsi256_si128(FLT_X), _mm256_castsi256_si128(c_2_256)));
 
-    FS = _mm_blendv_epi8(c_0, FS56, _mm_cmpgt_epi16(FLT, _mm256_castsi256_si128(c_4_256)));
+    FS = _mm_blendv_epi8(c0, FS56, _mm_cmpgt_epi16(FLT, _mm256_castsi256_si128(c_4_256)));
     FS = _mm_blendv_epi8(FS, FS4, _mm_cmpeq_epi16(FLT, _mm256_castsi256_si128(c_4_256)));
 
     FS = _mm_and_si128(FS, M0);
