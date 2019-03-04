@@ -1,0 +1,20 @@
+language: c
+dist: xenial
+
+addons:
+  apt:
+    packages:
+     - nasm
+  homebrew:
+    packages:
+      - nasm
+
+jobs:
+  include:
+   # General Linux build job
+   - name: Build
+     script:
+     - cd build/linux
+     - ./configure
+     - make -j
+
