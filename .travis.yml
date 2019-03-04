@@ -1,13 +1,10 @@
 language: c
 dist: xenial
 
-addons:
-  apt:
-    packages:
-     - nasm
-  homebrew:
-    packages:
-      - nasm
+install:
+  - wget https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/nasm-2.14.02.tar.gz -O nasm-2.14.02.tar.gz
+  - tar -xvf nasm-2.14.02.tar.gz
+  - pushd nasm-2.14.02 && ./configure --prefix=/usr && make && sudo make install && popd
 
 jobs:
   include:
