@@ -489,7 +489,7 @@ int biari_decode_symbol_eq_prob(aec_t *p_aec)
     } else {
         uint32_t s2 = p_aec->i_s1 + 1;
         uint32_t t2 = p_aec->i_t1;
-        int is_LPS = s2 > p_aec->i_value_s || (s2 == p_aec->i_value_s && p_aec->i_value_t >= t2) && p_aec->b_val_bound == 0;
+        int is_LPS = s2 > p_aec->i_value_s || ((s2 == p_aec->i_value_s && p_aec->i_value_t >= t2) && p_aec->b_val_bound == 0);
 
         p_aec->b_val_domain = (bool_t)is_LPS;
 
@@ -1668,7 +1668,7 @@ int cu_read_cbp(davs2_t *h, aec_t *p_aec, cu_t *p_cu, int scu_x, int scu_y)
 #if AVS2_TRACE
             snprintf(p_aec->tracestring, TRACESTRING_SIZE, "delta quant");
 #endif
-            i_delta_qp = i_delta_qp = (int8_t)aec_read_cu_delta_qp(p_aec, h->i_last_dquant);
+            i_delta_qp = (int8_t)aec_read_cu_delta_qp(p_aec, h->i_last_dquant);
             if (i_delta_qp < min_delta_qp ||
                 i_delta_qp > max_delta_qp) {
                 i_delta_qp = DAVS2_CLIP3(min_delta_qp, max_delta_qp, i_delta_qp);

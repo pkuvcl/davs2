@@ -504,13 +504,13 @@ void mc_luma(davs2_t *h, pel_t *dst, int i_dst, int posx, int posy, int width, i
     const int dx = posx & 3;
     const int dy = posy & 3;
     const int mc_part_index = MC_PART_INDEX(width, height);
-    pel_t *fref;
+
 
     UNUSED_PARAMETER(h);
     posx >>= 2;
     posy >>= 2;
     
-    fref = p_fref;
+
     p_fref += posy * i_fref + posx;
     
     if (dx == 0 && dy == 0) {

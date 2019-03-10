@@ -194,12 +194,24 @@ long long FileMD5(const char *filename, unsigned int md5value[4])
     flen[0] = (unsigned int)((len % 0x20000000) * 8);
 
     memset(x, 0, 64);
-    fread(&x, 4, 16, p_infile);
+    int read_size = fread(&x, 4, 16, p_infile);
+    if(read_size!=16){
+        if(!feof(p_infile) && ferror(p_infile)){
+            show_message(CONSOLE_RED, "Reading file error!\n", filename);
+            clearerr(p_infile);
+        }        
+    }
 
     for (i = 0; i < len / 64; i++) {
         md5(&A, &B, &C, &D, x);
         memset(x, 0, 64);
-        fread(&x, 4, 16, p_infile);
+        int ReadSize=fread(&x, 4, 16, p_infile);
+        if(ReadSize!=16){
+            if(!feof(p_infile) && ferror(p_infile)){
+                show_message(CONSOLE_RED, "Reading file error!\n", filename);
+                clearerr(p_infile);
+            }        
+        }
     }
     ((char *)x)[len % 64] = 128;
     if (len % 64 > 55) {

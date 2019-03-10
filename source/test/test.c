@@ -308,7 +308,7 @@ int main(int argc, char *argv[])
     clock_t tm_start = clock();
     int size;
     int frames;
-    long long filelength;
+
 
     memset(MD5val, 0, 16);
     memset(MD5str, 0, 33);
@@ -354,7 +354,7 @@ fail:
 
     /* calculate MD5 */
     if (inputparam.s_md5 && strlen(inputparam.s_md5) == 32) {
-        filelength = FileMD5(inputparam.s_outfile, MD5val);
+        FileMD5(inputparam.s_outfile, MD5val);
         sprintf (MD5str,"%08X%08X%08X%08X", MD5val[0], MD5val[1], MD5val[2], MD5val[3]);
         if (strcmp(MD5str,inputparam.s_md5)) {
             show_message(CONSOLE_RED, "\n  MD5 match failed\n");

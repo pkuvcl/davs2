@@ -369,7 +369,7 @@ static int parse_picture_header_intra(davs2_t *h, davs2_bs_t *bs)
         }
 
         h->rps.num_to_remove            = u_v(bs, 3, "num of removed picture");
-        assert(h->rps.num_to_remove <= sizeof(h->rps.remove_pic) / sizeof(h->rps.remove_pic[0]));
+        assert((unsigned int)h->rps.num_to_remove <= sizeof(h->rps.remove_pic) / sizeof(h->rps.remove_pic[0]));
 
         for (i = 0; i < h->rps.num_to_remove; i++) {
             h->rps.remove_pic[i]        = u_v(bs, 6, "delta COI of removed pic");
@@ -559,7 +559,7 @@ static int parse_picture_header_inter(davs2_t *h, davs2_bs_t *bs)
         }
 
         h->rps.num_to_remove            = u_v(bs, 3, "num of removed picture");
-        assert(h->rps.num_to_remove <= sizeof(h->rps.remove_pic) / sizeof(h->rps.remove_pic[0]));
+        assert((unsigned int)h->rps.num_to_remove <= sizeof(h->rps.remove_pic) / sizeof(h->rps.remove_pic[0]));
 
         for (i = 0; i < h->rps.num_to_remove; i++) {
             h->rps.remove_pic[i]        = u_v(bs, 6, "delta COI of removed pic");
@@ -1515,7 +1515,7 @@ int parse_header(davs2_t *h, davs2_bs_t *p_bs)
             davs2_seq_t new_seq;
             /* decode the sequence head */
             if (parse_sequence_header(h->task_info.taskmgr, &new_seq, p_bs) < 0) {
-                davs2_log(h, NULL, "Invalid sequence header.");
+                davs2_log(h, 0, "Invalid sequence header.");
                 return -1;
             }
             /* update the task manager */

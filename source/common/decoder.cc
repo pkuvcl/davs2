@@ -1073,7 +1073,7 @@ davs2_t *decoder_open(davs2_mgr_t *mgr, davs2_t *h, int idx_decoder)
 
     /* init log module */
     h->module_log.i_log_level = mgr->param.info_level;
-    sprintf(h->module_log.module_name, "Dec[%2d] %06llx", idx_decoder, h);
+    sprintf(h->module_log.module_name, "Dec[%2d] %06llx", idx_decoder,(long long unsigned int) h);
 
     /* only initialize some variables, not ready to work */
     h->task_info.taskmgr = mgr;
