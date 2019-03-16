@@ -3,6 +3,7 @@ Release/
 x64_Debug/
 x64_Release/
 build/linux/cavs2dec*
+build/linux/davs2*
 My*/
 *.user
 *.suo
