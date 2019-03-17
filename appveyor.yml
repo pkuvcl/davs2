@@ -14,12 +14,5 @@ build:
   project: build\vs2013\DAVS2.sln
 
 artifacts:
-    - path: build\x64\*davs2.*
+    - path: build\bin\x64_Release\*.* 
       name: $(APPVEYOR_PROJECT_NAME)
-
-deploy:
-    # Deploy to GitHub Releases
-  - provider: GitHub
-    artifact: /.*\.nupkg/           # upload all NuGet packages to release assets
-    draft: false
-    prerelease: false
