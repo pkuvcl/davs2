@@ -9,7 +9,7 @@ An encoder, **xavs2**, can be found at [Github][2] or  [Gitee (mirror in China)]
 [![GitHub stars](https://img.shields.io/github/stars/pkuvcl/davs2.svg)](https://github.com/pkuvcl/davs2/stargazers)
 
 [![Travis Build Status](https://travis-ci.org/pkuvcl/davs2.svg?branch=master)](https://travis-ci.org/pkuvcl/davs2)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/pq0b5mnc6mig6ryp?svg=true](https://ci.appveyor.com/project/luofalei/davs2/build/artifacts)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/pq0b5mnc6mig6ryp?svg=true)](https://ci.appveyor.com/project/luofalei/davs2/build/artifacts)
 
 Stargazers over time
 [![Stargazers over time](https://starcharts.herokuapp.com/pkuvcl/davs2.svg)](https://starcharts.herokuapp.com/pkuvcl/davs2)
