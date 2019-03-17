@@ -1,0 +1,21 @@
+image: Visual Studio 2015
+configuration: Release
+
+install:
+    - git submodule update --init
+    - appveyor DownloadFile https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/win64/nasm-2.14.02-win64.zip -FileName nasm.zip
+    - ps: Expand-Archive -Path nasm.zip -DestinationPath build/vs2013 -Force:$true
+
+build:
+  project: build\vs2013\DAVS2.sln
+
+artifacts:
+    - path: bin\Release\*.*
+      name: $(APPVEYOR_PROJECT_NAME)
+
+deploy:
+    # Deploy to GitHub Releases
+  - provider: GitHub
+    artifact: /.*\.nupkg/           # upload all NuGet packages to release assets
+    draft: false
+    prerelease: false
