@@ -8,8 +8,8 @@ An encoder, **xavs2**, can be found at [Github][2] or  [Gitee (mirror in China)]
 [![GitHub forks](https://img.shields.io/github/forks/pkuvcl/davs2.svg)](https://github.com/pkuvcl/davs2/network)
 [![GitHub stars](https://img.shields.io/github/stars/pkuvcl/davs2.svg)](https://github.com/pkuvcl/davs2/stargazers)
 
-[![Travis Build Status](https://travis-ci.org/pkuvcl/davs2.svg?branch=master)](https://travis-ci.org/pkuvcl/davs2)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/pq0b5mnc6mig6ryp?svg=true)](https://ci.appveyor.com/project/luofalei/davs2/build/artifacts)
+Linux(Ubuntu-16.04):[![Travis Build Status](https://travis-ci.org/pkuvcl/davs2.svg?branch=master)](https://travis-ci.org/pkuvcl/davs2)
+Windows(VS2013):[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/pq0b5mnc6mig6ryp?svg=true)](https://ci.appveyor.com/project/luofalei/davs2/build/artifacts)
 
 Stargazers over time
 [![Stargazers over time](https://starcharts.herokuapp.com/pkuvcl/davs2.svg)](https://starcharts.herokuapp.com/pkuvcl/davs2)
@@ -22,7 +22,7 @@ Use VS2013 or latest version of  visual studio open the `./build/vs2013/davs2.sl
 #### Notes
 1. A `shell executor`, i.e. the bash in git for windows, is needed and should be found in `PATH` variable.
  For example, the path `C:\Program Files\Git\bin` can be added if git-for-windows is installed.
-2. `nasm.exe` with version `2.13` (or later version) is needed and should be put into the `build/vs2013` directory.
+2. `nasm.exe` with version `2.13` (or later version) is needed and should be put into the `PATH` directory.
  For windows platform, you can downloaded the packege and unpack the zip file to get `nasm.exe`:
 https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/win64/nasm-2.14.02-win64.zip
 

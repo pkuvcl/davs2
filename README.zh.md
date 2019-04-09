@@ -9,8 +9,8 @@
 [![GitHub forks](https://img.shields.io/github/forks/pkuvcl/davs2.svg)](https://github.com/pkuvcl/davs2/network)
 [![GitHub stars](https://img.shields.io/github/stars/pkuvcl/davs2.svg)](https://github.com/pkuvcl/davs2/stargazers)
 
-[![Travis Build Status](https://travis-ci.org/pkuvcl/davs2.svg?branch=master)](https://travis-ci.org/pkuvcl/davs2)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/pq0b5mnc6mig6ryp?svg=true)](https://ci.appveyor.com/project/luofalei/davs2/build/artifacts)
+Linux(Ubuntu-16.04):[![Travis Build Status](https://travis-ci.org/pkuvcl/davs2.svg?branch=master)](https://travis-ci.org/pkuvcl/davs2)
+Windows(VS2013):[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/pq0b5mnc6mig6ryp?svg=true)](https://ci.appveyor.com/project/luofalei/davs2/build/artifacts)
 
 [![Stargazers over time](https://starcharts.herokuapp.com/pkuvcl/davs2.svg)](https://starcharts.herokuapp.com/pkuvcl/davs2)
 
@@ -25,7 +25,7 @@
  需要将该 `bash` 所在的目录添加到系统环境变量 `PATH` 中.
  如上所述, 如果您以默认配置安装了`git-for-windows`, 
  那么将 `C:\Program Files\Git\bin` 添加到环境变量中即可.
-2. 需将 `nasm.exe`放入到 `build/vs2013`目录, `nasm`版本号需为`2.13`或更新.
+2. 需将 `nasm.exe`放入到系统 `PATH` 目录, `nasm`版本号需为`2.13`或更新.
   对于`windows`平台,可下载如下压缩包中，解压得到`nasm.exe`.
 https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/win64/nasm-2.14.02-win64.zip
 
