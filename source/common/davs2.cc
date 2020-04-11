@@ -609,6 +609,10 @@ int decoder_decode_es_unit(davs2_mgr_t *mgr, es_unit_t *es_unit)
             davs2_thread_mutex_unlock(&mgr->mutex_aec);
             /* decode picture data */
             davs2_threadpool_run((davs2_threadpool_t *)mgr->thread_pool, decoder_decode_picture_data, h, 0, 0);
+        }else{ 
+            davs2_thread_mutex_unlock(&mgr->mutex_aec);
+            /* task is free */
+            task_unload_packet(h, es_unit);
         }
     } else {
         davs2_thread_mutex_unlock(&mgr->mutex_aec);
