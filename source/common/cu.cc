@@ -1367,6 +1367,7 @@ int decode_lcu_recon(davs2_t *h, davs2_row_rec_t *row_rec, int i_level, int pix_
             h->decoding_error = 1;
             davs2_log(h, DAVS2_LOG_WARNING, "invalid CU (%3d, %3d), POC %3d",
                      pix_x, pix_y, h->i_poc);
+            return 0;
         }
         cu_recon(h, row_rec, p_cu, pix_x, pix_y);
     }
