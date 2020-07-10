@@ -888,7 +888,7 @@ typedef struct es_unit_t {
 typedef struct davs2_task_t {
     ALIGN32(int     task_id);         /* task id */
     int             task_status;      /* 0: free; 1, busy */
-    davs2_mgr_t   *taskmgr;          /* the taskmgr */
+    davs2_mgr_t   *taskmgr;           /* the taskmgr */
     es_unit_t      *curr_es_unit;     /* decoding ES unit */
     davs2_thread_t  thread_decode;    /* handle of the decoding thread */
 } davs2_task_t;
@@ -899,6 +899,16 @@ struct davs2_log_t {
     int         i_log_level;          /* log level */
     char        module_name[60];      /* module name */
 };
+/* ---------------------------------------------------------------------------
+ * pts queue
+ */
+#if CTRL_REORDER_INPUT_PTS
+typedef struct pts_queue_t {
+    int     head;                 /* pts queue head */
+    int     tail;                 /* pts queue tail */
+    int64_t pts[AVS2_COI_CYCLE];  /* presentation time stamp */
+} pts_queue_t;
+#endif
 
 /* ---------------------------------------------------------------------------
  * decoder manager
@@ -919,6 +929,9 @@ struct davs2_mgr_t {
     /* --- decoder output --------- */
     int                 new_sps;      /* is SPS(sequence property set) changed? */
     int                 num_frames_to_output;
+#if CTRL_REORDER_INPUT_PTS
+    pts_queue_t         pts_queue;    /* pts queue*/
+#endif
 
     /* --- decoding picture buffer (DBP) --------- */
     davs2_frame_t     **dpb;          /* decoded picture buffer array */

@@ -56,12 +56,13 @@
 #define AVS2_TRACE              0     /* write trace file,    1: ON, 0: OFF */
 #endif
 
-#define DAVS2_TRACE_API        0     /* API calling trace */
+#define DAVS2_TRACE_API        0      /* API calling trace */
 
 #define USE_NEW_INTPL           0     /* use new interpolation functions */
 
 #define BUGFIX_PREDICTION_INTRA 1     /* align to latest intra prediction */
 
+#define CTRL_REORDER_INPUT_PTS  1     /* record input PTS and reuse them when output */
 
 
 /**

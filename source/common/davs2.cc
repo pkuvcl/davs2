@@ -343,6 +343,13 @@ int decoder_get_output(davs2_mgr_t *mgr, davs2_seq_info_t *headerset, davs2_pict
 
     mgr->num_frames_out++;
 
+#if CTRL_REORDER_INPUT_PTS
+    /* overwrite output pts */
+    pic->frame->i_pts = mgr->pts_queue.pts[mgr->pts_queue.tail];
+    mgr->pts_queue.tail++;
+    mgr->pts_queue.tail %= AVS2_COI_CYCLE;
+#endif
+
     /* copy out */
     davs2_write_a_frame(pic->pic, pic->frame);
 
@@ -503,6 +510,13 @@ davs2_decoder_open(davs2_param_t *param)
     /* init members that could not be zero */
     mgr->i_prev_coi       = -1;
 
+#if CTRL_REORDER_INPUT_PTS
+    /* init pts queue */
+    mgr->pts_queue.head = 0;
+    mgr->pts_queue.tail = 0;
+    memset(mgr->pts_queue.pts, 0, sizeof(mgr->pts_queue.pts));
+#endif
+
     /* output pictures */
     mgr->outpics.output   = -1;
     mgr->outpics.pics     = NULL;
@@ -659,6 +673,13 @@ davs2_decoder_send_packet(void *decoder, davs2_packet_t *packet)
                   packet->data[0], packet->data[1], packet->data[2]);
         return DAVS2_ERROR;
     }
+
+#if CTRL_REORDER_INPUT_PTS
+    /* record input pts */
+    mgr->pts_queue.pts[mgr->pts_queue.head] = packet->pts;
+    mgr->pts_queue.head++;
+    mgr->pts_queue.head %= AVS2_COI_CYCLE;
+#endif
 
     /* generate one es_unit for current byte-stream buffer */
     es_unit = davs2_pack_es_unit(mgr, packet->data, packet->len, packet->pts, packet->dts);
