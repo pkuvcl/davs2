@@ -62,7 +62,7 @@
 
 #define BUGFIX_PREDICTION_INTRA 1     /* align to latest intra prediction */
 
-#define CTRL_REORDER_INPUT_PTS  1     /* record input PTS and reuse them when output */
+#define CTRL_RECORD_INPUT_PTS   1     /* record input PTS and reuse them when output */
 
 
 /**

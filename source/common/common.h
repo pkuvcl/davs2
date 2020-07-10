@@ -902,7 +902,7 @@ struct davs2_log_t {
 /* ---------------------------------------------------------------------------
  * pts queue
  */
-#if CTRL_REORDER_INPUT_PTS
+#if CTRL_RECORD_INPUT_PTS
 typedef struct pts_queue_t {
     int     head;                 /* pts queue head */
     int     tail;                 /* pts queue tail */
@@ -929,7 +929,7 @@ struct davs2_mgr_t {
     /* --- decoder output --------- */
     int                 new_sps;      /* is SPS(sequence property set) changed? */
     int                 num_frames_to_output;
-#if CTRL_REORDER_INPUT_PTS
+#if CTRL_RECORD_INPUT_PTS
     pts_queue_t         pts_queue;    /* pts queue*/
 #endif
 
