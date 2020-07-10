@@ -675,10 +675,12 @@ davs2_decoder_send_packet(void *decoder, davs2_packet_t *packet)
     }
 
 #if CTRL_RECORD_INPUT_PTS
-    /* record input pts */
-    mgr->pts_queue.pts[mgr->pts_queue.head] = packet->pts;
-    mgr->pts_queue.head++;
-    mgr->pts_queue.head %= AVS2_COI_CYCLE;
+    /* record input pts for picture package */
+    if (packet->data[3] == 0xB3 || packet->data[3] == 0xB6) {
+        mgr->pts_queue.pts[mgr->pts_queue.head] = packet->pts;
+        mgr->pts_queue.head++;
+        mgr->pts_queue.head %= AVS2_COI_CYCLE;
+    }
 #endif
 
     /* generate one es_unit for current byte-stream buffer */
