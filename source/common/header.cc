@@ -53,6 +53,16 @@
 extern const int8_t *tab_DL_Avails[MAX_CU_SIZE_IN_BIT + 1];
 extern const int8_t *tab_TR_Avails[MAX_CU_SIZE_IN_BIT + 1];
 
+/* ---------------------------------------------------------------------------
+ */
+#define DAVS2_MAX_FRAME_RATE_CODE 13
+static const float FRAME_RATE[DAVS2_MAX_FRAME_RATE_CODE] = {
+    24000.0f / 1001.0f, 24.0f, 25.0f, 30000.0f / 1001.0f, 30.0f, 50.0f, 60000.0f / 1001.0f, 60.0f,
+    100.0f, 120.0f, 200.0f, 240.0f, 300.0f
+};
+
+/* ---------------------------------------------------------------------------
+ */
 static const uint8_t ALPHA_TABLE[64] = {
      0,  0,  0,  0,  0,  0,  1,  1,
      1,  1,  1,  2,  2,  2,  3,  3,
@@ -64,8 +74,6 @@ static const uint8_t ALPHA_TABLE[64] = {
     57, 58, 59, 60, 61, 62, 63, 64
 };
 
-/* ---------------------------------------------------------------------------
- */
 static const uint8_t BETA_TABLE[64] = {
      0,  0,  0,  0,  0,  0,  1,  1,
      1,  1,  1,  1,  1,  2,  2,  2,
@@ -118,10 +126,7 @@ void davs2_reconfigure_decoder(davs2_mgr_t *h)
 static
 int parse_sequence_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
 {
-    static const float FRAME_RATE[8] = {
-        24000.0f / 1001.0f, 24.0f, 25.0f, 30000.0f / 1001.0f, 30.0f, 50.0f, 60000.0f / 1001.0f, 60.0f
-    };
-    rps_t *p_rps      = NULL;
+    rps_t *p_rps = NULL;
 
     int i, j;
     int num_of_rps;
@@ -264,6 +269,12 @@ int parse_sequence_header(davs2_mgr_t *mgr, davs2_seq_t *seq, davs2_bs_t *bs)
     u_v(bs, 2,  "reserved bits");
 
     bs_align(bs); /* align position */
+
+    if (seq->head.frame_rate_id < 1 || seq->head.frame_rate_id > DAVS2_MAX_FRAME_RATE_CODE) {
+        davs2_log(mgr, DAVS2_LOG_ERROR, "Invalid frame_rate_code %d, valid range [1, %d].\n",
+            seq->head.frame_rate_id, DAVS2_MAX_FRAME_RATE_CODE);
+        seq->head.frame_rate_id = DAVS2_CLIP3(1, DAVS2_MAX_FRAME_RATE_CODE, seq->head.frame_rate_id);
+    }
 
     seq->head.bitrate    = ((seq->bit_rate_upper << 18) + seq->bit_rate_lower) * 400;
     seq->head.frame_rate = FRAME_RATE[seq->head.frame_rate_id - 1];
@@ -897,7 +908,7 @@ int create_dpb(davs2_mgr_t *mgr)
     int i;
 
     mgr->dpbsize = mgr->num_decoders + seq->picture_reorder_delay + 16;  /// !!! FIXME: decide dpb buffer size ?
-    mgr->dpbsize += 8;  // FIXME: ÐèÒª¼õÉÙ
+    mgr->dpbsize += 8;  // FIXME: ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 
     mem_size = mgr->dpbsize * sizeof(davs2_frame_t *)
         + davs2_frame_get_size(seq->i_enc_width, seq->i_enc_height, seq->head.chroma_format, 1) * mgr->dpbsize
